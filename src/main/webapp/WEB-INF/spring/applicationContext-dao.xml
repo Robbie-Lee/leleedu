@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd"
+	default-autowire="byName">
+	
+	<beans:bean id="leapTargetDataSource" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close">
+		<!-- 基本属性 url、user、password -->
+		<beans:property name="url" value="${datasource.url}" />
+		<beans:property name="username" value="${datasource.username}" />
+		<beans:property name="password" value="${datasource.password}" />
+		<!-- 配置初始化大小、最小、最大 -->
+		<beans:property name="initialSize" value="${datasource.initialSize}" />
+		<beans:property name="minIdle" value="${datasource.minIdle}" />
+		<beans:property name="maxActive" value="${datasource.maxActive}" />
+		<!-- 配置获取连接等待超时的时间 -->
+		<beans:property name="maxWait" value="${datasource.maxWait}" />
+		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+		<beans:property name="timeBetweenEvictionRunsMillis" value="${datasource.timeBetweenEvictionRunsMillis}" />
+		<!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+		<beans:property name="minEvictableIdleTimeMillis" value="${datasource.minEvictableIdleTimeMillis}" />
+		<!-- 测试有效用的SQL Query -->
+		<beans:property name="validationQuery" value="${datasource.validationQuery}" />
+		<!-- 连接空闲时测试是否有效 -->
+		<beans:property name="testWhileIdle" value="true" />
+		<!-- 获取连接时测试是否有效 -->
+		<beans:property name="testOnBorrow" value="false" />
+		<!-- 归还连接时是否测试有效 -->
+		<beans:property name="testOnReturn" value="false" />
+		<!-- 是否打开PSCache，并且指定每个连接上PSCache的大小 -->
+		<beans:property name="poolPreparedStatements" value="false" />
+		<beans:property name="maxPoolPreparedStatementPerConnectionSize"
+			value="20" />
+		<!-- 配置监控统计拦截的filters -->
+		<beans:property name="filters" value="mergeStat" />
+	</beans:bean>
+	
+	<beans:bean id="leapDataSource"
+		class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy">
+		<beans:property name="targetDataSource" ref="leapTargetDataSource"></beans:property>
+	</beans:bean>
+</beans:beans>

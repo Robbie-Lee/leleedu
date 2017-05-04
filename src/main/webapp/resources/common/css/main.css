@@ -1,0 +1,197 @@
+/*clear default style*/
+h1,h2,h3,h4,h5,h6,ul,li{margin: 0;}
+a:hover,a:focus{text-decoration: none;}
+body{font-family: '微软雅黑'}
+.glyphicon{font-size: 12px;}
+.table{margin-bottom: 0;}
+tr{background: #fff;}
+.btn{padding:5px 40px;}
+.table .btn-link{padding:0;}
+.form-inline .form-group{margin-bottom: 10px;}
+.llas-content .form-group .checkbox{margin-left: 20px;}
+.form-inline .form-control.select-defaule-width{width: 180px;}
+.form-group > label{width: 80px; text-align: right;padding-right: 6px;}
+.llas-content .form-control{height: 32px; border-color: #ddd; border-radius: 3px;}
+.llas-header {position: fixed;width: 100%;height: 50px;background: #373d41;z-index: 101;}
+.llas-body {position: absolute;width: 100%;top: 50px;bottom: 0px;background-color: #000;z-index: 100;}
+.llas-sidebar {width: 0;display: none;position: fixed;top: 50px;bottom: 0px;background-color: #293038;z-index: 102;overflow-x: hidden;}
+.llas-sidebar-full .llas-sidebar {width: 180px;display: block;}
+.llas-content {width: auto;position: absolute;top: 0px;left: 0px;bottom: 0px;right: 0px;overflow: hidden;background: #eaedf1;padding: 20px;overflow-y: auto;}
+.llas-sidebar-full .llas-content {left: 180px;}
+.llas-sidebar-mini .llas-sidebar {width: 50px;}
+.llas-sidebar-mini .llas-content {left: 50px;}
+.llas-margin-b-20{margin-bottom: 20px;}
+.llas-textright{text-align: right;}
+.llas-textleft{text-align: left;}
+.llas-textcenter{text-align: center;}
+.llas-left{float:left;}
+.llas-right{float:right;}
+.topbar-logo{
+	display: block;
+    width: 50px;color: #FFF;
+    text-align: center;
+    line-height: 50px;
+    margin-right: 1px;
+}
+.topbar-title{
+	color: #fff;
+	line-height: 50px;
+}
+.topbar-user{
+	position: relative;
+	right: 50px;
+}
+.topbar-user .dropdown .btn-default {
+	background: transparent;
+    border: transparent;
+    color: #fff;
+    line-height: 50px;
+    padding: 0 10px;
+}
+.topbar-user .dropdown .btn-default:hover, .topbar-user .dropdown .btn-default:focus{
+	background: transparent;
+    border: transparent;
+    color: #fff;
+    outline: none;
+}
+.topbar-link-user {
+	float:left;
+	line-height: 50px;
+	color: #fff;
+}
+.topbar-link-user:hover,.topbar-link-user:focus{color: #eaedf1;}
+.topbar-link-user .topbar-user-info{margin-left: 4px;}
+.sidebar-fold {
+    height: 30px;
+    width: 100%;
+    background: #4A5064;
+    color: #fff;
+    text-align: center;
+    line-height: 30px !important;
+    font-size: 12px;
+    user-select: none;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+}
+.sidebar-nav {
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.sidebar-nav .sidebar-title {
+    height: 40px;
+    background: #42485B;
+    color: #fff;
+    line-height: 40px;
+    position: relative;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    overflow: hidden;
+    padding-left: 10px;
+}
+.sidebar-nav .sidebar-title .sidebar-title-text{padding-left: 8px;}
+.llas-sidebar-mini .sidebar-nav .sidebar-title{padding: 0;text-align: center;}
+.llas-sidebar-mini .sidebar-title-text{display: none;}
+.sidebar-nav .sidebar-title:hover{
+	background: #0bacd7;
+}
+.sidebar-nav ul.sidebar-trans {
+    width: 200px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    
+}
+.max-none{max-height: 0;}
+.sidebar-nav-active .max-none{max-height: none;}
+.sidebar-nav-active{}
+.sidebar-nav li a {
+    display: block;
+    width: 180px;
+    height: 40px;
+    line-height: 40px;
+    overflow: hidden;
+    padding-left: 10px;
+}
+.sidebar-nav li a:hover{background: #4a5064;}
+.sidebar-nav li a .nav-title{
+    float: left;
+    overflow: hidden;
+    color: #fff;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: block;
+    width: 130px;	
+	padding-left: 8px;
+}
+.llas-sidebar-mini .sidebar-nav li a{padding: 0;text-align: center;width: 50px;}
+.llas-sidebar-mini .sidebar-nav li a .nav-title{display: none;}
+.layer-modle{padding: 20px;}
+.form-inline .form-control.note{width: 580px;resize: none;}
+.note-text-div{cursor: pointer;position: relative;}
+.note-text-div .note-text {display: none;}
+.note-text-div:hover .note-text{
+    display: block;
+    position: absolute;
+    max-width: 200px;
+    min-width: 100px;
+    right: 105%;
+    background-color: #000;
+    line-height: 20px;
+    opacity: .5;
+    color: #fff;
+    border-radius: 3px;
+    padding: 5px 10px;
+    top: 0;	
+}
+/*llas-login-panel*/
+.login-body{
+	background: #eaedf1;
+	
+}
+.llas-login-panel{
+	
+	background: #fff;
+	width: 360px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    padding: 0 20px;
+    border-radius: 5px;
+    margin-left: -180px;
+    min-height: 360px;
+    margin-top: -210px;
+    box-shadow: 0px 1px 4px 2px #aaa;
+}
+.llas-login-title{line-height: 130px;text-align: center;}
+/*阿里矢量图标扩展*/
+@font-face {font-family: "iconfont";
+  src: url('../../fonts/iconfont.eot?t=1493282522494'); /* IE9*/
+  src: url('../../fonts/iconfont.eot?t=1493282522494#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('../../fonts/iconfont.woff?t=1493282522494') format('woff'), /* chrome, firefox */
+  url('../../fonts/iconfont.ttf?t=1493282522494') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+  url('../../fonts/iconfont.svg?t=1493282522494#iconfont') format('svg'); /* iOS 4.1- */
+}
+
+.iconfont {
+  font-family:"iconfont" !important;
+  font-size:16px;
+  font-style:normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.icon-course:before { content: "\e645"; }
+.icon-tubiaofuben81:before { content: "\e6a1"; }
+.icon-tongji:before { content: "\e631"; }
+.icon-shanchu:before { content: "\e621"; }
+.icon-shouqicaidan:before { content: "\e622"; }
+.icon-zhankaicaidan:before { content: "\e624"; }
+.icon-daqia:before { content: "\e68e"; }
+.icon-xueshengguanli:before { content: "\e62c"; }
+.icon-yonghuguanli:before { content: "\e69b"; }
+.iconfont{color: #fff;float: left;}
+.llas-sidebar-mini .sidebar-nav .iconfont{float: none;}
