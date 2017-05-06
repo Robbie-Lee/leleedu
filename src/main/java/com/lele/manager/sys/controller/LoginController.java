@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.lele.manager.entity.UserCookie;
 import com.lele.manager.enums.LoginStatus;
+import com.lele.manager.sys.entity.UserCookie;
 import com.lele.manager.sys.service.CookieService;
 import com.lele.manager.sys.service.LoginService;
 import com.lele.manager.utils.Constants;

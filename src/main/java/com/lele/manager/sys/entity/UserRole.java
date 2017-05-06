@@ -1,4 +1,4 @@
-package com.lele.manager.entity;
+package com.lele.manager.sys.entity;
 
 import java.io.Serializable;
 
@@ -12,23 +12,23 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "leap_role_resource")
-public class RoleResoure implements Serializable {
+@Table(name = "user_role")
+public class UserRole implements Serializable {
 
-	private static final long serialVersionUID = 3717309962771607701L;
+	private static final long serialVersionUID = 3726677168978398503L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
 	
     @ManyToOne(cascade = {CascadeType.ALL})  
-    @JoinColumn(name="roleid")  
-	private Role role;
+    @JoinColumn(name="userid")  
+	private User user;
 
     @ManyToOne(cascade = {CascadeType.ALL})  
-    @JoinColumn(name="resourceid")  
-	private Resource resource;
-
+    @JoinColumn(name="roleid")  
+	private Role role;
+    
 	public long getId() {
 		return id;
 	}
@@ -45,11 +45,11 @@ public class RoleResoure implements Serializable {
 		this.role = role;
 	}
 
-	public Resource getResource() {
-		return resource;
+	public User getUser() {
+		return user;
 	}
 
-	public void setResource(Resource resource) {
-		this.resource = resource;
+	public void setUser(User user) {
+		this.user = user;
 	}
 }

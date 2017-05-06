@@ -1,4 +1,4 @@
-package com.lele.manager.service;
+package com.lele.manager.sys.service;
 
 import java.util.HashSet;
 import java.util.List;
@@ -7,8 +7,8 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.lele.manager.dao.RoleDAO;
-import com.lele.manager.entity.Role;
+import com.lele.manager.sys.dao.RoleDAO;
+import com.lele.manager.sys.entity.Role;
 
 @Service("roleService")
 public class RoleService {

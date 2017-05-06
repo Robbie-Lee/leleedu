@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.lele.manager.dao.UserDAO;
-import com.lele.manager.entity.Resource;
-import com.lele.manager.entity.Role;
-import com.lele.manager.entity.User;
+import com.lele.manager.sys.dao.UserDAO;
+import com.lele.manager.sys.entity.Resource;
+import com.lele.manager.sys.entity.Role;
+import com.lele.manager.sys.entity.User;
 import com.lele.manager.utils.WebContext;
 
 public class SecurityHolder {

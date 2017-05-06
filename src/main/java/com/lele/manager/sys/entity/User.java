@@ -1,4 +1,4 @@
-package com.lele.manager.entity;
+package com.lele.manager.sys.entity;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -12,7 +12,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "leap_test_user")
+@Table(name = "user")
 public class User extends BaseEntity implements Serializable {
 
 	private static final long serialVersionUID = 3022295376099115999L;
@@ -32,7 +32,7 @@ public class User extends BaseEntity implements Serializable {
 	private boolean enable;
 	
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
-	@JoinTable(name = "leap_user_role", joinColumns = { @JoinColumn(name = "userid", nullable = false, updatable = false) }, 
+	@JoinTable(name = "user_role", joinColumns = { @JoinColumn(name = "userid", nullable = false, updatable = false) }, 
 			inverseJoinColumns = { @JoinColumn(name = "roleid", nullable = false, updatable = false) })
 	private Set<Role> role;
 	

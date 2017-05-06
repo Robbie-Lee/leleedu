@@ -1,4 +1,4 @@
-package com.lele.manager.dao;
+package com.lele.manager.sys.dao;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;

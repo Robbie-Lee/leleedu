@@ -1,4 +1,4 @@
-package com.lele.manager.entity;
+package com.lele.manager.sys.entity;
 
 import java.io.Serializable;
 import java.util.Date;

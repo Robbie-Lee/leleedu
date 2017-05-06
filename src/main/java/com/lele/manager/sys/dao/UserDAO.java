@@ -1,12 +1,12 @@
-package com.lele.manager.dao;
+package com.lele.manager.sys.dao;
 
 import java.util.Date;
 
 import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Strings;
-import com.lele.manager.entity.User;
-import com.lele.manager.dao.MysqlBaseDAO;
+import com.lele.manager.sys.dao.MysqlBaseDAO;
+import com.lele.manager.sys.entity.User;
 import com.lele.manager.utils.AES;
 
 @Repository("userDAO")

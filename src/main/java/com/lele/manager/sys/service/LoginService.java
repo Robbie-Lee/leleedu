@@ -3,11 +3,11 @@ package com.lele.manager.sys.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.lele.manager.dao.UserDAO;
-import com.lele.manager.entity.User;
-import com.lele.manager.entity.UserCookie;
 import com.lele.manager.enums.LoginStatus;
 import com.lele.manager.sys.dao.UserCookieDAO;
+import com.lele.manager.sys.dao.UserDAO;
+import com.lele.manager.sys.entity.User;
+import com.lele.manager.sys.entity.UserCookie;
 import com.lele.manager.utils.AES;
 import com.lele.manager.vo.LoginResult;
 

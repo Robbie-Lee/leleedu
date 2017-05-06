@@ -1,4 +1,4 @@
-package com.lele.manager.service;
+package com.lele.manager.sys.service;
 
 import java.util.List;
 
@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.lele.manager.dao.UserDAO;
-import com.lele.manager.entity.User;
+import com.lele.manager.sys.dao.UserDAO;
+import com.lele.manager.sys.entity.User;
 import com.lele.manager.utils.AES;
 
 @Service("userService")

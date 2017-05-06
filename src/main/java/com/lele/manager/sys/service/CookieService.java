@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
-import com.lele.manager.entity.UserCookie;
 import com.lele.manager.sys.dao.UserCookieDAO;
+import com.lele.manager.sys.entity.UserCookie;
 import com.lele.manager.utils.AES;
 import com.lele.manager.utils.Constants;
 import com.lele.manager.utils.CookieUtils;

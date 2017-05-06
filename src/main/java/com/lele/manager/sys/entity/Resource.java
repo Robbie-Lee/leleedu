@@ -1,11 +1,11 @@
-package com.lele.manager.entity;
+package com.lele.manager.sys.entity;
 
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "leap_test_resource")
+@Table(name = "resource")
 public class Resource extends BaseEntity implements Serializable {
 
 	private static final long serialVersionUID = -5970300746411155751L;

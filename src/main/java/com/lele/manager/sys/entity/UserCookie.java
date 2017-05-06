@@ -1,4 +1,4 @@
-package com.lele.manager.entity;
+package com.lele.manager.sys.entity;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -10,12 +10,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.GenericGenerator;
-
 import com.alibaba.fastjson.JSON;
 
 @Entity
-@Table(name = "leap_test_login_persistent")
+@Table(name = "login_persistent")
 public class UserCookie implements Serializable {
 
 	private static final long serialVersionUID = 6747129681628462007L;
