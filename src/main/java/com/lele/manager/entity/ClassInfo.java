@@ -9,8 +9,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "classInfo")
@@ -40,9 +44,10 @@ public class ClassInfo implements Serializable {
 	
 	private int classPrice;
 	
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name="classBaseScore")
-	private ScoreLevel baseScoreLevel;
+	@ManyToOne
+	@JoinColumn(name = "classBaseScore", insertable = true, updatable = true, 
+				nullable = false, referencedColumnName="scoreIndex")
+	private ScoreLevel scoreLevel;
 	
 	private boolean acceptDiscount;
 	
@@ -58,12 +63,12 @@ public class ClassInfo implements Serializable {
 		this.id = id;
 	}
 	
-	public ScoreLevel getBaseScoreLevel() {
-		return baseScoreLevel;
+	public ScoreLevel getScoreLevel() {
+		return scoreLevel;
 	}
 	
-	public void SetBaseScoreLevel(ScoreLevel scoreLevel) {
-		this.baseScoreLevel = scoreLevel;
+	public void setScoreLevel(ScoreLevel scoreLevel) {
+		this.scoreLevel = scoreLevel;
 	}
 
 	public String getClassId() {
@@ -90,6 +95,7 @@ public class ClassInfo implements Serializable {
 		this.classRoom = classRoom;
 	}
 
+	@Temporal(value = TemporalType.DATE)
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -98,6 +104,7 @@ public class ClassInfo implements Serializable {
 		this.startDate = startDate;
 	}
 
+	@Temporal(value = TemporalType.DATE)
 	public Date getEndDate() {
 		return endDate;
 	}

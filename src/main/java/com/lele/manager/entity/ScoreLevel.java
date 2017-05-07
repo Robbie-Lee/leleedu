@@ -1,11 +1,16 @@
 package com.lele.manager.entity;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -18,9 +23,13 @@ public class ScoreLevel implements Serializable {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
 	
-	private int scoreLevel;
+	private int scoreIndex;
 	
 	private String scoreDescription;
+	
+	@OneToMany(mappedBy = "scoreLevel", cascade = { CascadeType.ALL }, 
+			fetch = FetchType.LAZY, orphanRemoval = true)
+	private transient Set<ClassInfo> classInfoSet = new HashSet<ClassInfo>();
 
 	public long getId() {
 		return id;
@@ -30,12 +39,12 @@ public class ScoreLevel implements Serializable {
 		this.id = id;
 	}
 
-	public int getScoreLevel() {
-		return scoreLevel;
+	public int getScoreIndex() {
+		return scoreIndex;
 	}
 
-	public void setScoreLevel(int scoreLevel) {
-		this.scoreLevel = scoreLevel;
+	public void setScoreIndex(int scoreIndex) {
+		this.scoreIndex = scoreIndex;
 	}
 
 	public String getScoreDescription() {
@@ -45,4 +54,13 @@ public class ScoreLevel implements Serializable {
 	public void setScoreDescription(String scoreDescription) {
 		this.scoreDescription = scoreDescription;
 	}
+
+	public Set<ClassInfo> getClassInfoSet() {
+		return classInfoSet;
+	}
+
+	public void setClassInfoSet(Set<ClassInfo> classInfoSet) {
+		this.classInfoSet = classInfoSet;
+	}
+
 }
