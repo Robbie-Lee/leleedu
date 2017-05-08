@@ -56,7 +56,7 @@ public class LoginController {
 			
 			if (userSession == null || StringUtils.isNullOrEmpty(userSession.getCurURI())) {
 				userSession = new UserSession();
-				loginResult.setAuthUrl(request.getContextPath() + "/status/overview.do");
+				loginResult.setAuthUrl(request.getContextPath() + "/class/manager.do");
 			}
 			else {
 				loginResult.setAuthUrl(request.getContextPath() + userSession.getCurURI());

@@ -18,6 +18,7 @@ import com.google.common.base.Strings;
 import com.lele.manager.entity.ClassInfo;
 import com.lele.manager.service.ClassInfoService;
 import com.lele.manager.sys.dao.Pagination;
+import com.lele.manager.utils.CommonResult;
 
 @Controller
 @RequestMapping("/class")
@@ -86,4 +87,33 @@ public class ClassController extends BaseController {
         return classInfoList;  
     }
 
+	@RequestMapping(value="/create.json", method = RequestMethod.GET)
+	public @ResponseBody 
+	CommonResult create(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam(value = "classId", required = false, defaultValue = "") String classId,
+			@RequestParam(value = "className", required = false, defaultValue = "") String className,
+			@RequestParam(value = "teacherName", required = false, defaultValue = "") String teacherName,
+			@RequestParam(value = "startDate", required = false, defaultValue = "") String startDate,
+			@RequestParam(value = "endDate", required = false, defaultValue = "") String endDate,
+			@RequestParam(value = "scoreLevel", required = false, defaultValue = "0") int scoreLevel,
+			@RequestParam(value = "pageSize", required = false, defaultValue = "20") int pageSize,
+			@RequestParam(value = "curPage", required = false, defaultValue = "1") int curPage) throws Exception { 
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+       
+        Date sDate = null;
+        Date eDate = null;
+        if (!Strings.isNullOrEmpty(startDate)) {
+        	sDate = sdf.parse(startDate);
+        }
+        if (!Strings.isNullOrEmpty(endDate)) {
+        	eDate = sdf.parse(endDate);
+        }
+        
+        Pagination<ClassInfo> classInfoList = classInfoService.getClassInfoByPage(curPage, pageSize, 
+        		classId, className, teacherName, sDate, eDate, scoreLevel);
+        
+        return null;  
+    }
+	
 }

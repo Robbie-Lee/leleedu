@@ -2,10 +2,11 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<link rel="stylesheet" type="text/css" href="../public/bootstrap/css/bootstrap.min.css">
-<link rel="stylesheet" type="text/css" href="../public/common/css/main.css">
+<link rel="stylesheet" type="text/css" href="/lele/resources/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="/lele/resources/common/css/main.css">
 <title>乐乐教育信息系统管理</title>
 </head>
+<#include "common/head.ftl">
 <body id="login" class="login-body">
 	<div class="llas-header">
 		<div class="topbar-head llas-left clearfix">
@@ -20,24 +21,16 @@
 	</div>
 	
 <div class="llas-login-panel">
-<form class="form-horizontal" method="post" action="/login.json" name="llasLoginForm">
+<form class="form-horizontal llas-valid-form" method="GET" action="/lele/login.json" name="llasLoginForm">
 <h2 class="llas-login-title llas-textcenter">乐乐教育</h2>
   <div class="form-group">
-    <!--  <label for="inputEmail3" class="col-sm-4 control-label">Email</label>-->
     <div class="col-sm-12">
-      <input type="text" name="loginName" class="form-control input-lg" id="inputEmail3" required="required" placeholder="用户名">
+      <input type="text" name="loginName" class="form-control required username" autocomplete="off" id="inputEmail3" maxlength="32" placeholder="用户名">
     </div>
   </div>
   <div class="form-group">
-    <!--<label for="inputPassword3" class="col-sm-4 control-label">Password</label>-->
     <div class="col-sm-12">
-      <input type="password" name="password" class="form-control input-lg" id="inputPassword3" required="required" placeholder="密码">
-    </div>
-  </div>
-  
-  <div class="form-group">
-    <div class="col-sm-12">
-      <button type="button" class="btn btn-primary btn-lg btn-block input-lg" onclick="loginSystem(this, llasLoginForm);">进入</button>
+      <input type="password" name="password" class="form-control required" autocomplete="off" id="inputPassword3" minlength="6" maxlength="32" placeholder="密码">
     </div>
   </div>
 <div class="form-group">
@@ -48,16 +41,23 @@
         </label>
       </div>
     </div>
+  </div>  
+  <div class="form-group">
+    <div class="col-sm-12">
+      <button type="button" class="btn btn-primary btn-lg btn-block"  onclick="loginSystem(this, llasLoginForm);">进入</button>
+    </div>
   </div>
-<div class="alert alert-danger sr-only"  role="alert">
-  <span> Better check yourself, you're not looking too good.</span>
+
+<div id="login-error-info" class="alert alert-danger sr-only"  role="alert">
+  <label id="login-error-text" class="margin0"></label>
 </div>  
 </form>
 </div>
-<script src="../public/common/js/jquery/jquery-1.11.1.min.js"></script>
-<script src="../public/bootstrap/js/bootstrap.min.js"></script>
-<script src="../public/common/js/jquery/jquery.validate.js"></script>
-<script src="../public/common/js/custom.js"></script>
+<script src="/lele/resources/common/js/jquery/jquery-1.11.1.min.js"></script>
+<script src="/lele/resources/bootstrap/js/bootstrap.min.js"></script>
+<script src="/lele/resources/layer/layer.js"></script>
+<script src="/lele/resources/common/js/jquery/jquery.validate.js"></script>
+<script src="/lele/resources/common/js/custom.js"></script>
 
 </body>
 </html>
