@@ -2,9 +2,6 @@ package com.lele.manager.service;
 
 import java.util.Date;
 
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,41 +23,30 @@ public class ClassInfoService {
 									teacherName, startDate, endDate, scoreLevel);
 	}
 
-/*	
-	public void saveClassInfo() {
+	public void saveClassInfo(String classId, String className, String classRoom, Date startDate, 
+			Date endDate, String classTime, String teacherName, int classCount, int classPrice, 
+			boolean acceptDiscount, String classDescription, ScoreLevel scoreLevel) {
 		
-		ClassInfo classInfo = new ClassInfo();
+		ClassInfo classInfo = classInfoDao.getClassInfoById(classId);
+		
+		if (classInfo == null) {
+			classInfo = new ClassInfo();
+			classInfo.setClassId(classId);
+		}
+		
 		classInfo.setAcceptDiscount(acceptDiscount);
+		classInfo.setClassCount(classCount);
+		classInfo.setClassDescription(classDescription);
+		classInfo.setClassName(className);
+		classInfo.setClassPrice(classPrice);
+		classInfo.setClassRoom(classRoom);
+		classInfo.setClassTime(classTime);
+		classInfo.setEndDate(endDate);
+		classInfo.setRegisterCount(0);
+		classInfo.setScoreLevel(scoreLevel);
+		classInfo.setStartDate(startDate);
+		classInfo.setTeacherName(teacherName);
 		
-		
-		
-		String classId, String className;
-		
-		private String classRoom;
-		
-		private Date startDate;
-		
-		private Date endDate;
-		
-		private String classTime;
-		
-		private String teacherName;
-		
-		private int classCount;
-		
-		private int classPrice;
-		
-		@ManyToOne
-		@JoinColumn(name = "classBaseScore", insertable = true, updatable = true, 
-					nullable = false, referencedColumnName="scoreIndex")
-		private ScoreLevel scoreLevel;
-		
-		private boolean acceptDiscount;
-		
-		private String classDescription;
-		
-		private int registerCount;
-
-	}
-*/	
+		classInfoDao.save(classInfo);
+	}	
 }

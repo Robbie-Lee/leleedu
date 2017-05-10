@@ -17,4 +17,8 @@ public class ScoreLevelService {
 	public List<ScoreLevel> getAllScoreLevel() {
 		return scoreLevelDao.getAllScoreLevel();
 	}
+	
+	public ScoreLevel getScoreLevel(int scoreIndex) {
+		return scoreLevelDao.getScoreLevel(scoreIndex);
+	}
 }

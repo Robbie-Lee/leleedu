@@ -16,5 +16,9 @@ public class ScoreLevelDAO extends MysqlBaseDAO<ScoreLevel> {
 		final String hql = "from " + HQL_ENTITY;
 		return this.doQueryList(hql);
 	}
-	
+
+	public ScoreLevel getScoreLevel(int scoreIndex) {
+		final String hql = "from " + HQL_ENTITY + " where scoreIndex = ?0";
+		return this.doQueryUnique(hql, scoreIndex);
+	}
 }

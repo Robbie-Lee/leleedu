@@ -16,6 +16,11 @@ public class ClassInfoDAO extends MysqlBaseDAO<ClassInfo> {
 
 	private final String HQL_ENTITY = "ClassInfo"; 
 	
+	public ClassInfo getClassInfoById(String classId) {
+		final String hql = "from " + HQL_ENTITY + " where classId = ?0";
+		return this.doQueryUnique(hql, classId);
+	}
+	
 	public Pagination<ClassInfo> getClassInfoByPage(int curPage, int pageSize, 
 							String classId, String className, String teacherName, 
 							Date startDate, Date endDate, int scoreLevel) {

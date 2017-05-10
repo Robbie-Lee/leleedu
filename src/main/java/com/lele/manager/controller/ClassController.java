@@ -16,7 +16,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.google.common.base.Strings;
 import com.lele.manager.entity.ClassInfo;
+import com.lele.manager.entity.ScoreLevel;
 import com.lele.manager.service.ClassInfoService;
+import com.lele.manager.service.ScoreLevelService;
 import com.lele.manager.sys.dao.Pagination;
 import com.lele.manager.utils.CommonResult;
 
@@ -26,6 +28,9 @@ public class ClassController extends BaseController {
 
 	@Autowired
 	ClassInfoService classInfoService;
+	
+	@Autowired
+	ScoreLevelService scoreLevelService;
 	
 	@RequestMapping(value="/manager.do", method = RequestMethod.GET)
 	public ModelAndView login(HttpServletRequest request, HttpServletResponse response,
@@ -87,17 +92,21 @@ public class ClassController extends BaseController {
         return classInfoList;  
     }
 
-	@RequestMapping(value="/create.json", method = RequestMethod.GET)
+	@RequestMapping(value="/create.json", method = RequestMethod.POST)
 	public @ResponseBody 
 	CommonResult create(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam(value = "classId", required = false, defaultValue = "") String classId,
-			@RequestParam(value = "className", required = false, defaultValue = "") String className,
-			@RequestParam(value = "teacherName", required = false, defaultValue = "") String teacherName,
-			@RequestParam(value = "startDate", required = false, defaultValue = "") String startDate,
-			@RequestParam(value = "endDate", required = false, defaultValue = "") String endDate,
-			@RequestParam(value = "scoreLevel", required = false, defaultValue = "0") int scoreLevel,
-			@RequestParam(value = "pageSize", required = false, defaultValue = "20") int pageSize,
-			@RequestParam(value = "curPage", required = false, defaultValue = "1") int curPage) throws Exception { 
+			@RequestParam(value = "classId", required = true) String classId,
+			@RequestParam(value = "className", required = true) String className,
+			@RequestParam(value = "classRoom", required = true) String classRoom,
+			@RequestParam(value = "startDate", required = true) String startDate,
+			@RequestParam(value = "endDate", required = true) String endDate,
+			@RequestParam(value = "classTime", required = true) String classTime,
+			@RequestParam(value = "teacherName", required = true) String teacherName,
+			@RequestParam(value = "classCount", required = true) int classCount,
+			@RequestParam(value = "classPrice", required = true) int classPrice,
+			@RequestParam(value = "acceptDiscount", required = true) boolean acceptDiscount,
+			@RequestParam(value = "classDescription", required = true) String classDescription,
+			@RequestParam(value = "scoreLevel", required = true) int scoreLevel) throws Exception { 
         
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
        
@@ -110,10 +119,15 @@ public class ClassController extends BaseController {
         	eDate = sdf.parse(endDate);
         }
         
-        Pagination<ClassInfo> classInfoList = classInfoService.getClassInfoByPage(curPage, pageSize, 
-        		classId, className, teacherName, sDate, eDate, scoreLevel);
+        classInfoService.saveClassInfo(classId, 
+        		className, classRoom, sDate, eDate, classTime, teacherName, 
+        		classCount, classPrice, acceptDiscount, classDescription,
+        		scoreLevelService.getScoreLevel(scoreLevel));
         
-        return null;  
+        CommonResult cr = new CommonResult();
+        cr.setResult("success");
+        
+        return cr;  
     }
 	
 }
