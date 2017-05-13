@@ -16,7 +16,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.google.common.base.Strings;
 import com.lele.manager.entity.ClassInfo;
-import com.lele.manager.entity.ScoreLevel;
 import com.lele.manager.service.ClassInfoService;
 import com.lele.manager.service.ScoreLevelService;
 import com.lele.manager.sys.dao.Pagination;
@@ -33,7 +32,7 @@ public class ClassController extends BaseController {
 	ScoreLevelService scoreLevelService;
 	
 	@RequestMapping(value="/manager.do", method = RequestMethod.GET)
-	public ModelAndView login(HttpServletRequest request, HttpServletResponse response,
+	public ModelAndView manager(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "classId", required = false, defaultValue = "") String classId,
 			@RequestParam(value = "className", required = false, defaultValue = "") String className,
 			@RequestParam(value = "teacherName", required = false, defaultValue = "") String teacherName,
@@ -105,7 +104,7 @@ public class ClassController extends BaseController {
 			@RequestParam(value = "classCount", required = true) int classCount,
 			@RequestParam(value = "classPrice", required = true) int classPrice,
 			@RequestParam(value = "acceptDiscount", required = true) boolean acceptDiscount,
-			@RequestParam(value = "classDescription", required = true) String classDescription,
+			@RequestParam(value = "classDescription", required = false, defaultValue = "") String classDescription,
 			@RequestParam(value = "scoreLevel", required = true) int scoreLevel) throws Exception { 
         
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -129,5 +128,4 @@ public class ClassController extends BaseController {
         
         return cr;  
     }
-	
 }
