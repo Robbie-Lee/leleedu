@@ -41,18 +41,18 @@
 
 .ic__header {
     position: relative;
-    background: #555;
+    background: #42485B;
     height: 35px;
 }
     .ic__prev, .ic__next {
         position: absolute;
         top: 0;
         width: 7%; height: 35px;
-        background-color: #555;
+        background-color: #42485B;
         cursor: pointer;
     }
     .ic__prev:hover, .ic__next:hover {
-        background-color: #666;
+        background-color: #4a5064;
     }
         .ic__prev div, .ic__next div {
             position: absolute;
@@ -136,8 +136,9 @@
         cursor: pointer;
     }
     .ic__days .ic__day:hover {
-        background: #d35746;
+        background: #33cde5;
         color: #fff;
+        border-color: #33cde5;
     }
     .ic__days .ic__day-empty {
         background: #fff url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAMAAAC6sdbXAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAAZQTFRF7u7u////KNOqmgAAABlJREFUeNpiYGRkZABCCGIA8UAEI4QACDAAAUoAFV5+ydgAAAAASUVORK5CYII=');

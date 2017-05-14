@@ -125,6 +125,7 @@ public class ClassController extends BaseController {
         
         CommonResult cr = new CommonResult();
         cr.setResult("success");
+        cr.setErrCode(classId);
         
         return cr;  
     }

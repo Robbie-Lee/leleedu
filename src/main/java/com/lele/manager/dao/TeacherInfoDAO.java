@@ -35,7 +35,7 @@ public class TeacherInfoDAO extends MysqlBaseDAO<TeacherInfo> {
 			values.add(teacherId);
 		}
 		if (!StringUtils.isNullOrEmpty(teacherName)) {
-			hql.append(" and j.teacherName = ?" + values.size());
+			hql.append(" and j.name = ?" + values.size());
 			values.add(teacherName);
 		}
 		if (!StringUtils.isNullOrEmpty(sex)) {

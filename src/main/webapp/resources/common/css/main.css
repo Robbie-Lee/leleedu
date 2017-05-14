@@ -6,6 +6,8 @@ body{font-family: '微软雅黑';overflow: hidden;color: #666;}
 .table{margin-bottom: 0;}
 tr{background: #fff;}
 .btn{padding:5px 40px;}
+.btn-primary{background: #00C1DE;border-color: #00C1DE;border-radius:2px;}
+.btn-primary:hover,.btn-primary:focus,.btn-primary:active:hover,.btn-primary:active:focus{outline: none; background: #33cde5;border-color: #33cde5;}
 .table .btn-link{padding:0;}
 .margin0{margin: 0 !important;}
 .none{display: none;}
@@ -13,7 +15,9 @@ tr{background: #fff;}
 .llas-content .form-group .checkbox{margin-left: 20px;}
 .form-inline .form-control.select-defaule-width{width: 180px;}
 .form-group > label{width: 80px; text-align: right;padding-right: 6px;}
-.llas-content .form-control{height: 32px; border-color: #ddd; border-radius: 3px;}
+.llas-content .form-control,.layui-layer .form-control{height: 32px; border-radius: 2px;}
+.llas-content textarea.form-control,.layui-layer textarea.form-control{height: auto;}
+.form-control:focus{border-color:#00c1de;}
 .llas-header {position: fixed;width: 100%;height: 50px;background: #373d41;z-index: 101;}
 .llas-body {position: absolute;width: 100%;top: 50px;bottom: 0px;background-color: #000;z-index: 100;}
 .llas-sidebar {width: 0;display: none;position: fixed;top: 50px;bottom: 0px;background-color: #293038;z-index: 102;overflow-x: hidden;}
@@ -28,6 +32,9 @@ tr{background: #fff;}
 .llas-textcenter{text-align: center;}
 .llas-left{float:left;}
 .llas-right{float:right;}
+.llas-nowrap{white-space: nowrap;}
+.breadcrumb{border-radius: 0;
+    border-left: 3px solid #00C1DE;}
 .topbar-logo{
 	display: block;
     width: 50px;color: #FFF;
@@ -97,7 +104,7 @@ tr{background: #fff;}
 .llas-sidebar-mini .sidebar-nav .sidebar-title{padding: 0;text-align: center;}
 .llas-sidebar-mini .sidebar-title-text{display: none;}
 .sidebar-nav .sidebar-title:hover{
-	background: #0bacd7;
+	background: #00C1DE;
 }
 .sidebar-nav ul.sidebar-trans {
     width: 200px;
@@ -134,7 +141,7 @@ tr{background: #fff;}
 .llas-sidebar-mini .sidebar-nav li a .nav-title{display: none;}
 .layer-modle{padding: 20px;}
 .form-inline .form-control.note{width: 580px;resize: none;}
-.note-text-div{cursor: pointer;position: relative;}
+.note-text-div{cursor: pointer;position: relative;text-align: center;}
 .note-text-div .note-text {display: none;}
 .note-text-div:hover .note-text{
     display: block;
@@ -167,9 +174,12 @@ tr{background: #fff;}
     min-height: 360px;
     margin-top: -210px;
 }
-.llas-login-panel .btn{border-radius: 3px; border:1px solid #337ab7; border-bottom: 3px solid #286090;}
+.llas-login-panel .btn{border-radius: 3px; border:1px solid #00C1DE; border-bottom: 3px solid #0bacd7;}
 .llas-login-panel .btn:hover,.llas-login-panel .btn:focus{outline: none;}
 .llas-login-title{line-height: 130px;text-align: center;}
+/*tooltip*/
+.tooltip.left .tooltip-arrow{border-left-color: #4a5064}
+.tooltip-inner{background-color: #4a5064;border-radius: 2px;line-height: 20px;padding:8px; }
 /*表格*/
 .table thead tr th,.table tfoot tr td{background-color: #F5F6FA;color:#666;}
 .table-bordered>thead>tr>td, .table-bordered>thead>tr>th {
@@ -182,6 +192,7 @@ tr{background: #fff;}
 tr.no-data-tr td{line-height: 120px !important; text-align: center;vertical-align: middle !important;font-size: 16px;}
 tr.no-data-tr:hover{background: #fff !important;}
 .no-data-icon:before{content: '\2639';margin-right: 4px;}
+.alert .no-data-icon:before{font-weight: 700;font-size: 20px;}
 /*错误信息样式*/
 label.error {
 	color: #a94442;
@@ -198,6 +209,16 @@ label.error:after{
 	position: relative;
 	bottom: 33px;
 	right: 15px;
+}
+.contact-error{display: none;}
+.error-info-div .form-group{position: relative;}
+.error-message{border-color: #FF5722;}
+.error-message + span.llas-error-inco:after{
+	color: #FF5722;
+    content: "\2716";
+    position: absolute;
+    right: 7px;
+    top: 6px;
 }
 /*分页*/
 .pagination{
@@ -217,15 +238,15 @@ label.error:after{
     margin: 5px;
 }
 .pagination .pageItemActive{
-    border: solid thin #0099FF;
+    border: solid thin #00C1DE;
     margin: 5px;
-    background-color: #0099FF;
+    background-color: #00C1DE;
     color:#fff;
     cursor: default;
 }
 .pagination .pageItem:hover{
-    border: solid thin #0099FF;
-    background-color: #0099FF;
+    border: solid thin #00C1DE;
+    background-color: #00C1DE;
     color:#fff;
 }
 .pagination .pageItemDisable{

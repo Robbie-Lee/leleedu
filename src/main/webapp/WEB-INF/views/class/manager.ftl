@@ -47,7 +47,7 @@
 				</div>
 				<ul class="sidebar-trans max-none">
 					<li class="nav-item">
-						<a href="#" class="sidebar-trans">
+						<a href="/lele/class/manager.do" class="sidebar-trans">
 							<span class="icon iconfont icon-course"></span>
 							<span class="nav-title">课程管理</span>
 						</a>
@@ -59,7 +59,7 @@
 						</a>
 					</li>
 					<li class="nav-item">
-						<a href="#" class="sidebar-trans">
+						<a href="/lele/teacher/manager.do" class="sidebar-trans">
 							<span class="icon iconfont icon-tubiaofuben81"></span>
 							<span class="nav-title">教师管理</span>
 						</a>
@@ -111,9 +111,8 @@
 				<div class="row">
 					<div class="">
 						<ol class="breadcrumb">
-						  <li><a href="#">Home</a></li>
-						  <li><a href="#">Library</a></li>
-						  <li class="active">Data</li>
+						  <!--<li><a href="#">Library</a></li>-->
+						  <li class="active">课程管理</li>
 						</ol>
 					</div>
 				</div>
@@ -155,16 +154,17 @@
 						</div>	
 						<div class="form-group">
 							<label for="course-grade">最低成绩</label>
-  							<select id="course-grade" name="scoreLevel" class="form-control select-defaule-width">
+  							<select id="course-grade" name="scoreLevel" class="form-control select-defaule-width course-grade">
 							</select>
 						</div>
 
 						<div class="form-group">
 							<div class="checkbox">
-							  <label for="course-discount">
-							    <input id="course-discount" type="checkbox" value="true" name="acceptDiscount">
+								<input type="hidden" value="false" data-type="CHECKBOX" name="acceptDiscount" class="checkbox-value">
+							    <label for="course-discount">
+							    	<input id="course-discount" type="checkbox" value="true" data-target=".checkbox-value" onchange="changeCheckboxValue(this);">
 							    	是否接受折扣
-							  </label>
+							  	</label>
 							</div>
 						</div>	
 					</div>
@@ -174,10 +174,9 @@
 					<div class="row llas-margin-b-20 llas-textright">
 						 <button type="button" class="btn btn-primary" onclick="searchByCondition(this, searchFrom, 'classSearch');">查询</button>
 						 <button type="reset" class="btn btn-primary">重置</button>
-						 <button type="button" class="btn btn-primary" onclick="newTableRowData(this, 'course');">新增</button>
+						 <button type="button" class="btn btn-primary" onclick="newTableRowData(this, 'createClass');">新增</button>
 					</div>
 				</form>
-			   <div class="def none">sssss</div>
 				<div class="row table-responsive llas-table-row">
 					<table class="table table-bordered table-hover" id="search-table">
 					        <thead>
@@ -203,29 +202,28 @@
 							<#if (classInfo.elements?size > 0)>
 			   					<#list classInfo.elements as class>
 					          <tr id="class-${class['id']}">
-					            <td>${class['classId']}</td>
-					            <td>${class['className']}</td>
-					            <td>${class['startDate']}</td>
-					            <td>${class['endDate']}</td>
-					            <td>${class['classTime']}</td>
-					            <td>${class['classCount']}</td>
-					            <td>${class['classRoom']}</td>
-					            <td>${class['teacherName']}</td>
-					            <td>${class['classPrice']}</td>
-					            <td>${class['scoreLevel'].scoreDescription}</td>
-					            <td>${class['acceptDiscount']?string("是","否")}</td>
-					            <td>${class['registerCount']}</td>
-					            <td>
+					            <td class="classId">${class['classId']}</td>
+					            <td class="className">${class['className']}</td>
+					            <td class="startDate llas-nowrap">${class['startDate']}</td>
+					            <td class="endDate llas-nowrap">${class['endDate']}</td>
+					            <td class="classTime">${class['classTime']}</td>
+					            <td class="classCount">${class['classCount']}</td>
+					            <td class="classRoom">${class['classRoom']}</td>
+					            <td class="teacherName">${class['teacherName']}</td>
+					            <td>¥<span class="classPrice">${class['classPrice']}</span></td>
+					            <td class="scoreLevel llas-nowrap" data-value="${class['scoreLevel'].scoreIndex}">${class['scoreLevel'].scoreDescription}</td>
+					            <td class="acceptDiscount" data-value="${class['acceptDiscount']}">${class['acceptDiscount']?string("是","否")}</td>
+					            <td class="registerCount">${class['registerCount']}</td>
+					            <td class="classDescription" data-value="${class['classDescription']}">
 					            	<div class="note-text-div">
-					            		<span class="glyphicon glyphicon-eye-open">
-					            			<span class="note-text">${class['classDescription']}</span>
+					            		<span class="glyphicon glyphicon-eye-open" data-container="#date-body" data-toggle="tooltip" data-placement="left" title="${class['classDescription']}">
 					            		</span>
 					            	 </div>
 					            </td>
 					            <td>
-					            	<button type="button" class="btn btn-link llas-left" data-id="" onclick="editTableRowData(this, 'course');">编辑</button>
+					            	<button type="button" class="btn btn-link llas-left" data-id="" onclick="editTableRowData(this, 'editClass');">编辑</button>
 					            	<span class="btn-link llas-left">|</span>
-					            	<button type="button" class="btn btn-link llas-left" data-id="1" onclick="deleteTableRowData(this, 'course');">删除</button>
+					            	<button type="button" class="btn btn-link llas-left" data-id="1" onclick="deleteTableRowData(this, 'deleteClass');">删除</button>
 					            </td>
 					          </tr>
 					         	 </#list>
@@ -245,13 +243,91 @@
 					        	</tr>
 					        </tfoot>
 					      </table>
-      
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
-<div id="layer-modle" class="layer-modle"></div>
+<div id="layer-modle" class="layer-modle">
+	<form class="container-fluid form-inline llas-valid-form error-info-div" name="createForm" method="POST" action="/lele/class/create.json">
+		<div class="alert alert-danger contact-error">
+			<span class="no-data-icon"></span>
+			<span class="error-message"></span>
+		</div>
+		<div class="row">
+			<div class="form-group">
+				<label for="course-number">课程号</label>
+				<input type="text" class="form-control required" name="classId" id="course-number" placeholder="课程号" maxlength="32">	
+				<span class="llas-error-inco"></span>
+			</div>
+			<div class="form-group">
+				<label for="course-name">课程名称</label>
+				<input type="text" class="form-control required" name="className" id="course-name" placeholder="课程名称" maxlength="64">	
+				<span class="llas-error-inco"></span>
+			</div>
+			<div class="form-group">
+				<label for="course-teacher">授课教师</label>
+				<select id="course-teacher" name="teacherName" data-type="SELECT" class="form-control select-defaule-width required">
+				  <option value="1">王老师</option>
+				  <option value="2">李老师</option>
+				  <option value="3">刘老师</option>
+				  <option value="4">郭老师</option>
+				</select>
+				<span class="llas-error-inco"></span>
+			</div>
+			<div class="form-group">
+				<label for="course-address">上课地点</label>
+				<input type="text" class="form-control required" name="classRoom" id="course-address" placeholder="上课地点" maxlength="16">	
+				<span class="llas-error-inco"></span>
+			</div>	
+			<div class="form-group">
+				<label for="course-start">开始日期</label>
+				<input type="text" class="form-control date-input required dateISO" name="startDate" id="course-start" placeholder="开始日期">	
+				<span class="llas-error-inco"></span>
+			</div>
+			<div class="form-group">
+				<label for="course-end">结束日期</label>
+				<input type="text" class="form-control date-input required dateISO" name="endDate" id="course-end" placeholder="结束日期">
+				<span class="llas-error-inco"></span>	
+			</div>
+			<div class="form-group">
+				<label for="course-time">上课时间</label>
+				<input type="text" class="form-control required" name="classTime" id="course-time" placeholder="上课时间" maxlength="16">	
+				<span class="llas-error-inco"></span>
+			</div>
+			<div class="form-group">
+				<label for="course-count">课次</label>
+				<input type="text" class="form-control number required" name="classCount" id="course-count" placeholder="课次">	
+				<span class="llas-error-inco"></span>
+			</div>		
+			<div class="form-group">
+				<label for="course-price">价格</label>
+				<input type="text" class="form-control number required" name="classPrice" id="course-price" placeholder="价格">	
+				<span class="llas-error-inco"></span>
+			</div>	
+			<div class="form-group">
+				<label for="course-grade">最低成绩</label>
+				<select class="form-control select-defaule-width course-grade" data-type="SELECT" required name="scoreLevel"></select>
+				<span class="llas-error-inco"></span>
+			</div>
+			
+			<div class="form-group">
+				<div class="checkbox">
+				<input type="hidden" value="false" data-type="CHECKBOX" name="acceptDiscount" class="checkbox-value">
+				<label for="course-discount">
+				    <input id="course-discount" type="checkbox" value="true" data-target=".checkbox-value" onchange="changeCheckboxValue(this);">
+				    	是否接受折扣
+				  </label>
+				</div>
+			</div>	
+			<div class="form-group">
+				<label for="course-note">课程说明</label>
+				<textarea id="course-note" placeholder="课程说明" name="classDescription" class="form-control note required" rows="3" maxlength="128"></textarea>
+				<span class="llas-error-inco"></span>
+			</div>	
+		</div>
+	</form>
+</div>
 <script src="/lele/resources/common/js/jquery/jquery-1.11.1.min.js"></script>
 <script src="/lele/resources/bootstrap/js/bootstrap.min.js"></script>
 <script src="/lele/resources/layer/layer.js"></script>
