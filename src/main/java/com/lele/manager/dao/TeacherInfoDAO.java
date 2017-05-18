@@ -15,6 +15,11 @@ public class TeacherInfoDAO extends MysqlBaseDAO<TeacherInfo> {
 	
 	private final String HQL_ENTITY = "TeacherInfo"; 
 
+	public String getTeacherIdByName(String teacherName) {
+		final String hql = "select teacherId from " + HQL_ENTITY + " where name = ?0";
+		return this.doQueryUnique(String.class, hql, teacherName);
+	}
+	
 	public TeacherInfo getTeacherInfoById(String teacherId) {
 		final String hql = "from " + HQL_ENTITY + " where teacherId = ?0";
 		return this.doQueryUnique(hql, teacherId);

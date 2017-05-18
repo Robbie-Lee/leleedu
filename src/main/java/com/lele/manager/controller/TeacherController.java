@@ -94,6 +94,7 @@ public class TeacherController {
         
         CommonResult cr = new CommonResult();
         cr.setResult("success");
+        cr.setErrCode(teacherId);
         
         return cr;  
     }

@@ -16,6 +16,21 @@ public class ClassInfoDAO extends MysqlBaseDAO<ClassInfo> {
 
 	private final String HQL_ENTITY = "ClassInfo"; 
 	
+	public String getClassIdByName(String className) {
+		final String hql = "select classId from " + HQL_ENTITY + " where className = ?0";
+		return this.doQueryUnique(String.class, hql, className);
+	}
+	
+	public String getClassIdByStartDate(Date startDate) {
+		final String hql = "select classId from " + HQL_ENTITY + " where startDate = ?0";
+		return this.doQueryUnique(String.class, hql, startDate);
+	}
+	
+	public String getClassIdByEndDate(Date endDate) {
+		final String hql = "select classId from " + HQL_ENTITY + " where endDate = ?0";
+		return this.doQueryUnique(String.class, hql, endDate);
+	}
+
 	public ClassInfo getClassInfoById(String classId) {
 		final String hql = "from " + HQL_ENTITY + " where classId = ?0";
 		return this.doQueryUnique(hql, classId);
@@ -29,10 +44,10 @@ public class ClassInfoDAO extends MysqlBaseDAO<ClassInfo> {
 		List<Object> values = new ArrayList<Object>();
 
 		if (scoreLevel != 0) {
-			hql.append("from " + HQL_ENTITY + " j join j.baseScoreLevel s where 1=1 ");
+			hql.append("from " + HQL_ENTITY + " j join j.scoreLevel s where 1=1 ");
 			
-			hql.append(" and s.scoreLevel = ?" + values.size());
-			values.add(startDate);
+			hql.append(" and s.scoreIndex = ?" + values.size());
+			values.add(scoreLevel);
 		}
 		else
 		{

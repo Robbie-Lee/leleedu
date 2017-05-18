@@ -4,11 +4,13 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -40,6 +42,9 @@ public class ClassInfo implements Serializable {
 	private int classCount;
 	
 	private int classPrice;
+	
+//	@OneToOne(mappedBy = "classInfo", fetch = FetchType.LAZY)
+//	private ClassAttend classAttend;
 	
 	@ManyToOne
 	@JoinColumn(name = "classBaseScore", insertable = true, updatable = true, 
@@ -166,5 +171,14 @@ public class ClassInfo implements Serializable {
 		this.registerCount = registerCount;
 	}
 
+/*	
+	@OneToOne(mappedBy = "classInfo", fetch = FetchType.LAZY)
+	public ClassAttend getClassAttend() {
+		return this.classAttend;
+	}
 	
+	public void setClassAttend(ClassAttend classAttend) {
+		this.classAttend = classAttend;
+	}
+*/	
 }
