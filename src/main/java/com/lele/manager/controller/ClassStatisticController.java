@@ -17,17 +17,16 @@ import org.springframework.web.servlet.ModelAndView;
 import com.google.common.base.Strings;
 import com.lele.manager.annotation.Auth;
 import com.lele.manager.annotation.Auth.AuthType;
-import com.lele.manager.entity.ClassInfo;
-import com.lele.manager.service.ClassCheckinService;
+import com.lele.manager.entity.ClassStatistic;
+import com.lele.manager.service.ClassStatisticService;
 import com.lele.manager.sys.dao.Pagination;
-import com.lele.manager.utils.CommonResult;
 
 @Controller
-@RequestMapping("/attend")
-public class ClassAttendController extends BaseController {
+@RequestMapping("/statistic")
+public class ClassStatisticController {
 
 	@Autowired
-	ClassCheckinService classCheckinService;
+	ClassStatisticService classStatisticService;
 	
 	@Auth(auth=AuthType.PAGE)
 	@RequestMapping(value="/manager.do", method = RequestMethod.GET)
@@ -35,22 +34,19 @@ public class ClassAttendController extends BaseController {
 			@RequestParam(value = "pageSize", required = false, defaultValue = "20") int pageSize,
 			@RequestParam(value = "curPage", required = false, defaultValue = "1") int curPage) throws Exception { 
 		
-        ModelAndView mv = new ModelAndView("attend/manager");
+        ModelAndView mv = new ModelAndView("statistic/manager");
         
-        Pagination<ClassInfo> classAttendList = classCheckinService.getClassAttendByPage(
-        		curPage, pageSize, "", "", "", null, null);
+        Pagination<ClassStatistic> classStatisticPage = classStatisticService.calcTeacherSalary(curPage, pageSize, "", null, null);
         
-        mv.addObject("classAttend", classAttendList);
+        mv.addObject("classStatistic", classStatisticPage);
         
         return mv;
 	}
-
+	
 	@Auth(auth=AuthType.INTERFACE)
 	@RequestMapping(value="/search.json", method = RequestMethod.GET)
 	public @ResponseBody 
 	Object search(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam(value = "classId", required = false, defaultValue = "") String classId,
-			@RequestParam(value = "className", required = false, defaultValue = "") String className,
 			@RequestParam(value = "teacherName", required = false, defaultValue = "") String teacherName,
 			@RequestParam(value = "startDate", required = false, defaultValue = "") String startDate,
 			@RequestParam(value = "endDate", required = false, defaultValue = "") String endDate,
@@ -67,25 +63,7 @@ public class ClassAttendController extends BaseController {
         if (!Strings.isNullOrEmpty(endDate)) {
         	eDate = sdf.parse(endDate);
         }
-		
-		Pagination<ClassInfo> classAttendList = classCheckinService.getClassAttendByPage(curPage, 
-				pageSize, classId, className, teacherName, sDate, eDate);
-		
-		return classAttendList;
-	}
-	
-	@Auth(auth=AuthType.INTERFACE)
-	@RequestMapping(value="/checkin.json", method = RequestMethod.POST)
-	public @ResponseBody 
-	CommonResult checkin(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam(value = "classId", required = false, defaultValue = "") String classId) throws Exception {
-		
-		classCheckinService.checkin(classId);
-		
-        CommonResult cr = new CommonResult();
-        cr.setResult("success");
-        cr.setErrCode(classId);
         
-        return cr;  
+        return classStatisticService.calcTeacherSalary(curPage, pageSize, teacherName, sDate, eDate);
 	}
 }

@@ -1,6 +1,7 @@
 package com.lele.manager.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -11,10 +12,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-@Entity
-@Table(name = "class_attend")
+//@Entity
+//@Table(name = "class_attend")
 public class ClassAttend implements Serializable {
 
 	private static final long serialVersionUID = 4388322065382773897L;
@@ -29,10 +32,8 @@ public class ClassAttend implements Serializable {
 	
 	private String teacherId;
 	
+	@Transient
 	private int attendCount;
-	
-//	@Transient
-//	private String teacherName;
 	
 	public ClassInfo getClassInfo() {
 		return this.classInfo;
@@ -65,12 +66,4 @@ public class ClassAttend implements Serializable {
 	public void setAttendCount(int attendCount) {
 		this.attendCount = attendCount;
 	}
-
-//	public String getTeacherName() {
-//		return teacherName;
-//	}
-
-//	public void setTeacherName(String teacherName) {
-//		this.teacherName = teacherName;
-//	}
 }

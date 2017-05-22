@@ -67,14 +67,19 @@ public class ClassInfoDAO extends MysqlBaseDAO<ClassInfo> {
 			values.add(teacherName);
 		}
 		if (startDate != null) {
-			hql.append(" and j.startDate = ?" + values.size());
+			hql.append(" and j.startDate <= ?" + values.size());
 			values.add(startDate);
 		}
 		if (endDate != null) {
-			hql.append(" and j.endDate = ?" + values.size());
-			values.add(startDate);
+			hql.append(" and j.endDate >= ?" + values.size());
+			values.add(endDate);
 		}
 		
 		return this.doQuery(hql.toString(), curPage, pageSize, values.toArray());
+	}
+	
+	public void checkin(String classId) {
+		String hql = "update " + HQL_ENTITY + " set checkinCount = checkinCount + 1 where classId = ?0";
+		this.executeHsqlWithoutEvict(hql, classId);
 	}
 }

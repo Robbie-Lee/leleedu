@@ -31,8 +31,10 @@ public class ClassInfo implements Serializable {
 	
 	private String classRoom;
 	
+	@Temporal(value = TemporalType.DATE)
 	private Date startDate;
 	
+	@Temporal(value = TemporalType.DATE)
 	private Date endDate;
 	
 	private String classTime;
@@ -56,6 +58,8 @@ public class ClassInfo implements Serializable {
 	private String classDescription;
 	
 	private int registerCount;
+	
+	private int checkinCount;
 
 	public long getId() {
 		return id;
@@ -106,7 +110,6 @@ public class ClassInfo implements Serializable {
 		this.startDate = startDate;
 	}
 
-	@Temporal(value = TemporalType.DATE)
 	public Date getEndDate() {
 		return endDate;
 	}
@@ -169,6 +172,14 @@ public class ClassInfo implements Serializable {
 
 	public void setRegisterCount(int registerCount) {
 		this.registerCount = registerCount;
+	}
+
+	public int getCheckinCount() {
+		return checkinCount;
+	}
+
+	public void setCheckinCount(int checkinCount) {
+		this.checkinCount = checkinCount;
 	}
 
 /*	

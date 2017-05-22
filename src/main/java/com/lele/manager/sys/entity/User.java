@@ -1,14 +1,7 @@
 package com.lele.manager.sys.entity;
 
 import java.io.Serializable;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -30,11 +23,6 @@ public class User extends BaseEntity implements Serializable {
 	private String phone;
 	
 	private boolean enable;
-	
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
-	@JoinTable(name = "user_role", joinColumns = { @JoinColumn(name = "userid", nullable = false, updatable = false) }, 
-			inverseJoinColumns = { @JoinColumn(name = "roleid", nullable = false, updatable = false) })
-	private Set<Role> role;
 	
 	public String getAccount() {
 		return account;
@@ -82,13 +70,5 @@ public class User extends BaseEntity implements Serializable {
 
 	public void setEnable(boolean enable) {
 		this.enable = enable;
-	}
-
-	public Set<Role> getRole() {
-		return role;
-	}
-
-	public void setRole(Set<Role> role) {
-		this.role = role;
 	}
 }

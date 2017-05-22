@@ -22,7 +22,7 @@ public class ClassInfoService {
 		return classInfoDao.getClassInfoByPage(curPage, pageSize, classId, className, 
 									teacherName, startDate, endDate, scoreLevel);
 	}
-
+	
 	public void saveClassInfo(String classId, String className, String classRoom, Date startDate, 
 			Date endDate, String classTime, String teacherName, int classCount, int classPrice, 
 			boolean acceptDiscount, String classDescription, ScoreLevel scoreLevel) {
@@ -32,6 +32,7 @@ public class ClassInfoService {
 		if (classInfo == null) {
 			classInfo = new ClassInfo();
 			classInfo.setClassId(classId);
+			classInfo.setCheckinCount(0);
 		}
 		
 		classInfo.setAcceptDiscount(acceptDiscount);

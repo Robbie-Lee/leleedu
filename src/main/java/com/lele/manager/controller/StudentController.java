@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.lele.manager.annotation.Auth;
+import com.lele.manager.annotation.Auth.AuthType;
 import com.lele.manager.entity.StudentInfo;
 import com.lele.manager.service.DiscountService;
 import com.lele.manager.service.ScoreLevelService;
@@ -44,6 +46,7 @@ public class StudentController {
 		return studentInfoList;
 	}
 	
+	@Auth(auth=AuthType.PAGE)
 	@RequestMapping(value="/manager.do", method = RequestMethod.GET)
 	public ModelAndView manager(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "studentId", required = false, defaultValue = "") String studentId,
@@ -65,6 +68,7 @@ public class StudentController {
         return mv;  
     }
 	
+	@Auth(auth=AuthType.INTERFACE)
 	@RequestMapping(value="/search.json", method = RequestMethod.GET)
 	public @ResponseBody 
 	Object search(HttpServletRequest request, HttpServletResponse response,
@@ -81,6 +85,7 @@ public class StudentController {
 				studentId, studentName, sex, grade, guarderName, guarderPhone);
     }
 
+	@Auth(auth=AuthType.INTERFACE)
 	@RequestMapping(value="/create.json", method = RequestMethod.POST)
 	public @ResponseBody 
 	CommonResult create(HttpServletRequest request, HttpServletResponse response,

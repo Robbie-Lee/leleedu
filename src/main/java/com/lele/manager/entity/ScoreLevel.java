@@ -14,7 +14,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "scoreLevel")
+@Table(name = "score_level")
 public class ScoreLevel implements Serializable {
 
 	private static final long serialVersionUID = -2006309400239858983L;

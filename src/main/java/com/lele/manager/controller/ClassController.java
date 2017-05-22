@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.google.common.base.Strings;
+import com.lele.manager.annotation.Auth;
+import com.lele.manager.annotation.Auth.AuthType;
 import com.lele.manager.entity.ClassInfo;
 import com.lele.manager.service.ClassInfoService;
 import com.lele.manager.service.ScoreLevelService;
@@ -31,6 +33,7 @@ public class ClassController extends BaseController {
 	@Autowired
 	ScoreLevelService scoreLevelService;
 	
+	@Auth(auth=AuthType.PAGE)
 	@RequestMapping(value="/manager.do", method = RequestMethod.GET)
 	public ModelAndView manager(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "classId", required = false, defaultValue = "") String classId,
@@ -62,6 +65,7 @@ public class ClassController extends BaseController {
         return mv;  
     }
 
+	@Auth(auth=AuthType.INTERFACE)
 	@RequestMapping(value="/search.json", method = RequestMethod.GET)
 	public @ResponseBody 
 	Object search(HttpServletRequest request, HttpServletResponse response,
@@ -91,6 +95,7 @@ public class ClassController extends BaseController {
         return classInfoList;  
     }
 
+	@Auth(auth=AuthType.INTERFACE)
 	@RequestMapping(value="/create.json", method = RequestMethod.POST)
 	public @ResponseBody 
 	CommonResult create(HttpServletRequest request, HttpServletResponse response,

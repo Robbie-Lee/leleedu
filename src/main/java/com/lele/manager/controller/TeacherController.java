@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.google.common.base.Strings;
+import com.lele.manager.annotation.Auth;
+import com.lele.manager.annotation.Auth.AuthType;
 import com.lele.manager.entity.TeacherInfo;
 import com.lele.manager.service.TeacherInfoService;
 import com.lele.manager.sys.dao.Pagination;
@@ -27,6 +29,7 @@ public class TeacherController {
 	@Autowired
 	TeacherInfoService teacherInfoService;
 
+	@Auth(auth=AuthType.PAGE)
 	@RequestMapping(value="/manager.do", method = RequestMethod.GET)
 	public ModelAndView login(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "teacherId", required = false, defaultValue = "") String teacherId,
@@ -46,6 +49,7 @@ public class TeacherController {
         return mv;  
     }
 	
+	@Auth(auth=AuthType.INTERFACE)
 	@RequestMapping(value="/search.json", method = RequestMethod.GET)
 	public @ResponseBody 
 	Object search(HttpServletRequest request, HttpServletResponse response,
@@ -61,6 +65,7 @@ public class TeacherController {
         						pageSize, teacherId, teacherName, sex, phone, status);
     }
 
+	@Auth(auth=AuthType.INTERFACE)
 	@RequestMapping(value="/create.json", method = RequestMethod.POST)
 	public @ResponseBody 
 	CommonResult create(HttpServletRequest request, HttpServletResponse response,

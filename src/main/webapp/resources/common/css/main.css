@@ -177,6 +177,7 @@ tr{background: #fff;}
 .llas-login-panel .btn{border-radius: 3px; border:1px solid #00C1DE; border-bottom: 3px solid #0bacd7;}
 .llas-login-panel .btn:hover,.llas-login-panel .btn:focus{outline: none;}
 .llas-login-title{line-height: 130px;text-align: center;}
+.llas-success-text{color:#009688}
 /*tooltip*/
 .tooltip.left .tooltip-arrow{border-left-color: #4a5064}
 .tooltip-inner{background-color: #4a5064;border-radius: 2px;line-height: 20px;padding:8px; }
@@ -282,3 +283,54 @@ label.error:after{
 .icon-yonghuguanli:before { content: "\e69b"; }
 .iconfont{color: #fff;float: left;}
 .llas-sidebar-mini .sidebar-nav .iconfont{float: none;}
+/*动画效果*/
+
+.animated {
+    -webkit-animation-duration: 1s;
+    animation-duration: 1s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both
+}
+.animated.infinite {
+    -webkit-animation-iteration-count: infinite;
+    animation-iteration-count: infinite
+}
+.animated.hinge {
+    -webkit-animation-duration: 2s;
+    animation-duration: 2s
+}
+@-webkit-keyframes bounce {
+    0%,100%,20%,50%,80% {
+        -webkit-transform: translateY(0);
+        transform: translateY(0)
+    }
+    40% {
+        -webkit-transform: translateY(-30px);
+        transform: translateY(-30px)
+    }
+    60% {
+        -webkit-transform: translateY(-15px);
+        transform: translateY(-15px)
+    }
+}
+@keyframes bounce {
+    0%,100%,20%,50%,80% {
+        -webkit-transform: translateY(0);
+        -ms-transform: translateY(0);
+        transform: translateY(0)
+    }
+    40% {
+        -webkit-transform: translateY(-30px);
+        -ms-transform: translateY(-30px);
+        transform: translateY(-30px)
+    }
+    60% {
+        -webkit-transform: translateY(-15px);
+        -ms-transform: translateY(-15px);
+        transform: translateY(-15px)
+    }
+}
+.bounce {
+    -webkit-animation-name: bounce;
+    animation-name: bounce
+}
