@@ -24,7 +24,7 @@ public class ClassCheckinService {
 			String classId, String className, String teacherName, Date startDate, Date endDate) {
 
 		return classInfoDao.getClassInfoByPage(curPage, pageSize, classId, 
-								className, teacherName, startDate, endDate, 0);
+								className, teacherName, startDate, endDate, 0, 0);
 	}
 	
 	public void checkin(String classId) {

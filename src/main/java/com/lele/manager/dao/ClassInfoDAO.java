@@ -36,9 +36,33 @@ public class ClassInfoDAO extends MysqlBaseDAO<ClassInfo> {
 		return this.doQueryUnique(hql, classId);
 	}
 	
+	public void activeClass(String classId, boolean active) {
+		final String hql = "update " + HQL_ENTITY + " set valid = ?0 where classId = ?1";
+		this.executeHsqlWithoutEvict(hql, active, classId);
+		
+	}
+	
+	public List<ClassInfo> getClassInfoByIds(List<String> classIds) {
+		StringBuilder hql = new StringBuilder();
+		hql.append("from " + HQL_ENTITY + " where classId in (");
+
+		for (int i = 0;i < classIds.size();i ++) {
+			hql.append("?" + i);
+			if (i < classIds.size() - 1) {
+				hql.append(",");
+			}
+			else {
+				hql.append(")");
+			}
+		}
+		
+		return this.doQueryList(hql.toString(), classIds.toArray());
+	}
+	
 	public Pagination<ClassInfo> getClassInfoByPage(int curPage, int pageSize, 
 							String classId, String className, String teacherName, 
-							Date startDate, Date endDate, int scoreLevel) {
+							Date startDate, Date endDate, int scoreLevel, int classGrade) {
+		
 		StringBuilder hql = new StringBuilder();
 
 		List<Object> values = new ArrayList<Object>();
@@ -74,12 +98,21 @@ public class ClassInfoDAO extends MysqlBaseDAO<ClassInfo> {
 			hql.append(" and j.endDate >= ?" + values.size());
 			values.add(endDate);
 		}
+		if (classGrade > 0) {
+			hql.append(" and j.classGrade = ?" + values.size());
+			values.add(classGrade);
+		}
 		
 		return this.doQuery(hql.toString(), curPage, pageSize, values.toArray());
 	}
 	
 	public void checkin(String classId) {
 		String hql = "update " + HQL_ENTITY + " set checkinCount = checkinCount + 1 where classId = ?0";
+		this.executeHsqlWithoutEvict(hql, classId);
+	}
+	
+	public void enroll(String classId) {
+		String hql = "update " + HQL_ENTITY + " set registerCount = registerCount + 1 where classId = ?0";
 		this.executeHsqlWithoutEvict(hql, classId);
 	}
 }

@@ -43,8 +43,11 @@ public class PrivilegeAspect {
 		HttpServletResponse response = BaseController.response();
 		
 		Object result = null;
-		UserSession us = (UserSession)request.getSession().getAttribute(Constants.DEFAULT_SESSION_ATTRIBUTE_NAME);
-
+		UserSession us = null;
+		if (request != null) {
+			us = (UserSession)request.getSession().getAttribute(Constants.DEFAULT_SESSION_ATTRIBUTE_NAME);
+		}
+		
 		MethodSignature ms = (MethodSignature) pjp.getSignature();
 		Auth annoAuth = ms.getMethod().getAnnotation(Auth.class);
 		

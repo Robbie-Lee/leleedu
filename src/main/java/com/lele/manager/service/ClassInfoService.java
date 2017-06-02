@@ -18,14 +18,14 @@ public class ClassInfoService {
 	
 	public Pagination<ClassInfo> getClassInfoByPage(int curPage, int pageSize, 
 						String classId, String className, String teacherName, 
-						Date startDate, Date endDate, int scoreLevel) {
+						Date startDate, Date endDate, int scoreLevel, int classGrade) {
 		return classInfoDao.getClassInfoByPage(curPage, pageSize, classId, className, 
-									teacherName, startDate, endDate, scoreLevel);
+									teacherName, startDate, endDate, scoreLevel, classGrade);
 	}
 	
 	public void saveClassInfo(String classId, String className, String classRoom, Date startDate, 
 			Date endDate, String classTime, String teacherName, int classCount, int classPrice, 
-			boolean acceptDiscount, String classDescription, ScoreLevel scoreLevel) {
+			boolean acceptDiscount, String classDescription, ScoreLevel scoreLevel, int classGrade) {
 		
 		ClassInfo classInfo = classInfoDao.getClassInfoById(classId);
 		
@@ -47,7 +47,12 @@ public class ClassInfoService {
 		classInfo.setScoreLevel(scoreLevel);
 		classInfo.setStartDate(startDate);
 		classInfo.setTeacherName(teacherName);
+		classInfo.setClassGrade(classGrade);
 		
 		classInfoDao.save(classInfo);
-	}	
+	}
+	
+	public void activeClass(String classId, boolean active) {
+		classInfoDao.activeClass(classId, active);
+	}
 }

@@ -1,6 +1,5 @@
 package com.lele.manager.service;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,7 +36,7 @@ public class ClassStatisticService {
 					String teacherName, Date startDate, Date endDate) {
 		
 		Pagination<ClassInfo> classInfoPage = classInfoDao.getClassInfoByPage(
-				curPage, pageSize, "", "", teacherName, startDate, endDate, 0);
+				curPage, pageSize, "", "", teacherName, startDate, endDate, 0, 0);
 		
 		List<ClassStatistic> csList = new ArrayList<ClassStatistic>();
 		for (ClassInfo ci : classInfoPage.getElements()) {

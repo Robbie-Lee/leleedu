@@ -1,12 +1,4 @@
-<!doctype html>
-<html>
-<head>
-<meta charset="UTF-8">
-<link rel="stylesheet" type="text/css" href="/lele/resources/bootstrap/css/bootstrap.min.css">
-<link rel="stylesheet" type="text/css" href="/lele/resources/common/css/main.css">
-<title>乐乐教育信息系统管理</title>
-</head>
-<#include "../common/head.ftl">
+<#include "/common/head.ftl">
 <body id="login" class="login-body">
 	<div class="llas-header">
 		<div class="topbar-head llas-left clearfix">

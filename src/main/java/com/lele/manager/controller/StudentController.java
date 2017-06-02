@@ -22,7 +22,7 @@ import com.lele.manager.utils.CommonResult;
 
 @Controller
 @RequestMapping("/student")
-public class StudentController {
+public class StudentController extends BaseController {
 	@Autowired
 	StudentInfoService studentInfoService;
 
@@ -66,6 +66,24 @@ public class StudentController {
         mv.addObject("studentInfo", studentInfoList);
         
         return mv;  
+    }
+
+	@Auth(auth=AuthType.INTERFACE)
+	@RequestMapping(value="/score.json", method = RequestMethod.GET)
+	public @ResponseBody 
+	CommonResult score(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam(value = "studentId", required = true) String studentId,
+			@RequestParam(value = "classIds", required = false, defaultValue = "") String classIds,
+			@RequestParam(value = "classScores", required = false, defaultValue = "") String classScores,
+			@RequestParam(value = "scoreLevel", required = false, defaultValue = "0") int scoreLevel) throws Exception { 
+
+		studentInfoService.updateStudentScore(studentId, classIds, classScores, scoreLevel);
+		
+        CommonResult cr = new CommonResult();
+        cr.setResult("success");
+        cr.setErrCode(studentId);
+        
+        return cr;  
     }
 	
 	@Auth(auth=AuthType.INTERFACE)

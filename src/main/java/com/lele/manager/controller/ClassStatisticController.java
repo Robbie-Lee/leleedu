@@ -23,7 +23,7 @@ import com.lele.manager.sys.dao.Pagination;
 
 @Controller
 @RequestMapping("/statistic")
-public class ClassStatisticController {
+public class ClassStatisticController extends BaseController {
 
 	@Autowired
 	ClassStatisticService classStatisticService;

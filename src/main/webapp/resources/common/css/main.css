@@ -127,6 +127,8 @@ tr{background: #fff;}
     padding-left: 10px;
 }
 .sidebar-nav li a:hover{background: #4a5064;}
+.sidebar-nav li a.active{background:#00C1DE;}
+.sidebar-nav li a.active:hover{background:#00C1DE;}
 .sidebar-nav li a .nav-title{
     float: left;
     overflow: hidden;

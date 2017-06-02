@@ -408,6 +408,85 @@ var ajaxDone = {
 			}else{
 				layer.alert('打卡失败，请您稍后重试!', {icon: 2});
 			}
+		},
+		statisticSearch: function(result){
+			var $tbody = $('#search-table').find('tbody'), tbodyHTML = '', elements = result.elements;
+			for(var key in elements){
+				tbodyHTML += '<tr id="'+elements[key].classId+'">';
+				tbodyHTML += '<td class="teacherName">'+elements[key].teacherName+'</td>';
+				tbodyHTML += '<td class="startDate llas-nowrap">'+tool.formatDate(elements[key].startDate, 'YYYY-MM-DD')+'</td>';
+				tbodyHTML += '<td class="endDate llas-nowrap">'+tool.formatDate(elements[key].endDate, 'YYYY-MM-DD')+'</td>';
+				tbodyHTML += '<td class="className">'+elements[key].className+'</td>';
+				tbodyHTML += '<td class="attendCount">'+elements[key].attendCount+'</td>';
+				tbodyHTML += '<td class="studentCount">'+elements[key].studentCount+'</td>';
+				tbodyHTML += '<td>¥<span class="teacherSalary">'+elements[key].teacherSalary+'</span></td>';
+				tbodyHTML += '<td>¥<span class="teacherMinFee">'+elements[key].teacherMinFee+'</span></td>';
+				tbodyHTML += '<td>¥<span class="teacherRateFee">'+elements[key].teacherRateFee+'</span></td>';
+				tbodyHTML += '<td>¥<span class="totalFee">'+elements[key].totalFee+'</span></td>';
+				tbodyHTML += '</tr>';
+			}
+			if('' == tbodyHTML){
+				tbodyHTML = llas.noDataTrHTML;
+			}
+			$tbody.html(tbodyHTML);
+			page.init(result.totalElements, result.pageNumber, llas.page);
+			tool.highlightingOperationRow(llas.currentRowId);			
+		},
+		userSearch: function(result){
+			var $tbody = $('#search-table').find('tbody'), tbodyHTML = '', status = '激活', targetStatus = 'false', targetText = '停用';
+			if(result){
+				if(!result.enable || result.enable == 'false') {
+					status = '停用';
+					targetStatus = 'true';
+					targetText = '激活';
+				}
+				tbodyHTML += '<tr id="user-'+result.id+'">';
+				tbodyHTML += '<td class="account">'+result.account+'</td>';
+				tbodyHTML += '<td class="email">'+result.email+'</td>';
+				tbodyHTML += '<td class="name">'+result.name+'</td>';
+				tbodyHTML += '<td class="phone">'+result.phone+'</td>';
+				tbodyHTML += '<td class="createTime llas-nowrap">'+tool.formatDate(result.createTime, 'YYYY-MM-DD')+'</td>';
+				tbodyHTML += '<td class="modifyTime llas-nowrap">'+tool.formatDate(result.modifyTime, 'YYYY-MM-DD')+'</td>';
+				tbodyHTML += '<td class="enable" data-value="'+result.enable+'">'+status+'</td>';
+				tbodyHTML += '<td>';
+				tbodyHTML += '<button type="button" class="btn btn-link llas-left" data-id="'+result.id+'" data-value="'+targetStatus+'" onclick="sysManager.changeStatus(this, \'changeUserStatus\');">'+targetText+'</button>';
+				tbodyHTML += '<span class="btn-link llas-left">|</span>';
+				tbodyHTML += '<button type="button" class="btn btn-link llas-left" data-id="'+result.id+'" onclick="sysManager.changePassword(this, \'changeUserPassword\');">修改密码</button>';
+				tbodyHTML += '</td>';
+				tbodyHTML += '</tr>';
+			}
+			if('' == tbodyHTML){
+				tbodyHTML = llas.noDataTrHTML;
+			}
+			$tbody.html(tbodyHTML);
+			tool.highlightingOperationRow(llas.currentRowId);				
+		},
+		createUser: function(result){
+			if(result.result == 'success'){
+				llas.currentRowId = result.errCode;
+				formSubmitMethod(null, searchFrom, 'userSearch');
+				layer.closeAll('page');
+			}else{
+				layer.alert('创建失败，请检查您填写的信息是否合理!', {icon: 2});
+			}		
+		},
+		changeUserStatus: function(result){
+			if(result.result == 'success'){
+				llas.currentRowId = result.errCode;
+				formSubmitMethod(null, searchFrom, 'userSearch');
+				layer.closeAll('page');
+			}else{
+				layer.alert(result.errCode, {icon: 2});
+			}			
+		},
+		changeUserPassword: function(result){
+			if(result.result == 'success'){
+				llas.currentRowId = result.errCode;
+				formSubmitMethod(null, searchFrom, 'userSearch');
+				layer.closeAll('page');
+			}else{
+				layer.alert(result.errCode, {icon: 2});
+			}	
 		}
 	};
 function loginSystem(_this, _form){
@@ -612,6 +691,58 @@ var attendManager = {
 		
 	}
 };
+//打卡统计管理
+var statisticManager = {
+	init: function(){
+		commonManager.page();
+		//获取教师信息
+		ajaxGetDataMethod({status:0},'/lele/teacher/search.json', 'get', 'teacherList', null);
+	},		
+};
+//系统管理模块
+var sysManager = {
+	changeStatus: function(_this, type){
+		var title = '确认激活该用户吗？', icon = 1, userId = _this.getAttribute('data-id'), active = _this.getAttribute('data-value');
+		if(!active || active == 'false'){
+			title = '确认停用该用户吗？';
+			icon = 2;
+		}
+		layer.confirm(title, {
+			title:'操作确认',
+			icon: icon,
+			btn: ['取消', '确认'],
+			btn2: function(index, layero){
+				ajaxGetDataMethod({userId:userId,active:active}, '/lele/manager/activeuser.json', 'POST', type, _this);
+			}
+	    }, function(index, layero){
+	    	layer.close(index);
+		});	
+	},
+	changePassword: function(_this, type){
+		var userId = _this.getAttribute('data-id'), $layerModel = $('#layer-modle-change-password'),password = $('#user-change-password').val();
+		layer.open({
+			type: 1,
+			title: '修改密码',
+			shadeClose: false,
+			scrollbar: false,
+			zIndex: 110,
+			skin: 'layui-layer-rim', 
+			btn: ['确定', '取消'],
+			btnAlign: 'c',
+			btn1: function(index, layero){
+				ajaxGetDataMethod({userId:userId,password:password}, '/lele/manager/changepassword.json', 'POST', type, _this);
+			},
+			btn2: function(index, layero){
+				createForm.reset();
+			},
+			content: $layerModel,
+			end: function(){
+				createForm.reset();
+			}
+		 });
+	}
+	
+};
 //分页插件
 var  page = {
     "pageId":"",
@@ -729,7 +860,6 @@ jQuery.validator.addMethod("username", function(value, element) {
 	var flag = llas.vaild.username.test(value);
 	return this.optional(element) || flag;   
 }, $.validator.format('只接受英文字母和数字'));
-
 jQuery.validator.addMethod("password1", function(value, element) {
 	var rules = llas.vaild.password, count = 0;
 	for(var i in rules){
@@ -739,6 +869,10 @@ jQuery.validator.addMethod("password1", function(value, element) {
 	}
 	return this.optional(element) || count > 1 ;   
 }, $.validator.format('您的密码太简单'));
+jQuery.validator.addMethod("cofirm-password", function(value, element) {
+	var $form = $(element).parents('form'), password = $form.find('input[name="password"]').val();
+	return this.optional(element) || password == value ;   
+}, $.validator.format('两次输入的密码不一致'));
 jQuery.validator.addMethod("phone", function(value, element) {
 	var reg = /^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/;
 	return this.optional(element) || reg.test($.trim(value));   

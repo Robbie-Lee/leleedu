@@ -24,7 +24,7 @@ import com.lele.manager.utils.CommonResult;
 
 @Controller
 @RequestMapping("/teacher")
-public class TeacherController {
+public class TeacherController extends BaseController {
 
 	@Autowired
 	TeacherInfoService teacherInfoService;

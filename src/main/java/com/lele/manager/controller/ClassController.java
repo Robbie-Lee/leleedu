@@ -32,12 +32,13 @@ public class ClassController extends BaseController {
 	
 	@Autowired
 	ScoreLevelService scoreLevelService;
-	
+
 	@Auth(auth=AuthType.PAGE)
 	@RequestMapping(value="/manager.do", method = RequestMethod.GET)
 	public ModelAndView manager(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "classId", required = false, defaultValue = "") String classId,
 			@RequestParam(value = "className", required = false, defaultValue = "") String className,
+			@RequestParam(value = "classGrade", required = false, defaultValue = "0") int classGrade,
 			@RequestParam(value = "teacherName", required = false, defaultValue = "") String teacherName,
 			@RequestParam(value = "startDate", required = false, defaultValue = "") String startDate,
 			@RequestParam(value = "endDate", required = false, defaultValue = "") String endDate,
@@ -58,19 +59,20 @@ public class ClassController extends BaseController {
         }
         
         Pagination<ClassInfo> classInfoList = classInfoService.getClassInfoByPage(curPage, pageSize, 
-        		classId, className, teacherName, sDate, eDate, scoreLevel);
+        		classId, className, teacherName, sDate, eDate, scoreLevel, classGrade);
         
         mv.addObject("classInfo", classInfoList);
         
         return mv;  
     }
-
+	
 	@Auth(auth=AuthType.INTERFACE)
 	@RequestMapping(value="/search.json", method = RequestMethod.GET)
 	public @ResponseBody 
 	Object search(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "classId", required = false, defaultValue = "") String classId,
 			@RequestParam(value = "className", required = false, defaultValue = "") String className,
+			@RequestParam(value = "classGrade", required = false, defaultValue = "0") int classGrade,
 			@RequestParam(value = "teacherName", required = false, defaultValue = "") String teacherName,
 			@RequestParam(value = "startDate", required = false, defaultValue = "") String startDate,
 			@RequestParam(value = "endDate", required = false, defaultValue = "") String endDate,
@@ -90,7 +92,7 @@ public class ClassController extends BaseController {
         }
         
         Pagination<ClassInfo> classInfoList = classInfoService.getClassInfoByPage(curPage, pageSize, 
-        		classId, className, teacherName, sDate, eDate, scoreLevel);
+        		classId, className, teacherName, sDate, eDate, scoreLevel, classGrade);
         
         return classInfoList;  
     }
@@ -101,6 +103,7 @@ public class ClassController extends BaseController {
 	CommonResult create(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "classId", required = true) String classId,
 			@RequestParam(value = "className", required = true) String className,
+			@RequestParam(value = "classGrade", required = false, defaultValue = "0") int classGrade,
 			@RequestParam(value = "classRoom", required = true) String classRoom,
 			@RequestParam(value = "startDate", required = true) String startDate,
 			@RequestParam(value = "endDate", required = true) String endDate,
@@ -126,7 +129,7 @@ public class ClassController extends BaseController {
         classInfoService.saveClassInfo(classId, 
         		className, classRoom, sDate, eDate, classTime, teacherName, 
         		classCount, classPrice, acceptDiscount, classDescription,
-        		scoreLevelService.getScoreLevel(scoreLevel));
+        		scoreLevelService.getScoreLevel(scoreLevel), classGrade);
         
         CommonResult cr = new CommonResult();
         cr.setResult("success");
@@ -134,4 +137,20 @@ public class ClassController extends BaseController {
         
         return cr;  
     }
+	
+	@Auth(auth=AuthType.INTERFACE)
+	@RequestMapping(value="/active.json", method = RequestMethod.POST)
+	public @ResponseBody 
+	CommonResult search(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam(value = "classId", required = true) String classId,
+			@RequestParam(value = "active", required = false, defaultValue = "true") boolean active) {
+
+		classInfoService.activeClass(classId, active);
+		
+        CommonResult cr = new CommonResult();
+        cr.setResult("success");
+        cr.setErrCode(classId);
+        
+        return cr;  		
+	}
 }

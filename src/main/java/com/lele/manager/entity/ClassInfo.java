@@ -4,13 +4,11 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -60,6 +58,12 @@ public class ClassInfo implements Serializable {
 	private int registerCount;
 	
 	private int checkinCount;
+	
+	private int classGrade;
+	
+	private int registerLimit;
+	
+	private boolean valid;
 
 	public long getId() {
 		return id;
@@ -150,14 +154,6 @@ public class ClassInfo implements Serializable {
 		this.classPrice = classPrice;
 	}
 
-	public boolean isAcceptDiscount() {
-		return acceptDiscount;
-	}
-
-	public void setAcceptDiscount(boolean acceptDiscount) {
-		this.acceptDiscount = acceptDiscount;
-	}
-
 	public String getClassDescription() {
 		return classDescription;
 	}
@@ -180,6 +176,38 @@ public class ClassInfo implements Serializable {
 
 	public void setCheckinCount(int checkinCount) {
 		this.checkinCount = checkinCount;
+	}
+
+	public int getClassGrade() {
+		return classGrade;
+	}
+
+	public void setClassGrade(int classGrade) {
+		this.classGrade = classGrade;
+	}
+
+	public int getRegisterLimit() {
+		return registerLimit;
+	}
+
+	public void setRegisterLimit(int registerLimit) {
+		this.registerLimit = registerLimit;
+	}
+
+	public boolean isAcceptDiscount() {
+		return acceptDiscount;
+	}
+
+	public void setAcceptDiscount(boolean acceptDiscount) {
+		this.acceptDiscount = acceptDiscount;
+	}
+
+	public boolean isValid() {
+		return valid;
+	}
+
+	public void setValid(boolean valid) {
+		this.valid = valid;
 	}
 
 /*	

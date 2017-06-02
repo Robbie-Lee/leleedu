@@ -24,10 +24,6 @@
 			</beans:list>
 		</beans:property>
 	</beans:bean>
-
-	<beans:bean id="executorConfigurer"  class="com.lele.manager.property.InterfacePropertyConfigurer">  
-    	<beans:property name="location" value="classpath:properties/${server.type}/interface.properties" />  
-	</beans:bean> 
 		
 	<!-- component scan -->
 	<context:component-scan base-package="com.lele.manager" use-default-filters="false">
@@ -36,5 +32,10 @@
 		<context:include-filter type="annotation" expression="org.springframework.stereotype.Component" />
 	</context:component-scan>
 
+	<context:component-scan base-package="com.lele.wechat" use-default-filters="false">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Repository" />
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Service" />
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Component" />
+	</context:component-scan>
 	
 </beans:beans>
