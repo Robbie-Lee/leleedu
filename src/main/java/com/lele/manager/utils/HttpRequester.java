@@ -25,11 +25,32 @@ public class HttpRequester {
 
 	public static String HttpGetAccess(String requestURL, Object ... args) {
 	
-		int index = 0;
+		String index = "0";
 		
 		for (Object arg : args) {
 			requestURL = requestURL.replace("=?" + index, "=" + arg.toString());
-			index ++;
+			int i = Integer.valueOf(index) + 1;
+			if (i == 10) {
+				index = "a";
+			}
+			else if (i == 11) {
+				index = "b";
+			}
+			else if (i == 12) {
+				index = "c";
+			}
+			else if (i == 13) {
+				index = "d";
+			}
+			else if (i == 14) {
+				index = "e";
+			}
+			else if (i == 15) {
+				index = "f";
+			}
+			else {
+				index = String.valueOf(i);
+			}
 		}
 		
 		String respStr = null;

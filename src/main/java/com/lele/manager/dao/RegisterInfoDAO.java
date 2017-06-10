@@ -35,6 +35,6 @@ public class RegisterInfoDAO extends MysqlBaseDAO<RegisterInfo> {
 	
 	public void updateScore(String studentId, String classId, int score) {
 		final String hql = "update " + HQL_ENTITY + " set classScore = ?0 where studentId = ?1 and classId = ?2"; 
-		this.executeHsqlWithoutEvict(hql, studentId, classId, score);
+		this.executeHsqlWithoutEvict(hql, score, studentId, classId);
 	}
 }

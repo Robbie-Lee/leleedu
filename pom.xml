@@ -220,7 +220,15 @@
 	      <artifactId>httpclient</artifactId>
 	      <version>4.3.3</version>
 	      <scope>compile</scope>
-	    </dependency>		
+	    </dependency>
+	    
+	    <!-- https://mvnrepository.com/artifact/xstream/xstream -->
+		<dependency>
+		    <groupId>xstream</groupId>
+		    <artifactId>xstream</artifactId>
+		    <version>1.2.2</version>
+		</dependency>
+	    
 	</dependencies>
     <build>
         <plugins>

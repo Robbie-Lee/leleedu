@@ -2,7 +2,9 @@ package com.lele.wechat.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -92,12 +94,17 @@ public class WechatService {
 		
 		Pagination<RegisterInfo> ris = registerInfoDao.getStudentRegisterInfo(curPage, pageSize, studentId);
 		
+		Map<String, Integer> classScoreMap = new HashMap<String, Integer>();
 		List<String> classIds = new ArrayList<String>();
 		for (RegisterInfo ri : ris.getElements()) {
 			classIds.add(ri.getClassId());
+			classScoreMap.put(ri.getClassId(), ri.getClassScore());
 		}
 		
 		List<ClassInfo> cis = classInfoDao.getClassInfoByIds(classIds);
+		for (ClassInfo ci : cis) {
+			ci.setClassScore(classScoreMap.get(ci.getClassId()));
+		}
 		
 		Pagination<ClassInfo> pci = new Pagination<ClassInfo>();
 		pci.setPageNumber(ris.getPageNumber());

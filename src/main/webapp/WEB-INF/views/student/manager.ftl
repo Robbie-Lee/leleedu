@@ -95,7 +95,7 @@
 					            <td class="guarderName">${student['guarderName']}</td>
 					            <td class="guarder" data-value="${student['guarder']}">${guarderList[student['guarder']]}</td>
 					            <td class="guarderPhone">${student['guarderPhone']}</td>
-					            <td class="examine"><a href="#">查看</a></td>
+					            <td class="examine"><a href="javascript:;" data-id="${student['studentId']}" onclick="studentManager.lookSource(this);">查看</a></td>
 					            <td class="scoreLevel llas-nowrap" data-value="${class['scoreLevel'].scoreIndex}">${student['scoreLevel'].scoreDescription}</td>
 					            <td class="discountRate">${student['discountRate']?string("0.##")}</td>
 					            <td class="note" data-value="${student['note']?html}">
@@ -119,7 +119,7 @@
 					        	<tr>
 					        		<td colspan="100">
 										<nav aria-label="Page navigation" class="llas-right">
-										  <ul class="pagination" id="pagination"></ul>
+										  <ul class="pagination" id="pagination" data-type="studentSearch"></ul>
 										</nav>						        		
 					        		</td>
 					        	</tr>
@@ -202,6 +202,44 @@
 				<textarea id="c-student-note" placeholder="备注说明" name="note" class="form-control note" rows="3" maxlength="512"></textarea>
 				<span class="llas-error-inco"></span>
 			</div>	
+		</div>
+	</form>
+</div>
+
+<div id="layer-modle-class" class="layer-modle">
+	<form class="container-fluid form-inline llas-valid-form error-info-div" name="createForm" method="POST" action="/lele/student/create.json">
+		<div class="alert alert-danger contact-error">
+			<span class="no-data-icon"></span>
+			<span class="error-message"></span>
+		</div>
+		<div class="row">
+				<table class="table table-bordered table-hover" id="enroll-class-table">
+			        <thead>
+			          <tr>
+			            <th>课程名称</th>
+			            <th>授课教师</th>
+			            <th>状态</th>
+			            <th>课程成绩</th>
+			          </tr>
+			        </thead>
+			        <tbody>
+					
+			        </tbody>
+			        <tfoot>
+			        	<tr>
+			        		<td colspan="100">
+								<nav aria-label="Page navigation" class="llas-right">
+								  <ul class="pagination" id="pagination-class"></ul>
+								</nav>						        		
+			        		</td>
+			        	</tr>
+			        </tfoot>
+			  </table>
+				<div class="form-group llas-right" style="margin-top: 15px;">
+					<label for="course-grade">成绩评定</label>
+					<select id="course-grade" name="scoreLevel" class="form-control select-defaule-width course-grade">
+					</select>
+				</div>
 		</div>
 	</form>
 </div>

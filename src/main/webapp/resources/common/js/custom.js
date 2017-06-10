@@ -89,6 +89,12 @@ var tool = {
 				llasLoginForm.loginName.value = cookie.get('username');
 				llasLoginForm.password.value = this.randomWord(false, 8);
 				llasLoginForm.rememberMe.checked = true;
+			}else{
+				llasLoginForm.loginName.value = '';
+				llasLoginForm.password.value = '';
+				llasLoginForm.rememberMe.checked = false;
+				$('#inputEmail3').val('');
+				console.log($('#inputEmail3').val());
 			}
 		}
 	},
@@ -253,6 +259,13 @@ var ajaxDone = {
 			}
 			$teacherList.html(optionsHtml);
 		},
+		studentList: function(result){
+			var $studentList = $('#enroll-student-id'), optionsHtml = llas.initSelectStr;;
+			for(var key in result.elements){
+				optionsHtml += '<option value="'+result.elements[key].studentId+'">'+result.elements[key].name+'</option>';
+			}
+			$studentList.html(optionsHtml);
+		},
 		editClass: function(result){
 			this.createClass(result);
 		},
@@ -278,9 +291,16 @@ var ajaxDone = {
 			}	
 		},
 		classSearch: function(result){
-			var $tbody = $('#search-table').find('tbody'), tbodyHTML = '', elements = result.elements;
-			var handHtml = tool.relaceVariable(llas.tableRowEditButton , 'editClass') + llas.tableRowHandLine + tool.relaceVariable(llas.tableRowDeleteButton, 'deleteClass');
+			var $tbody = $('#search-table').find('tbody'), tbodyHTML = '', elements = result.elements, status_html;
+			var handHtml = tool.relaceVariable(llas.tableRowEditButton , 'editClass') + llas.tableRowHandLine;
 			for(var key in elements){
+				if(elements[key].valid == 1){
+					status_html = '<button type="button" class="btn btn-link llas-left" data-id="'+elements[key].classId+'" data-value="false" onclick="classManager.changeStatus(this, \'changeClassStatus\');">删除</button>';
+					status_html +=   '<span class="btn-link llas-left">|</span>'
+	            					+'<button type="button" class="btn btn-link llas-left" data-id="'+elements[key].classId+'" data-grade="'+elements[key].classGrade+'" onclick="classManager.enrollClass(this, \'studentList\');">报名</button>';
+				}else{
+					status_html = '<button type="button" class="btn btn-link llas-left" data-id="'+elements[key].classId+'" data-value="true" onclick="classManager.changeStatus(this, \'changeClassStatus\');">恢复</button>';
+				}
 				tbodyHTML += '<tr id="'+elements[key].classId+'">';
 				tbodyHTML += '<td class="classId">'+elements[key].classId+'</td>';
 				tbodyHTML += '<td class="className">'+elements[key].className+'</td>';
@@ -295,7 +315,7 @@ var ajaxDone = {
 				tbodyHTML += '<td class="acceptDiscount" data-value="'+elements[key].acceptDiscount+'">'+tool.acceptDiscountStr(elements[key].acceptDiscount)+'</td>';
 				tbodyHTML += '<td class="registerCount">'+elements[key].registerCount+'</td>';
 				tbodyHTML += '<td class="classDescription" data-value="'+tool.html_encode(elements[key].classDescription)+'"><div class="note-text-div"><span class="glyphicon glyphicon-eye-open" data-container="#date-body" data-toggle="tooltip" data-placement="left" title="'+tool.html_encode(elements[key].classDescription)+'"></span></div></td>';
-				tbodyHTML += '<td>'+ handHtml +'</td>';
+				tbodyHTML += '<td>'+ handHtml + status_html+'</td>';
 				tbodyHTML += '</tr>';
 			}
 			if('' == tbodyHTML){
@@ -305,6 +325,24 @@ var ajaxDone = {
 			$('span[data-toggle="tooltip"]').tooltip();
 			page.init(result.totalElements, result.pageNumber, llas.page);
 			tool.highlightingOperationRow(llas.currentRowId);
+		},
+		changeClassStatus: function(result){
+			if(result.result == 'success'){
+				llas.currentRowId = result.errCode;
+				formSubmitMethod(null, searchFrom, 'classSearch');
+				layer.closeAll('page');
+			}else{
+				layer.alert(result.errCode, {icon: 2});
+			}	
+		},
+		enrollClass: function(result){
+			if(result.result == 'success'){
+				llas.currentRowId = result.errCode;
+				formSubmitMethod(null, searchFrom, 'classSearch');
+				layer.closeAll('page');
+			}else{
+				layer.alert(result.errCode, {icon: 2});
+			}	
 		},
 		teacherSearch: function(result){
 			var $tbody = $('#search-table').find('tbody'), tbodyHTML = '', elements = result.elements; 
@@ -346,7 +384,7 @@ var ajaxDone = {
 				tbodyHTML += '<td class="guarderName">'+elements[key].guarderName+'</td>';
 				tbodyHTML += '<td class="guarder" data-value="'+elements[key].guarder+'">'+studentManager.guarderList[elements[key].guarder]+'</td>';
 				tbodyHTML += '<td class="guarderPhone">'+elements[key].guarderPhone+'</td>';
-				tbodyHTML += '<td><a href="#">查看</a></td>';
+				tbodyHTML += '<td><a href="javascript:;" data-id="'+elements[key].studentId+'" onclick="studentManager.lookSource(this);">查看</a></td>';
 				tbodyHTML += '<td  class="scoreLevel llas-nowrap" data-value="'+elements[key].scoreLevel.scoreIndex+'">'+elements[key].scoreLevel.scoreDescription+'</td>';
 				tbodyHTML += '<td class="discountRate">'+elements[key].discountRate+'</td>';
 				tbodyHTML += '<td class="note" data-value="'+tool.html_encode(elements[key].note)+'"><div class="note-text-div"><span class="glyphicon glyphicon-eye-open" data-container="#date-body" data-toggle="tooltip" data-placement="left" title="'+tool.html_encode(elements[key].note)+'"></span></div></td>';
@@ -372,6 +410,45 @@ var ajaxDone = {
 			}else{
 				layer.alert('创建失败，请检查您填写的信息是否合理!', {icon: 2});
 			}	
+		},
+		enrollInfo: function(result){
+			var $tbody = $('#enroll-class-table').find('tbody'), tbodyHTML = '', elements = result.elements;
+			for(var key in elements){
+				tbodyHTML += '<tr id="'+elements[key].classId+'">';
+				tbodyHTML += '<td class="className">'+elements[key].className+'</td>';
+				tbodyHTML += '<td class="teacherName">'+elements[key].teacherName+'</td>';
+				
+				tbodyHTML += '<td>';
+				if(elements[key].classCount > elements[key].checkinCount){
+					tbodyHTML += '<span class="" style="llas-success-text">进行中</span>';
+				}else{
+					tbodyHTML += '<span class="" style="llas-success-text">已结束</span>';
+				}
+				tbodyHTML += '</td>';
+				tbodyHTML += '<td class="startDate llas-nowrap"><input class="classScores" value="'+elements[key].classScore+'" type="number" max="100" name="classScores[]"></td>';
+				tbodyHTML += '</tr>';
+			}
+			if('' == tbodyHTML){
+				tbodyHTML = llas.noDataTrHTML;
+			}
+			$tbody.html(tbodyHTML);
+			var dPage = {
+				"data":"",
+				"id":"pagination-class",
+			    "maxshowpageitem":5,
+			    "pagelistcount":5
+			}
+			page.init(result.totalElements, result.pageNumber, dPage);
+			studentManager.showDiagol();
+		},
+		studentScore: function(result){
+			if(result.result == 'success'){
+				llas.currentRowId = result.errCode;
+				formSubmitMethod(null, searchFrom, 'studentSearch');
+				layer.closeAll('page');
+			}else{
+				layer.alert('操作失败，请您稍后重试', {icon: 2});
+			}			
 		},
 		attendSearch: function(result){
 			var $tbody = $('#search-table').find('tbody'), tbodyHTML = '', elements = result.elements;
@@ -626,7 +703,12 @@ function deleteTableRowData(_this, type){
 var commonManager = {
 	page: function(){
 		page.init(document.getElementById('total-items').value, document.getElementById('cur-page').value, llas.page);
-	}	
+	},
+	systemLoginOut: function(){
+		if(cookie.check('username')){
+			cookie.del('username');
+		}
+	}
 };
 //课程管理模块
 var classManager = {
@@ -637,6 +719,49 @@ var classManager = {
 		ajaxGetDataMethod({status:0},'/lele/teacher/search.json', 'get', 'teacherList', null);
 		//分页信息
 		commonManager.page();
+	},
+	changeStatus: function(_this, type){
+		var title = '确认删除该课程吗？', icon = 2, classId = _this.getAttribute('data-id'), active = _this.getAttribute('data-value');
+		if(!active || active == 'true'){
+			title = '确认恢复该课程吗？';
+			icon = 1;
+		}
+		layer.confirm(title, {
+			title:'操作确认',
+			icon: icon,
+			btn: ['取消', '确认'],
+			btn2: function(index, layero){
+				ajaxGetDataMethod({classId:classId,active:active}, '/lele/class/active.json', 'POST', type, _this);
+			}
+	    }, function(index, layero){
+	    	layer.close(index);
+		});	
+	},
+	enrollClass: function(_this, type){
+		ajaxGetDataMethod({grade:_this.getAttribute('data-grade')},'/lele/student/search.json', 'get', type, null);
+		$('#enroll-class-id').val(_this.getAttribute('data-id'));
+		var $layerModel = $('#layer-enroll-modle');
+		layer.open({
+			type: 1,
+			title: '报名',
+			shadeClose: false,
+			scrollbar: false,
+			zIndex: 110,
+			skin: 'layui-layer-rim', 
+			btn: ['确定', '取消'],
+			btnAlign: 'c',
+			btn1: function(index, layero){
+				formSubmitMethod(_this, enrollForm, 'enrollClass');
+			},
+			btn2: function(index, layero){
+				enrollForm.reset();
+			},
+			area: '360px',
+			content: $layerModel,
+			end: function(){
+				enrollForm.reset();
+			}
+		 });
 	}
 };
 //教师管理模块
@@ -665,7 +790,51 @@ var studentManager = {
 	guarderList: ['请选择','爸爸','妈妈','爷爷','奶奶','姥爷','姥姥','其他'],
 	init: function(){
 		commonManager.page();
+		ajaxGetDataMethod('', '/lele/score/level.json', 'get', 'grade', null);
 	},
+	lookSource: function(_this){
+		var studentId = _this.getAttribute('data-id'),
+			curPage = 1, pageSize = 5;
+		$('#enroll-class-table').attr('data-student', studentId);
+		ajaxGetDataMethod({studentId: studentId, curPage: curPage, pageSize: pageSize},'/lele/wechat/search/enrollinfo.json', 'get', 'enrollInfo', null);
+	},
+	showDiagol: function(){
+		//return false;
+		$layerModel = $('#layer-modle-class');
+		layer.open({
+			type: 1,
+			title: '查看已报课程',
+			shadeClose: false,
+			scrollbar: false,
+			zIndex: 110,
+			skin: 'layui-layer-rim', 
+			btn: ['确定', '取消'],
+			btnAlign: 'c',
+			btn1: function(index, layero){
+				var data = {}, $tbody = $('#enroll-class-table').find('tbody'), classIdArr = [], classScoresArr = [];
+				$tbody.find('tr').each(function(){
+					var $this = $(this), $scores = $this.find('input.classScores');
+					if($scores.length > 0 && $scores.val() >= 0 ){
+						classIdArr.push(this.id);
+						classScoresArr.push($this.find('input.classScores').val());
+					}
+				});
+				data.classId = classIdArr.join(',');
+				data.classScores = classScoresArr.join(',');
+				data.scoreLevel = $('#course-grade').val();
+				data.studentId = $('#enroll-class-table').attr('data-student');;
+				ajaxGetDataMethod( data, '/lele/student/score.json', 'post', 'studentScore', null );
+			},
+			btn2: function(index, layero){
+				
+			},
+			area: '740px',
+			content: $layerModel,
+			end: function(){
+				
+			}
+		 });
+	}
 };
 //打卡管理模块
 var attendManager = {
@@ -807,7 +976,8 @@ var  page = {
     "initPageEvent":function(listCount){
         $("#"+page.pageId +">li[class='pageItem']").on("click",function(){
         	document.getElementById('cur-page').value = $(this).attr("page-data");
-        	searchByCondition(this, searchFrom, 'classSearch');
+        	var type = $(this).parents('ul.pagination').attr('data-type');
+        	searchByCondition(this, searchFrom, type);
             page.setPageListCount(listCount,$(this).attr("page-data"),page.fun);
         });
     },

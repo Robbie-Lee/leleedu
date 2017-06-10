@@ -68,7 +68,7 @@
 					            <th>是否折扣</th>
 					            <th>已报人数</th>
 					            <th>说明</th>
-					            <th style="width: 84px;">操作</th>
+					            <th style="width: 118px;">操作</th>
 					          </tr>
 					        </thead>
 					        <tbody>
@@ -97,7 +97,13 @@
 					            <td>
 					            	<button type="button" class="btn btn-link llas-left" data-id="" onclick="editTableRowData(this, 'editClass');">编辑</button>
 					            	<span class="btn-link llas-left">|</span>
-					            	<button type="button" class="btn btn-link llas-left" data-id="1" onclick="deleteTableRowData(this, 'deleteClass');">删除</button>
+					            	<button type="button" class="btn btn-link llas-left" data-id="${class['classId']}" data-value="${class['valid']?string("false","true")}" onclick="classManager.changeStatus(this, 'changeClassStatus');">
+					            	${class['valid']?string("删除","恢复")}
+					            	</button>
+					            	<#if class['valid'] =='true' >
+					            		<span class="btn-link llas-left">|</span>
+					            		<button type="button" class="btn btn-link llas-left" data-id="${class['classId']}" data-grade="${class['classGrade']}" onclick="classManager.enrollClass(this, 'studentList');">报名</button>
+									</#if>					            	
 					            </td>
 					          </tr>
 					         	 </#list>
@@ -192,6 +198,27 @@
 			<div class="form-group">
 				<label for="course-note">课程说明</label>
 				<textarea id="course-note" placeholder="课程说明" name="classDescription" class="form-control note required" rows="3" maxlength="128"></textarea>
+				<span class="llas-error-inco"></span>
+			</div>	
+		</div>
+	</form>
+</div>
+<div id="layer-enroll-modle" class="layer-modle">
+	<form class="container-fluid form-inline llas-valid-form error-info-div" name="enrollForm" method="POST" action="/lele/wechat/enroll.json">
+		<div class="alert alert-danger contact-error">
+			<span class="no-data-icon"></span>
+			<span class="error-message"></span>
+		</div>
+		<div class="row">
+			<input type="hidden" value="" id="enroll-class-id" name="classId">
+			<div class="form-group">
+				<label for="enroll-student-id">学生</label>
+				<select id="enroll-student-id" class="form-control select-defaule-width" required name="studentId"></select>
+				<span class="llas-error-inco"></span>
+			</div>
+			<div class="form-group">
+				<label for="enroll-course-price">支付费用</label>
+				<input type="text" class="form-control number required" name="fee" id="enroll-course-price" placeholder="实际支付费用">	
 				<span class="llas-error-inco"></span>
 			</div>	
 		</div>

@@ -27,8 +27,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.lele.manager.annotation.Auth;
-import com.lele.manager.annotation.Auth.AuthType;
 import com.lele.manager.entity.ClassInfo;
 import com.lele.manager.service.ClassInfoService;
 import com.lele.manager.service.ScoreLevelService;
@@ -216,7 +214,7 @@ public class WechatController {
 		return mv;
 	}
 	
-	@RequestMapping(value="/register.json", method = RequestMethod.GET)
+	@RequestMapping(value="/register.json", method = RequestMethod.POST)
 	public @ResponseBody 
 	CommonResult create(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "studentId", required = true) String studentId,

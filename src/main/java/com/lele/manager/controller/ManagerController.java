@@ -54,7 +54,7 @@ public class ManagerController extends BaseController {
 	Object searchUser(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "userName", required = false, defaultValue = "") String userName) throws Exception {  
 
-		return userService.getUser(userName);
+		return userService.searchUser(userName);
     }
 	
 	@Auth(auth=AuthType.INTERFACE)

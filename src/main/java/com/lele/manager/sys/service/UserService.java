@@ -31,6 +31,10 @@ public class UserService {
 		userDao.changePassword(userId, AES.AESEncrypt(inputPassword));
 	}
 	
+	public List<User> searchUser(String userName) {
+		return userDao.searchUserByName(userName);
+	}
+	
 	public User getUser(String account) {
 		return userDao.getUserByName(account);
 	}

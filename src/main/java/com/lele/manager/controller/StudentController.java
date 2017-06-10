@@ -69,7 +69,7 @@ public class StudentController extends BaseController {
     }
 
 	@Auth(auth=AuthType.INTERFACE)
-	@RequestMapping(value="/score.json", method = RequestMethod.GET)
+	@RequestMapping(value="/score.json", method = RequestMethod.POST)
 	public @ResponseBody 
 	CommonResult score(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "studentId", required = true) String studentId,

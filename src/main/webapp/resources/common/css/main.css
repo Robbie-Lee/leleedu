@@ -2,6 +2,7 @@
 h1,h2,h3,h4,h5,h6,ul,li{margin: 0;}
 a:hover,a:focus{text-decoration: none;}
 body{font-family: '微软雅黑';overflow: hidden;color: #666;}
+img{max-height: 100%; max-width:100%;}
 .glyphicon{font-size: 12px;}
 .table{margin-bottom: 0;}
 tr{background: #fff;}
@@ -37,10 +38,13 @@ tr{background: #fff;}
     border-left: 3px solid #00C1DE;}
 .topbar-logo{
 	display: block;
-    width: 50px;color: #FFF;
+    width: 136px;
+    color: #FFF;
     text-align: center;
-    line-height: 50px;
+    line-height: 46px;
     margin-right: 1px;
+    margin-left: 22px;
+    height: 46px;
 }
 .topbar-title{
 	color: #fff;

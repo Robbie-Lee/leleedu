@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "class_info")
@@ -64,6 +65,9 @@ public class ClassInfo implements Serializable {
 	private int registerLimit;
 	
 	private boolean valid;
+	
+	@Transient
+	private int classScore;
 
 	public long getId() {
 		return id;
@@ -208,6 +212,14 @@ public class ClassInfo implements Serializable {
 
 	public void setValid(boolean valid) {
 		this.valid = valid;
+	}
+
+	public int getClassScore() {
+		return classScore;
+	}
+
+	public void setClassScore(int classScore) {
+		this.classScore = classScore;
 	}
 
 /*	

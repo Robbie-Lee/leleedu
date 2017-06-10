@@ -43,6 +43,11 @@ public class ClassInfoDAO extends MysqlBaseDAO<ClassInfo> {
 	}
 	
 	public List<ClassInfo> getClassInfoByIds(List<String> classIds) {
+
+		if (classIds.isEmpty()) {
+			return new ArrayList<ClassInfo>();
+		}
+
 		StringBuilder hql = new StringBuilder();
 		hql.append("from " + HQL_ENTITY + " where classId in (");
 
@@ -79,16 +84,16 @@ public class ClassInfoDAO extends MysqlBaseDAO<ClassInfo> {
 		}
 		
 		if (!StringUtils.isNullOrEmpty(classId)) {
-			hql.append(" and j.classId = ?" + values.size());
-			values.add(classId);
+			hql.append(" and j.classId like ?" + values.size());
+			values.add("%" + classId + "%");
 		}
 		if (!StringUtils.isNullOrEmpty(className)) {
 			hql.append(" and j.className like ?" + values.size());
-			values.add(className);
+			values.add("%" + className + "%");
 		}
 		if (!StringUtils.isNullOrEmpty(teacherName)) {
-			hql.append(" and j.teacherName = ?" + values.size());
-			values.add(teacherName);
+			hql.append(" and j.teacherName like ?" + values.size());
+			values.add("%" + teacherName + "%");
 		}
 		if (startDate != null) {
 			hql.append(" and j.startDate <= ?" + values.size());

@@ -2,8 +2,10 @@
 <body id="login" class="login-body">
 	<div class="llas-header">
 		<div class="topbar-head llas-left clearfix">
-			<a class="topbar-btn topbar-logo llas-left" href="#" title="">LOGO</a>
-			<h2 class="topbar-title llas-left">乐乐教育信息系统管理</h2>
+			<a class="topbar-btn topbar-logo llas-left" href="/lele" title="">
+				<img src="/lele/resources/common/images/logo.png" alt="Logo">
+			</a>
+			<!--<h2 class="topbar-title llas-left">乐乐教育信息系统管理</h2>-->
 		</div>
 		<div class="topbar-head topbar-user llas-right clearfix">
 				<a href="#" class="topbar-link-user">

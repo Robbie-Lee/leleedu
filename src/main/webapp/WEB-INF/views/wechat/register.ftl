@@ -5,20 +5,34 @@
 <meta name="Keywords" content="">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
 <link rel="stylesheet" type="text/css" href="/lele/resources/weui/weui.min.css">
-<title>注册</title>
+<title>注册用户</title>
 <style>
 body{font-family: '微软雅黑';}
 </style>
 </head>
 <body>
+<div id="dialogs" class="page">
+<!--BEGIN dialog2-->
+<div class="js_dialog" id="iosDialog2" style="display: none;">
+    <div class="weui-mask"></div>
+    <div class="weui-dialog">
+        <div class="weui-dialog__bd dialog-notice"></div>
+        <div class="weui-dialog__ft">
+            <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary" onclick="hideDialogMethod(this);">知道了</a>
+        </div>
+    </div>
+</div>
+<!--END dialog2-->
+</div>
 <div class="weui-toptips weui-toptips_warn js_tooltips" style="display: none;"></div>
 <div class="page__bd">
 
-	<form class="weui-cells weui-cells_form" id="form">
+	<form class="weui-cells weui-cells_form" id="weui-signup-form" action="register.json" method="POST">
+		<input type="hidden" value="${wechatid}" name="studentId" id="student-id">
 		<div class="weui-cell">
 			<div class="weui-cell__hd"><label class="weui-label">姓名</label></div>
 			<div class="weui-cell__bd">
-				<input class="weui-input required" name="name" type="text" pattern="[0-9]*" placeholder="姓名">
+				<input class="weui-input" name="name" type="text" placeholder="姓名" data-required="true" data-descriptions="name" maxlength="16">
 			</div>
 		</div>
 		<div class="weui-cell weui-cell_select weui-cell_select-after">
@@ -26,7 +40,8 @@ body{font-family: '微软雅黑';}
                     <label for="" class="weui-label">性别</label>
                 </div>
                 <div class="weui-cell__bd">
-                    <select class="weui-select" name="sex">
+                    <select class="weui-select" name="sex" data-required="true" data-descriptions="sex">
+                    	<option value="">请选择</option>
                         <option value="男">男</option>
                         <option value="女">女</option>
                     </select>
@@ -37,7 +52,8 @@ body{font-family: '微软雅黑';}
                     <label for="" class="weui-label">年级</label>
                 </div>
                 <div class="weui-cell__bd">
-                    <select class="weui-select" name="sex">
+                    <select class="weui-select" name="grade" data-required="true" data-descriptions="grade">
+                    	<option value="">请选择</option>
                         <option value="1">一年级</option>
 						<option value="1">二年级</option>
 						<option value="1">三年级</option>
@@ -50,7 +66,7 @@ body{font-family: '微软雅黑';}
 		<div class="weui-cell">
 			<div class="weui-cell__hd"><label class="weui-label">就读学校</label></div>
 			<div class="weui-cell__bd">
-				<input class="weui-input required" name="name" type="text" placeholder="就读学校">
+				<input class="weui-input" name="school" type="text" placeholder="就读学校" maxlength="64">
 			</div>
 		</div>
 		<div class="weui-cell weui-cell_select weui-cell_select-after">
@@ -58,7 +74,7 @@ body{font-family: '微软雅黑';}
                     <label for="" class="weui-label">监护人关系</label>
                 </div>
                 <div class="weui-cell__bd">
-				<select class="weui-select" name="guarder">
+				<select class="weui-select" name="guarder" data-required="true" data-descriptions="guarder">
 					<option value="">请选择</option>
 					<option value="1">爸爸</option>
 					<option value="2">妈妈</option>
@@ -73,57 +89,30 @@ body{font-family: '微软雅黑';}
 		<div class="weui-cell">
 			<div class="weui-cell__hd"><label class="weui-label">监护人姓名</label></div>
 			<div class="weui-cell__bd">
-				<input class="weui-input" name="name" type="text" placeholder="监护人姓名">
+				<input class="weui-input" name="guarderName" type="text" placeholder="监护人姓名" data-required="true" data-descriptions="guarderName" maxlength="16">
 			</div>
 		</div>
 		<div class="weui-cell">
 			<div class="weui-cell__hd"><label class="weui-label">监护人电话</label></div>
 			<div class="weui-cell__bd">
-				<input class="weui-input" name="name" type="text" required pattern="[0-9]*" placeholder="监护人电话">
+				<input class="weui-input" name="guarderPhone" type="text" placeholder="监护人电话" data-describedby="phone" data-validate="phone">
 			</div>
 		</div>
 		<div class="weui-cell">
 			<div class="weui-cell__hd"><label class="weui-label">说明</label></div>
 			<div class="weui-cell__bd">
-				<textarea class="weui-textarea" placeholder="说明" rows="3"></textarea>
+				<textarea class="weui-textarea" name="note" placeholder="说明" rows="3" maxlength="512"></textarea>
 			</div>
 		</div>
 		<div class="weui-btn-area">
-            <a class="weui-btn weui-btn_primary" href="javascript:" id="signup-button">注册</a>
+            <input type="submit" class="weui-btn weui-btn_primary" value="注册">
         </div>
 
 
 	</form>
 </div>
-<script src="/lele/resources/common/jquery/jquery-1.11.1.min.js"></script>
-<script src="/lele/resources/common/jquery/jquery.validate.js"></script>
-<script type="text/javascript">
-$(function(){
-
-	$('#form').validate({
-		errorContainer: '.js_tooltips',
-		errorElement: 'span',
-		errorClass: 'error',
-		errorPlacement: function(error, element) { 
-			error.appendTo(element.parents('body').children('.js_tooltips')); 
-		},
-		showErrors:function(errorMap,errorList) {
-			this.defaultShowErrors();
-			$('div.js_tooltips').find("span.error").last().show().siblings('span.error').remove();
-		}
-	});
-
-	$('#signup-button').on('click',function(){
-		if(!$('#form').valid()){
-		}
-		var $tooltips = $('.js_tooltips');
-		$tooltips.css('display', 'block');
-		setTimeout(function () {
-			$tooltips.css('display', 'none');
-		}, 2000);
-
-	});
-});
-</script>
+<script src="/lele/resources/common/js/jquery/jquery-1.11.1.min.js"></script>
+<script src="/lele/resources/weui/jquery-mvalidate.js"></script>
+<script src="/lele/resources/weui/weui.js"></script>
 </body>
 </html>

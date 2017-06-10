@@ -42,12 +42,12 @@ public class StudentInfoDAO extends MysqlBaseDAO<StudentInfo> {
 		hql.append("from " + HQL_ENTITY + " j where 1=1 ");
 		
 		if (!StringUtils.isNullOrEmpty(studentId)) {
-			hql.append(" and j.studentId = ?" + values.size());
-			values.add(studentId);
+			hql.append(" and j.studentId like ?" + values.size());
+			values.add("%" + studentId + "%");
 		}
 		if (!StringUtils.isNullOrEmpty(studentName)) {
-			hql.append(" and j.name = ?" + values.size());
-			values.add(studentName);
+			hql.append(" and j.name like ?" + values.size());
+			values.add("%" + studentName + "%");
 		}
 		if (!StringUtils.isNullOrEmpty(sex)) {
 			hql.append(" and j.sex = ?" + values.size());
@@ -59,11 +59,11 @@ public class StudentInfoDAO extends MysqlBaseDAO<StudentInfo> {
 		}
 		if (!StringUtils.isNullOrEmpty(guarderName)) {
 			hql.append(" and j.guarderName like ?" + values.size());
-			values.add(guarderName);
+			values.add("%" + guarderName + "%");
 		}
 		if (!StringUtils.isNullOrEmpty(guarderPhone)) {
 			hql.append(" and j.guarderPhone like ?" + values.size());
-			values.add(guarderPhone);
+			values.add("%" + guarderPhone + "%");
 		}
 		
 		return this.doQuery(hql.toString(), curPage, pageSize, values.toArray());

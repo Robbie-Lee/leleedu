@@ -41,20 +41,20 @@ public class TeacherInfoDAO extends MysqlBaseDAO<TeacherInfo> {
 		hql.append("from " + HQL_ENTITY + " j where 1=1 ");
 		
 		if (!StringUtils.isNullOrEmpty(teacherId)) {
-			hql.append(" and j.teacherId = ?" + values.size());
-			values.add(teacherId);
+			hql.append(" and j.teacherId like ?" + values.size());
+			values.add("%" + teacherId + "%");
 		}
 		if (!StringUtils.isNullOrEmpty(teacherName)) {
-			hql.append(" and j.name = ?" + values.size());
-			values.add(teacherName);
+			hql.append(" and j.name like ?" + values.size());
+			values.add("%" + teacherName + "%");
 		}
 		if (!StringUtils.isNullOrEmpty(sex)) {
 			hql.append(" and j.sex = ?" + values.size());
 			values.add(sex);
 		}
 		if (!StringUtils.isNullOrEmpty(phone)) {
-			hql.append(" and j.phone = ?" + values.size());
-			values.add(phone);
+			hql.append(" and j.phone like ?" + values.size());
+			values.add("%" + phone + "%");
 		}
 		if (status >= 0) {
 			hql.append(" and j.status = ?" + values.size());

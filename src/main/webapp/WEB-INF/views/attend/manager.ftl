@@ -94,7 +94,7 @@
 					        	<tr>
 					        		<td colspan="100">
 										<nav aria-label="Page navigation" class="llas-right">
-										  <ul class="pagination" id="pagination"></ul>
+										  <ul class="pagination" id="pagination" data-type="attendSearch"></ul>
 										</nav>						        		
 					        		</td>
 					        	</tr>

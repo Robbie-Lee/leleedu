@@ -1,6 +1,7 @@
 package com.lele.manager.sys.dao;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
@@ -13,6 +14,27 @@ import com.lele.manager.utils.AES;
 public class UserDAO extends MysqlBaseDAO<User> {
 
 	private static final String HQL_ENTITY = "User";
+	
+	public List<User> searchUserByName(String userName) {
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("from " + HQL_ENTITY + " where 1=1 ");
+		
+		List<User> userList = null;
+		if (!Strings.isNullOrEmpty(userName)) {
+			hql.append("and name like ?0");
+			userList = this.doQueryList(hql.toString(), "%" + userName + "%");
+		}
+		else {
+			userList = this.doQueryList(hql.toString());
+		}
+
+		for (User user : userList) {
+			user.setPassword("");
+		}
+		
+		return userList;
+	}
 	
 	public User getUserByName(String userName) {
 		
