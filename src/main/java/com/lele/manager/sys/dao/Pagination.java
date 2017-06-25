@@ -239,6 +239,12 @@ public class Pagination<T> implements Serializable {
 		this.elements = elements;
 	}
 
+	public void setElements(T element) {
+		List<T> es = new ArrayList<T>();
+		es.add(element);
+		this.elements = es;
+	}
+
 	public long getTotalElements() {
 		return totalElements;
 	}

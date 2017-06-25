@@ -22,7 +22,7 @@ public class UserDAO extends MysqlBaseDAO<User> {
 		
 		List<User> userList = null;
 		if (!Strings.isNullOrEmpty(userName)) {
-			hql.append("and name like ?0");
+			hql.append("and account like ?0");
 			userList = this.doQueryList(hql.toString(), "%" + userName + "%");
 		}
 		else {

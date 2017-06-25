@@ -20,6 +20,7 @@
 			<list>
         	 	<value>com.lele.manager.entity</value>
          		<value>com.lele.manager.sys.entity</value>
+         		<value>com.lele.wechat.entity</value>
      		</list>
 		</property>
 		<property name="hibernateProperties">

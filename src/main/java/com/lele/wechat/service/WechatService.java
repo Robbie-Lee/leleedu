@@ -11,8 +11,10 @@ import org.springframework.stereotype.Service;
 
 import com.lele.manager.dao.ClassInfoDAO;
 import com.lele.manager.dao.RegisterInfoDAO;
+import com.lele.manager.dao.ScoreLevelDAO;
 import com.lele.manager.dao.StudentInfoDAO;
 import com.lele.manager.entity.ClassInfo;
+import com.lele.manager.entity.EnrollInfo;
 import com.lele.manager.entity.RegisterInfo;
 import com.lele.manager.entity.StudentInfo;
 import com.lele.manager.service.DiscountService;
@@ -32,6 +34,9 @@ public class WechatService {
 	
 	@Autowired
 	DiscountService discountService;
+	
+	@Autowired
+	ScoreLevelDAO scoreLevelDao;
 
 	public int enroll(String classId, String studentId, int fee) {
 		
@@ -64,7 +69,8 @@ public class WechatService {
 		if (studentInfo.getScoreLevel().getScoreIndex() < classInfo.getScoreLevel().getScoreIndex()) {
 			return -3;		// 不满足课程成绩要求
 		}
-		
+
+/*		
 		ri = new RegisterInfo();
 		ri.setClassId(classId);
 		ri.setRegisterDate(new Date());
@@ -74,7 +80,7 @@ public class WechatService {
 		registerInfoDao.save(ri);
 		classInfoDao.enroll(classId);
 		studentInfoDao.updateTotalFee(studentId, fee);
-		
+*/		
 		return 0;
 	}
 	
@@ -90,7 +96,7 @@ public class WechatService {
 		return (int)(cInfo.getClassPrice() * discountService.getDiscountRate(sInfo.getTotalFee()));
 	}
 	
-	public Pagination<ClassInfo> getClassInfoByIds(int curPage, int pageSize, String studentId) {
+	public Pagination<EnrollInfo> getEnrollInfoByIds(int curPage, int pageSize, String studentId) {
 		
 		Pagination<RegisterInfo> ris = registerInfoDao.getStudentRegisterInfo(curPage, pageSize, studentId);
 		
@@ -101,16 +107,22 @@ public class WechatService {
 			classScoreMap.put(ri.getClassId(), ri.getClassScore());
 		}
 		
+		EnrollInfo ei = new EnrollInfo();
+		
 		List<ClassInfo> cis = classInfoDao.getClassInfoByIds(classIds);
 		for (ClassInfo ci : cis) {
-			ci.setClassScore(classScoreMap.get(ci.getClassId()));
+			ei.addEnrollClass(ci.getClassId(), ci.getClassName(), ci.getTeacherName(), 
+							ci.getClassCount(), ci.getCheckinCount(), classScoreMap.get(ci.getClassId()));
 		}
 		
-		Pagination<ClassInfo> pci = new Pagination<ClassInfo>();
+		StudentInfo si = studentInfoDao.getStudentInfoById(studentId);
+		ei.setScoreLevel(si.getScoreLevel());
+		
+		Pagination<EnrollInfo> pci = new Pagination<EnrollInfo>();
 		pci.setPageNumber(ris.getPageNumber());
 		pci.setPageSize(ris.getPageSize());
 		pci.setTotalElements(ris.getTotalElements());
-		pci.setElements(cis);
+		pci.setElements(ei);
 		
 		return pci;
 	}

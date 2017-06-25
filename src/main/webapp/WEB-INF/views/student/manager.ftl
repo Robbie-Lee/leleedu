@@ -207,7 +207,12 @@
 </div>
 
 <div id="layer-modle-class" class="layer-modle">
-	<form class="container-fluid form-inline llas-valid-form error-info-div" name="createForm" method="POST" action="/lele/student/create.json">
+	<form class="container-fluid form-inline llas-valid-form error-info-div" id="grade-evaluation-form" name="gradeEvaluationForm" method="GET" action="/lele/wechat/search/enrollinfo.json">
+		<input type="hidden" value="5" name="pageSize" class="page-size"/>
+		<input type="hidden" value="1" name="curPage" class="cur-page"/>
+		<input type="hidden" value="" id="total-items"/>
+		<input type="hidden" name="studentId" id="grade-evaluation-student"/>
+		
 		<div class="alert alert-danger contact-error">
 			<span class="no-data-icon"></span>
 			<span class="error-message"></span>
@@ -229,15 +234,15 @@
 			        	<tr>
 			        		<td colspan="100">
 								<nav aria-label="Page navigation" class="llas-right">
-								  <ul class="pagination" id="pagination-class"></ul>
+								  <ul class="pagination" id="pagination-class" data-type="enrollInfo" data-target="grade-evaluation-form"></ul>
 								</nav>						        		
 			        		</td>
 			        	</tr>
 			        </tfoot>
 			  </table>
 				<div class="form-group llas-right" style="margin-top: 15px;">
-					<label for="course-grade">成绩评定</label>
-					<select id="course-grade" name="scoreLevel" class="form-control select-defaule-width course-grade">
+					<label for="enroll-course-grade">成绩评定</label>
+					<select id="enroll-course-grade" class="form-control select-defaule-width course-grade">
 					</select>
 				</div>
 		</div>

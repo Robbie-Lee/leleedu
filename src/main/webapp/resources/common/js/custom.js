@@ -412,7 +412,7 @@ var ajaxDone = {
 			}	
 		},
 		enrollInfo: function(result){
-			var $tbody = $('#enroll-class-table').find('tbody'), tbodyHTML = '', elements = result.elements;
+			var $tbody = $('#enroll-class-table').find('tbody'), tbodyHTML = '', elements = result.elements[0].enrollClass;
 			for(var key in elements){
 				tbodyHTML += '<tr id="'+elements[key].classId+'">';
 				tbodyHTML += '<td class="className">'+elements[key].className+'</td>';
@@ -425,13 +425,14 @@ var ajaxDone = {
 					tbodyHTML += '<span class="" style="llas-success-text">已结束</span>';
 				}
 				tbodyHTML += '</td>';
-				tbodyHTML += '<td class="startDate llas-nowrap"><input class="classScores" value="'+elements[key].classScore+'" type="number" max="100" name="classScores[]"></td>';
+				tbodyHTML += '<td class="startDate llas-nowrap"><input class="classScores" value="'+elements[key].classScore+'" type="number" max="100"></td>';
 				tbodyHTML += '</tr>';
 			}
 			if('' == tbodyHTML){
 				tbodyHTML = llas.noDataTrHTML;
 			}
 			$tbody.html(tbodyHTML);
+			$('#enroll-course-grade').val(result.elements[0].scoreLevel.scoreIndex);
 			var dPage = {
 				"data":"",
 				"id":"pagination-class",
@@ -439,7 +440,7 @@ var ajaxDone = {
 			    "pagelistcount":5
 			}
 			page.init(result.totalElements, result.pageNumber, dPage);
-			studentManager.showDiagol();
+			
 		},
 		studentScore: function(result){
 			if(result.result == 'success'){
@@ -511,28 +512,29 @@ var ajaxDone = {
 		},
 		userSearch: function(result){
 			var $tbody = $('#search-table').find('tbody'), tbodyHTML = '', status = '激活', targetStatus = 'false', targetText = '停用';
-			if(result){
-				if(!result.enable || result.enable == 'false') {
-					status = '停用';
-					targetStatus = 'true';
-					targetText = '激活';
+			if(result.length > 0){
+				for(var i in result){
+					if(!result[i].enable || result[i].enable == 'false') {
+						status = '停用';
+						targetStatus = 'true';
+						targetText = '激活';
+					}
+					tbodyHTML += '<tr id="user-'+result[i].id+'">';
+					tbodyHTML += '<td class="account">'+result[i].account+'</td>';
+					tbodyHTML += '<td class="email">'+result[i].email+'</td>';
+					tbodyHTML += '<td class="name">'+result[i].name+'</td>';
+					tbodyHTML += '<td class="phone">'+result[i].phone+'</td>';
+					tbodyHTML += '<td class="createTime llas-nowrap">'+tool.formatDate(result[i].createTime, 'YYYY-MM-DD')+'</td>';
+					tbodyHTML += '<td class="modifyTime llas-nowrap">'+tool.formatDate(result[i].modifyTime, 'YYYY-MM-DD')+'</td>';
+					tbodyHTML += '<td class="enable" data-value="'+result[i].enable+'">'+status+'</td>';
+					tbodyHTML += '<td>';
+					tbodyHTML += '<button type="button" class="btn btn-link llas-left" data-id="'+result[i].id+'" data-value="'+targetStatus+'" onclick="sysManager.changeStatus(this, \'changeUserStatus\');">'+targetText+'</button>';
+					tbodyHTML += '<span class="btn-link llas-left">|</span>';
+					tbodyHTML += '<button type="button" class="btn btn-link llas-left" data-id="'+result[i].id+'" onclick="sysManager.changePassword(this, \'changeUserPassword\');">修改密码</button>';
+					tbodyHTML += '</td>';
+					tbodyHTML += '</tr>';
 				}
-				tbodyHTML += '<tr id="user-'+result.id+'">';
-				tbodyHTML += '<td class="account">'+result.account+'</td>';
-				tbodyHTML += '<td class="email">'+result.email+'</td>';
-				tbodyHTML += '<td class="name">'+result.name+'</td>';
-				tbodyHTML += '<td class="phone">'+result.phone+'</td>';
-				tbodyHTML += '<td class="createTime llas-nowrap">'+tool.formatDate(result.createTime, 'YYYY-MM-DD')+'</td>';
-				tbodyHTML += '<td class="modifyTime llas-nowrap">'+tool.formatDate(result.modifyTime, 'YYYY-MM-DD')+'</td>';
-				tbodyHTML += '<td class="enable" data-value="'+result.enable+'">'+status+'</td>';
-				tbodyHTML += '<td>';
-				tbodyHTML += '<button type="button" class="btn btn-link llas-left" data-id="'+result.id+'" data-value="'+targetStatus+'" onclick="sysManager.changeStatus(this, \'changeUserStatus\');">'+targetText+'</button>';
-				tbodyHTML += '<span class="btn-link llas-left">|</span>';
-				tbodyHTML += '<button type="button" class="btn btn-link llas-left" data-id="'+result.id+'" onclick="sysManager.changePassword(this, \'changeUserPassword\');">修改密码</button>';
-				tbodyHTML += '</td>';
-				tbodyHTML += '</tr>';
-			}
-			if('' == tbodyHTML){
+			}else{
 				tbodyHTML = llas.noDataTrHTML;
 			}
 			$tbody.html(tbodyHTML);
@@ -793,10 +795,12 @@ var studentManager = {
 		ajaxGetDataMethod('', '/lele/score/level.json', 'get', 'grade', null);
 	},
 	lookSource: function(_this){
-		var studentId = _this.getAttribute('data-id'),
-			curPage = 1, pageSize = 5;
+		var studentId = _this.getAttribute('data-id');
+		$('#grade-evaluation-student').val(studentId);
 		$('#enroll-class-table').attr('data-student', studentId);
-		ajaxGetDataMethod({studentId: studentId, curPage: curPage, pageSize: pageSize},'/lele/wechat/search/enrollinfo.json', 'get', 'enrollInfo', null);
+		formSubmitMethod(_this, gradeEvaluationForm, 'enrollInfo');
+		this.showDiagol();
+//		ajaxGetDataMethod({studentId: studentId, curPage: curPage, pageSize: pageSize},'/lele/wechat/search/enrollinfo.json', 'get', 'enrollInfo', null);
 	},
 	showDiagol: function(){
 		//return false;
@@ -975,10 +979,22 @@ var  page = {
     },
     "initPageEvent":function(listCount){
         $("#"+page.pageId +">li[class='pageItem']").on("click",function(){
-        	document.getElementById('cur-page').value = $(this).attr("page-data");
-        	var type = $(this).parents('ul.pagination').attr('data-type');
-        	searchByCondition(this, searchFrom, type);
-            page.setPageListCount(listCount,$(this).attr("page-data"),page.fun);
+        	var $this, $ul, pageData, type, value;
+        	
+        	$this    = $(this);
+        	$ul      = $this.parents('ul.pagination');
+        	pageData = $ul.data();
+        	type = pageData.type;
+        	value = $this.attr("page-data");
+        	
+        	if(pageData.target){
+        		$('#'+pageData.target).find('.cur-page').val(value);
+        		searchByCondition(this, document.getElementById(pageData.target), type);
+        	}else{
+            	document.getElementById('cur-page').value = value;
+            	searchByCondition(this, searchFrom, type);
+        	}
+            page.setPageListCount(listCount, value, page.fun);
         });
     },
     "getPageListModel":function(pageCount,currentPage){

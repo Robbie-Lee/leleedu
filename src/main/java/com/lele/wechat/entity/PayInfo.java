@@ -18,15 +18,27 @@ public class PayInfo implements Serializable {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
 
-	private String prepayId;
-	
 	private String studentId;
 	
 	private String classId;
 	
 	private String clientIp;
+
+	private String prepayId;
 	
+	private int prepayFee;
+	
+	private String preTradeNo;
+	
+	private String tradeType;
+
 	private int payFee;
+
+	private String transactionId;
+	
+	private String tradeNo;
+	
+	private String payTime;
 	
 	private int payStatus;
 	
@@ -94,6 +106,54 @@ public class PayInfo implements Serializable {
 
 	public void setPayStatus(int payStatus) {
 		this.payStatus = payStatus;
+	}
+
+	public int getPrepayFee() {
+		return prepayFee;
+	}
+
+	public void setPrepayFee(int prepayFee) {
+		this.prepayFee = prepayFee;
+	}
+
+	public String getPreTradeNo() {
+		return preTradeNo;
+	}
+
+	public void setPreTradeNo(String preTradeNo) {
+		this.preTradeNo = preTradeNo;
+	}
+
+	public String getTradeType() {
+		return tradeType;
+	}
+
+	public void setTradeType(String tradeType) {
+		this.tradeType = tradeType;
+	}
+
+	public String getTransactionId() {
+		return transactionId;
+	}
+
+	public void setTransactionId(String transactionId) {
+		this.transactionId = transactionId;
+	}
+
+	public String getTradeNo() {
+		return tradeNo;
+	}
+
+	public void setTradeNo(String tradeNo) {
+		this.tradeNo = tradeNo;
+	}
+
+	public String getPayTime() {
+		return payTime;
+	}
+
+	public void setPayTime(String payTime) {
+		this.payTime = payTime;
 	}
 	
 	

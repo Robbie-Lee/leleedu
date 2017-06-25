@@ -1,6 +1,10 @@
-package com.lele.wechat.entity;
+package com.lele.wechat.vo;
 
-public class WechatPayInfo {
+import java.io.Serializable;
+
+public class WechatPrePayInfo implements Serializable {
+
+	private static final long serialVersionUID = 1612553271126950888L;
 
 	private String wechatAppId;
 	

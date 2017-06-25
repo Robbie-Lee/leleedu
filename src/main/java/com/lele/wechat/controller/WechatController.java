@@ -312,6 +312,6 @@ public class WechatController {
 			@RequestParam(value = "pageSize", required = false, defaultValue = "20") int pageSize,
 			@RequestParam(value = "curPage", required = false, defaultValue = "1") int curPage) throws Exception {
 		
-		return wechatService.getClassInfoByIds(curPage, pageSize, studentId);
+		return wechatService.getEnrollInfoByIds(curPage, pageSize, studentId);
 	}
 }

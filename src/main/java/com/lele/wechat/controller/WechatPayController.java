@@ -1,6 +1,5 @@
 package com.lele.wechat.controller;
 
-import java.util.Enumeration;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +13,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.lele.wechat.service.WechatPayService;
+import com.lele.wechat.vo.WechatReturn;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder;
 
 @Controller
 @RequestMapping("/wechatPay")
@@ -40,19 +43,32 @@ public class WechatPayController {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> rpm = request.getParameterMap();
 
-		return null;
+		String processResult = "";
+		for (String key : rpm.keySet()) {
+			processResult = wechatPayService.wechatPayCallback(rpm.get(key).toString());
+		}
+
+		WechatReturn wr = new WechatReturn();
+		if (processResult.equals("SUCCESS")) {
+			wr.setReturn_code("SUCCESS");
+			wr.setReturn_msg("OK");
+		}
+		else {
+			wr.setReturn_code("FAIL");
+			wr.setReturn_msg("Inner Error");
+		}
+
+        XStream xStream = new XStream(new DomDriver("UTF-8", new XmlFriendlyNameCoder("-_", "_")));
+        xStream.alias("xml", WechatReturn.class);
+        return xStream.toXML(wr);
 	}
 
 	@RequestMapping(value="/clientpayback.json", method = RequestMethod.GET)
 	public @ResponseBody 
 	Object clientpayback(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam(value = "studentId", required = true) String studentId,
-			@RequestParam(value = "classId", required = true) String classId,
-			@RequestParam(value = "clientIp", required = true) String clientIp,
-			@RequestParam(value = "payFee", required = true) int payFee) throws Exception {
+			@RequestParam(value = "prepayId", required = true) String prepayId) throws Exception {
 		
 		// 页面获得支付成功信息后，需要通知后台，后台Check是否真正成功
-		
-		return wechatPayService.getPayInfo(studentId, classId, clientIp, payFee);
+		return wechatPayService.clientPayCallback(prepayId);
 	}
 }
