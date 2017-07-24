@@ -13,6 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
+import com.alibaba.fastjson.JSON;
+import com.lele.manager.dao.ClassInfoDAO;
+import com.lele.manager.dao.RegisterInfoDAO;
+import com.lele.manager.dao.StudentInfoDAO;
+import com.lele.manager.entity.RegisterInfo;
 import com.lele.manager.utils.HttpRequester;
 import com.lele.wechat.dao.PayInfoDAO;
 import com.lele.wechat.entity.PayInfo;
@@ -32,28 +37,61 @@ public class WechatPayService {
 
 	private final String appId = "wx352adddd9f085a9a";
 	private final String mchId = "1481039182";
-	private final String body = "乐乐奥数-奥数课程";
+	private final String body = "leleedu-class";
 	private final String tradeType = "JSAPI";
 	
-	private final String notifyUrl = "http://wx.leleedu.com/lele/wechatPay/wechatpayback.json";
+	private final String notifyUrl = "http://wx.leleedu.com/wechatPay/wechatpayback.json";
 	
 	@Autowired
 	PayInfoDAO payInfoDao;
+	
+	@Autowired
+	RegisterInfoDAO registerInfoDao;
+	
+	@Autowired
+	ClassInfoDAO classInfoDao;
+	
+	@Autowired
+	StudentInfoDAO studentInfoDao;
+	
+	private void enrollComplete(PayInfo payInfo) {
+		String classId = payInfo.getClassId();
+		String studentId = payInfo.getStudentId();
+		int fee = payInfo.getPayFee();
 		
+		RegisterInfo ri = new RegisterInfo();
+		ri.setClassId(classId);
+		ri.setRegisterDate(new Date());
+		ri.setRegisterFee(fee);
+		ri.setStudentId(studentId);
+		ri.setClassScore(0);
+		ri.setRegisterMode(0);
+		
+		registerInfoDao.save(ri);
+		classInfoDao.enroll(classId);
+		studentInfoDao.updateTotalFee(studentId, fee);
+	}
+	
 	private String genRandomStr() {
 		return String.valueOf(new Random(new Date().getTime()).nextLong());
 	}
 	
 	public int clientPayCallback(String prepayId) {
 		
+		return 1;
+		
+/*		prepayId = prepayId.substring(10);
 		PayInfo payInfo = payInfoDao.getPayInfo(prepayId);
+		
 		if (payInfo.getPayStatus() != 0) {
 			return payInfo.getPayStatus();
 		}
 		
 		// 查询  https://api.mch.weixin.qq.com/pay/orderquery
 		String outTradeNo = payInfo.getClassId() + "_" + payInfo.getStudentId();
-		outTradeNo = outTradeNo.substring(0, 32);
+		if (outTradeNo.length() > 32) {
+			outTradeNo = outTradeNo.substring(0, 32);
+		}
 		outTradeNo = outTradeNo.replace("?", "@");
 		
 		final String nonceStr = genRandomStr();
@@ -78,6 +116,8 @@ public class WechatPayService {
 
 		final String queryUrl = "https://api.mch.weixin.qq.com/pay/orderquery";
 		String queryPayResponse = HttpRequester.HttpPostAccess(queryUrl, postDataXML); 
+		
+		System.out.println("query pay status from wechat and response is: " + queryPayResponse);
 
         XStream xStreamForResponseData = new XStream();
         xStreamForResponseData.alias("xml", WechatPayExtendB.class);
@@ -108,7 +148,7 @@ public class WechatPayService {
 			
 			if (wechatExtendB.getErr_code() != null) {
 				payInfo.setPayStatus(2);
-				payInfo.setPayError(wechatExtendB.getErr_code());
+				payInfo.setPayError(wechatExtendB.getErr_code_des());
 				payInfoDao.save(payInfo);
 				return 2;
 
@@ -116,12 +156,14 @@ public class WechatPayService {
 			else {
 				payInfo.setPayStatus(1);
 				payInfoDao.save(payInfo);
+				enrollComplete(payInfo);   // 完成报名
+				System.out.println("complete pay process for student: " + payInfo.getStudentId() + " and class: " + payInfo.getClassId());
 				return 1;
 			}
 		}
 		else {
 			return 2;
-		}
+		}*/
 	}
 	
 	public String wechatPayCallback(String callbackInfo) {
@@ -135,6 +177,7 @@ public class WechatPayService {
 			
 			try {
 				if (!Signature.checkIsSignValidFromResponseString(callbackInfo)) {
+					System.out.println("pay callback sign is error");
 					return "FAIL";
 				}
 			} catch (ParserConfigurationException e) {
@@ -172,16 +215,19 @@ public class WechatPayService {
 			payInfo.setPayTime(wechatExtendA.getTime_end());
 			
 			if (wechatExtendA.getErr_code() != null) {
+				System.out.println("pay callback error and cause is " + wechatExtendA.getErr_code_des());
+
 				payInfo.setPayStatus(2);
-				payInfo.setPayError(wechatExtendA.getErr_code());
+				payInfo.setPayError(wechatExtendA.getErr_code_des());
 				payInfoDao.save(payInfo);
-				return "SUCCESS";
+				return "FAIL";
 
 			}
 			else {
 				payInfo.setPayStatus(1);
 				payInfoDao.save(payInfo);
-				return "FAIL";
+				enrollComplete(payInfo);
+				return "SUCCESS";
 			}
 		}
 		else {
@@ -199,7 +245,9 @@ public class WechatPayService {
 	public WechatPrePayInfo getPayInfo(String studentId, String classId, String clientIp, int payFee) {
 		
 		String outTradeNo = classId + "-" + studentId;
-		outTradeNo = outTradeNo.substring(0, 32);
+		if (outTradeNo.length() > 32) {
+			outTradeNo = outTradeNo.substring(0, 32);
+		}
 		outTradeNo = outTradeNo.replace("?", "@");
 		
 		final String wechatPrePayUrl = "https://api.mch.weixin.qq.com/pay/unifiedorder";
@@ -241,11 +289,16 @@ public class WechatPayService {
 
         XStream xStreamForResponseData = new XStream();
         xStreamForResponseData.alias("xml", WechatPrePay.class);
-        xStreamForResponseData.ignoreUnknownElements();//暂时忽略掉一些新增的字段
+        xStreamForResponseData.ignoreUnknownElements();
         WechatPrePay wechatPrePay = (WechatPrePay) xStreamForResponseData.fromXML(prePayResponse);
 
 		PayInfo pi = new PayInfo();
 		WechatPrePayInfo wpi = new WechatPrePayInfo();
+
+		pi.setClassId(classId);
+		pi.setClientIp(clientIp);
+		pi.setStudentId(studentId);
+
 		if (wechatPrePay.getReturn_code().equals("SUCCESS")) {
 			
 			try {
@@ -267,26 +320,23 @@ public class WechatPayService {
 			
 			if (wechatPrePay.getResult_code().equals("SUCCESS")) {
 				String nonStr = genRandomStr();
-				String timeStamp = String.valueOf(new Date().getTime());
+				String timeStamp = String.valueOf(new Date().getTime()/1000);
 					
-				pi.setClassId(classId);
-				pi.setClientIp(clientIp);
 				pi.setPayError("");
 				pi.setPayFee(payFee);
 				pi.setPayStatus(0);
 				pi.setPrepayId(wechatPrePay.getPrepay_id());
-				pi.setStudentId(studentId);
 				
 				Map<String, Object> pm = new HashMap<String, Object>();
-				pm.put("appid", appId);
-				pm.put("nonce_str", nonStr);
+				pm.put("appId", appId);
+				pm.put("nonceStr", nonStr);
 				pm.put("package", "prepay_id="+wechatPrePay.getPrepay_id());
 				pm.put("signType", "MD5");
 				pm.put("timeStamp", timeStamp);
 
 				String toPageSign = Signature.getSign(pm);
 
-				wpi.setWechatAppId(appId);
+				wpi.setAppId(appId);
 				wpi.setSignType("MD5");
 				wpi.setNonceStr(nonStr);
 				wpi.setPrepayId("prepay_id="+wechatPrePay.getPrepay_id());
@@ -299,9 +349,9 @@ public class WechatPayService {
 				return wpi;
 			}
 			else {
-				System.out.println("Request pre pay code result error: " + wechatPrePay.getErr_code());
+				System.out.println("Request pre pay code result error: " + wechatPrePay.getErr_code_des());
 				pi.setPayStatus(2);
-				pi.setPayError(wechatPrePay.getErr_code());
+				pi.setPayError(wechatPrePay.getErr_code_des());
 				
 				wpi.setStatus(1);
 				wpi.setErrMsg(wechatPrePay.getErr_code_des());

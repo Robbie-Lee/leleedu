@@ -716,9 +716,9 @@ var commonManager = {
 var classManager = {
 	init: function(){
 		//成绩等级
-		ajaxGetDataMethod('', '/lele/score/level.json', 'get', 'grade', null);
+		ajaxGetDataMethod('', '/score/level.json', 'get', 'grade', null);
 		//获取教师信息
-		ajaxGetDataMethod({status:0},'/lele/teacher/search.json', 'get', 'teacherList', null);
+		ajaxGetDataMethod({status:0},'/teacher/search.json', 'get', 'teacherList', null);
 		//分页信息
 		commonManager.page();
 	},
@@ -733,14 +733,14 @@ var classManager = {
 			icon: icon,
 			btn: ['取消', '确认'],
 			btn2: function(index, layero){
-				ajaxGetDataMethod({classId:classId,active:active}, '/lele/class/active.json', 'POST', type, _this);
+				ajaxGetDataMethod({classId:classId,active:active}, '/class/active.json', 'POST', type, _this);
 			}
 	    }, function(index, layero){
 	    	layer.close(index);
 		});	
 	},
 	enrollClass: function(_this, type){
-		ajaxGetDataMethod({grade:_this.getAttribute('data-grade')},'/lele/student/search.json', 'get', type, null);
+		ajaxGetDataMethod({grade:_this.getAttribute('data-grade')},'/student/search.json', 'get', type, null);
 		$('#enroll-class-id').val(_this.getAttribute('data-id'));
 		var $layerModel = $('#layer-enroll-modle');
 		layer.open({
@@ -792,7 +792,7 @@ var studentManager = {
 	guarderList: ['请选择','爸爸','妈妈','爷爷','奶奶','姥爷','姥姥','其他'],
 	init: function(){
 		commonManager.page();
-		ajaxGetDataMethod('', '/lele/score/level.json', 'get', 'grade', null);
+		ajaxGetDataMethod('', '/score/level.json', 'get', 'grade', null);
 	},
 	lookSource: function(_this){
 		var studentId = _this.getAttribute('data-id');
@@ -800,7 +800,7 @@ var studentManager = {
 		$('#enroll-class-table').attr('data-student', studentId);
 		formSubmitMethod(_this, gradeEvaluationForm, 'enrollInfo');
 		this.showDiagol();
-//		ajaxGetDataMethod({studentId: studentId, curPage: curPage, pageSize: pageSize},'/lele/wechat/search/enrollinfo.json', 'get', 'enrollInfo', null);
+//		ajaxGetDataMethod({studentId: studentId, curPage: curPage, pageSize: pageSize},'/wechat/search/enrollinfo.json', 'get', 'enrollInfo', null);
 	},
 	showDiagol: function(){
 		//return false;
@@ -827,7 +827,7 @@ var studentManager = {
 				data.classScores = classScoresArr.join(',');
 				data.scoreLevel = $('#course-grade').val();
 				data.studentId = $('#enroll-class-table').attr('data-student');;
-				ajaxGetDataMethod( data, '/lele/student/score.json', 'post', 'studentScore', null );
+				ajaxGetDataMethod( data, '/student/score.json', 'post', 'studentScore', null );
 			},
 			btn2: function(index, layero){
 				
@@ -845,7 +845,7 @@ var attendManager = {
 	init: function(){
 		commonManager.page();
 		//获取教师信息
-		ajaxGetDataMethod({status:0},'/lele/teacher/search.json', 'get', 'teacherList', null);
+		ajaxGetDataMethod({status:0},'/teacher/search.json', 'get', 'teacherList', null);
 	},
 	checkIn: function(_this){
 		
@@ -854,7 +854,7 @@ var attendManager = {
 			icon: 1,
 			btn: ['取消', '确认'],
 			btn2: function(index, layero){
-				ajaxGetDataMethod({classId:_this.getAttribute('data-id')}, '/lele/attend/checkin.json', 'POST', 'checkInAfter', _this);
+				ajaxGetDataMethod({classId:_this.getAttribute('data-id')}, '/attend/checkin.json', 'POST', 'checkInAfter', _this);
 			}
 	    }, function(index, layero){
 	    	layer.close(index);
@@ -869,7 +869,7 @@ var statisticManager = {
 	init: function(){
 		commonManager.page();
 		//获取教师信息
-		ajaxGetDataMethod({status:0},'/lele/teacher/search.json', 'get', 'teacherList', null);
+		ajaxGetDataMethod({status:0},'/teacher/search.json', 'get', 'teacherList', null);
 	},		
 };
 //系统管理模块
@@ -885,7 +885,7 @@ var sysManager = {
 			icon: icon,
 			btn: ['取消', '确认'],
 			btn2: function(index, layero){
-				ajaxGetDataMethod({userId:userId,active:active}, '/lele/manager/activeuser.json', 'POST', type, _this);
+				ajaxGetDataMethod({userId:userId,active:active}, '/manager/activeuser.json', 'POST', type, _this);
 			}
 	    }, function(index, layero){
 	    	layer.close(index);
@@ -903,7 +903,7 @@ var sysManager = {
 			btn: ['确定', '取消'],
 			btnAlign: 'c',
 			btn1: function(index, layero){
-				ajaxGetDataMethod({userId:userId,password:password}, '/lele/manager/changepassword.json', 'POST', type, _this);
+				ajaxGetDataMethod({userId:userId,password:password}, '/manager/changepassword.json', 'POST', type, _this);
 			},
 			btn2: function(index, layero){
 				createForm.reset();

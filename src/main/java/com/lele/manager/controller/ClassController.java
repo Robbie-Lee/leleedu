@@ -110,6 +110,7 @@ public class ClassController extends BaseController {
 			@RequestParam(value = "classTime", required = true) String classTime,
 			@RequestParam(value = "teacherName", required = true) String teacherName,
 			@RequestParam(value = "classCount", required = true) int classCount,
+			@RequestParam(value = "registerLimit", required = true) int registerLimit,
 			@RequestParam(value = "classPrice", required = true) int classPrice,
 			@RequestParam(value = "acceptDiscount", required = true) boolean acceptDiscount,
 			@RequestParam(value = "classDescription", required = false, defaultValue = "") String classDescription,
@@ -129,7 +130,7 @@ public class ClassController extends BaseController {
         classInfoService.saveClassInfo(classId, 
         		className, classRoom, sDate, eDate, classTime, teacherName, 
         		classCount, classPrice, acceptDiscount, classDescription,
-        		scoreLevelService.getScoreLevel(scoreLevel), classGrade);
+        		scoreLevelService.getScoreLevel(scoreLevel), classGrade, registerLimit);
         
         CommonResult cr = new CommonResult();
         cr.setResult("success");

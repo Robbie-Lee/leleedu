@@ -28,6 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.lele.manager.entity.ClassInfo;
+import com.lele.manager.entity.EnrollInfo;
 import com.lele.manager.service.ClassInfoService;
 import com.lele.manager.service.ScoreLevelService;
 import com.lele.manager.service.StudentInfoService;
@@ -100,7 +101,6 @@ public class WechatController {
 			
 		String[] arr = new String[] { token, timestamp, nonce };  
 
-	    // 将token、timestamp、nonce三个参数进行字典序排序  
         Arrays.sort(arr);  
         StringBuilder content = new StringBuilder();  
 
@@ -113,14 +113,12 @@ public class WechatController {
 
         try {  
             md = MessageDigest.getInstance("SHA-1");  
-            // 将三个参数字符串拼接成一个字符串进行sha1加密  
             byte[] digest = md.digest(content.toString().getBytes());  
             tmpStr = byteToStr(digest);  
         } catch (NoSuchAlgorithmException e) {  
             e.printStackTrace();  
         }  
 
-        // 将sha1加密后的字符串可与signature对比，标识该请求来源于微信  
         if (tmpStr != null) {
         	if (tmpStr.equals(signature.toUpperCase())) {
         		return echostr;
@@ -130,6 +128,7 @@ public class WechatController {
         return null;
 	}
 	
+	// 微信回调到报名接口
 	@RequestMapping(value="/callback.json", method = RequestMethod.GET)
 	public @ResponseBody 
 	Object callback(HttpServletRequest request, HttpServletResponse response,
@@ -159,12 +158,10 @@ public class WechatController {
 		String openId = jsonObject.get("openid").toString();
 		
 		if (studentInfoService.isStudentExist(openId)) {
-			// 跳转报名页面
-			response.sendRedirect(request.getContextPath() + "/wechat/enroll.do?wechatid=?" + openId);
+			response.sendRedirect(request.getContextPath() + "/wechat/enroll.do?wechatid=" + openId);
 		}
 		else {
-			// 跳转注册页面
-			response.sendRedirect(request.getContextPath() + "/wechat/register.do?wechatid=?" + openId);
+			response.sendRedirect(request.getContextPath() + "/wechat/register.do?wechatid=" + openId);
 		}
 		
 		return null;
@@ -179,21 +176,20 @@ public class WechatController {
 			System.out.println("wechat file exist");
 			try {
                 InputStream ins = new FileInputStream(file);    
-                BufferedInputStream bins = new BufferedInputStream(ins);// 放到缓冲流里面    
-                OutputStream outs = response.getOutputStream();// 获取文件输出IO流    
+                BufferedInputStream bins = new BufferedInputStream(ins);
+                OutputStream outs = response.getOutputStream();
                 BufferedOutputStream bouts = new BufferedOutputStream(outs);    
-                response.setContentType("text/plain");// 设置response内容的类型    
+                response.setContentType("text/plain");
                 response.setHeader(    
                         "Content-disposition",
                         "attachment;filename="
-                                + URLEncoder.encode(file.getName(), "UTF-8"));// 设置头部信息    
+                                + URLEncoder.encode(file.getName(), "UTF-8")); 
                 int bytesRead = 0;    
                 byte[] buffer = new byte[8192];    
-                // 开始向网络传输文件流    
                 while ((bytesRead = bins.read(buffer, 0, 8192)) != -1) {
                     bouts.write(buffer, 0, bytesRead);
                 }    
-                bouts.flush();// 这里一定要调用flush()方法    
+                bouts.flush();//     
                 ins.close();    
                 bins.close();    
                 outs.close();    
@@ -268,41 +264,56 @@ public class WechatController {
 	CommonResult enroll(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "classId", required = true) String classId,
 			@RequestParam(value = "studentId", required = true) String studentId,
-			@RequestParam(value = "fee", required = true) String fee) throws Exception {
+			@RequestParam(value = "fee", required = true) int fee,
+			@RequestParam(value = "payMode", required = false, defaultValue = "0") int payMode) throws Exception {
 
 		CommonResult cr = new CommonResult();
 
-		int result = wechatService.enroll(classId, studentId, Integer.valueOf(fee));
+		int result = wechatService.enroll(classId, studentId, fee, payMode);
 		
 		if (result == 0) {
 	        cr.setResult("success");
 		}
 		else if (result == -1){
 	        cr.setResult("failed");
-	        cr.setErrCode("您已经报过该课程");
+	        cr.setErrCode("您已经报名该课程");
 		}
 		else if (result == -2){
 	        cr.setResult("failed");
-	        cr.setErrCode("课程已报满");
+	        cr.setErrCode("该课程已经报满");
 		}
 		else if (result == -3){
 	        cr.setResult("failed");
-	        cr.setErrCode("您暂时无法报名该级别课程");
+	        cr.setErrCode("您不满足该课程报名要求");
 		}
 		else if (result == -4){
 	        cr.setResult("failed");
-	        cr.setErrCode("没有这个学生");
+	        cr.setErrCode("您的账号有误");
 		}
 		else if (result == -5){
 	        cr.setResult("failed");
-	        cr.setErrCode("没有这么课程");
+	        cr.setErrCode("该课程信息有误");
 		}
 		else if (result == -6){
 	        cr.setResult("failed");
-	        cr.setErrCode("该课程被取消");
+	        cr.setErrCode("该课程已过期");
 		}
 		
 		return cr;
+	}
+	
+	@RequestMapping(value="/enrollinfo.do", method = RequestMethod.GET)
+	public ModelAndView enrollInfoPage(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam(value = "studentId", required = false, defaultValue = "") String studentId,
+			@RequestParam(value = "pageSize", required = false, defaultValue = "20") int pageSize,
+			@RequestParam(value = "curPage", required = false, defaultValue = "1") int curPage) throws Exception {
+		
+		ModelAndView mv = new ModelAndView("wechat/enrollinfo");
+		
+		Pagination<EnrollInfo> eis = wechatService.getEnrollInfoByIds(curPage, pageSize, studentId);
+		mv.addObject("enrollinfo", eis);
+		
+		return mv;
 	}
 	
 	@RequestMapping(value="/search/enrollinfo.json", method = RequestMethod.GET)

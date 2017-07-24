@@ -6,7 +6,7 @@ public class WechatPrePayInfo implements Serializable {
 
 	private static final long serialVersionUID = 1612553271126950888L;
 
-	private String wechatAppId;
+	private String appId;
 	
 	private String timeStamp;
 	
@@ -38,28 +38,12 @@ public class WechatPrePayInfo implements Serializable {
 		this.nonceStr = nonceStr;
 	}
 
-	public String getPrepayId() {
-		return prepayId;
-	}
-
-	public void setPrepayId(String prepayId) {
-		this.prepayId = prepayId;
-	}
-
 	public String getPaySign() {
 		return paySign;
 	}
 
 	public void setPaySign(String paySign) {
 		this.paySign = paySign;
-	}
-
-	public String getWechatAppId() {
-		return wechatAppId;
-	}
-
-	public void setWechatAppId(String wechatAppId) {
-		this.wechatAppId = wechatAppId;
 	}
 
 	public String getSignType() {
@@ -84,5 +68,21 @@ public class WechatPrePayInfo implements Serializable {
 
 	public void setStatus(int status) {
 		this.status = status;
+	}
+
+	public String getAppId() {
+		return appId;
+	}
+
+	public void setAppId(String appId) {
+		this.appId = appId;
+	}
+
+	public String getPrepayId() {
+		return prepayId;
+	}
+
+	public void setPrepayId(String prepayId) {
+		this.prepayId = prepayId;
 	}
 }

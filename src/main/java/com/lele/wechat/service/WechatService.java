@@ -38,18 +38,18 @@ public class WechatService {
 	@Autowired
 	ScoreLevelDAO scoreLevelDao;
 
-	public int enroll(String classId, String studentId, int fee) {
+	public int enroll(String classId, String studentId, int fee, int payMode) {
 		
 		RegisterInfo ri = registerInfoDao.getRegisterInfo(classId, studentId);
 		
 		if (ri != null) {
-			return -1;		//	已报
+			return -1;		//	 
 		}
 		
 		ClassInfo classInfo = classInfoDao.getClassInfoById(classId);
 		
 		if (classInfo == null) {
-			return -5;		// 没有这门课
+			return -5;		// 
 		}
 		
 		if (!classInfo.isValid()) {
@@ -57,30 +57,34 @@ public class WechatService {
 		}
 		
 		if (classInfo.getRegisterLimit() <= classInfo.getRegisterCount()) {
-			return -2;		// 	已满无法再报
+			return -2;		// 	
 		}
 		
 		StudentInfo studentInfo = studentInfoDao.getStudentInfoById(studentId);
 		
 		if (studentInfo == null) {
-			return -4;      // 没有这个学生
+			return -4;      //
 		}
 		
 		if (studentInfo.getScoreLevel().getScoreIndex() < classInfo.getScoreLevel().getScoreIndex()) {
-			return -3;		// 不满足课程成绩要求
+			return -3;		// 
 		}
 
-/*		
-		ri = new RegisterInfo();
-		ri.setClassId(classId);
-		ri.setRegisterDate(new Date());
-		ri.setRegisterFee(fee);
-		ri.setStudentId(studentId);
+		//
+		if (payMode != 0) {
+			ri = new RegisterInfo();
+			ri.setClassId(classId);
+			ri.setRegisterDate(new Date());
+			ri.setRegisterFee(fee);
+			ri.setStudentId(studentId);
+			ri.setClassScore(0);
+			ri.setRegisterMode(payMode);
+			
+			registerInfoDao.save(ri);
+			classInfoDao.enroll(classId);
+			studentInfoDao.updateTotalFee(studentId, fee);
+		}
 		
-		registerInfoDao.save(ri);
-		classInfoDao.enroll(classId);
-		studentInfoDao.updateTotalFee(studentId, fee);
-*/		
 		return 0;
 	}
 	
@@ -116,14 +120,16 @@ public class WechatService {
 		}
 		
 		StudentInfo si = studentInfoDao.getStudentInfoById(studentId);
-		ei.setScoreLevel(si.getScoreLevel());
 		
 		Pagination<EnrollInfo> pci = new Pagination<EnrollInfo>();
 		pci.setPageNumber(ris.getPageNumber());
 		pci.setPageSize(ris.getPageSize());
 		pci.setTotalElements(ris.getTotalElements());
-		pci.setElements(ei);
-		
+
+		if (si != null) {
+			ei.setScoreLevel(si.getScoreLevel());
+			pci.setElements(ei);
+		}
 		return pci;
 	}
 }

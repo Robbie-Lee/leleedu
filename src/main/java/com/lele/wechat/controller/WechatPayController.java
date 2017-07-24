@@ -1,5 +1,7 @@
 package com.lele.wechat.controller;
 
+import java.io.BufferedReader;
+import java.io.PrintWriter;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.lele.wechat.service.WechatPayService;
+import com.lele.wechat.vo.WechatPrePay;
 import com.lele.wechat.vo.WechatReturn;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -38,15 +41,30 @@ public class WechatPayController {
 	
 	@RequestMapping(value="/wechatpayback.json", method = RequestMethod.POST)
 	public @ResponseBody 
-	Object wechatpayback(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	void wechatpayback(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
-		@SuppressWarnings("unchecked")
-		Map<String, Object> rpm = request.getParameterMap();
-
-		String processResult = "";
-		for (String key : rpm.keySet()) {
-			processResult = wechatPayService.wechatPayCallback(rpm.get(key).toString());
+		System.out.println("get pay callback from wechat");
+		
+		PrintWriter pw = response.getWriter();
+		
+		StringBuffer xmlStr = new StringBuffer(); 
+		try {
+			BufferedReader reader = request.getReader(); 
+			String line = null; 
+			while ((line = reader.readLine()) != null) { 
+				xmlStr.append(line); 
+			}
 		}
+		catch (Exception e) { 
+			
+		} 
+		finally { 
+			pw.close();
+		}
+		
+		System.out.println("get pay callback from wechat, body is " + xmlStr.toString());
+		
+		String processResult = wechatPayService.wechatPayCallback(xmlStr.toString());
 
 		WechatReturn wr = new WechatReturn();
 		if (processResult.equals("SUCCESS")) {
@@ -60,7 +78,10 @@ public class WechatPayController {
 
         XStream xStream = new XStream(new DomDriver("UTF-8", new XmlFriendlyNameCoder("-_", "_")));
         xStream.alias("xml", WechatReturn.class);
-        return xStream.toXML(wr);
+
+		System.out.println("get pay callback from wechat, response is " + xStream.toXML(wr));
+
+        response.getWriter().write(xStream.toXML(wr));
 	}
 
 	@RequestMapping(value="/clientpayback.json", method = RequestMethod.GET)
@@ -68,7 +89,6 @@ public class WechatPayController {
 	Object clientpayback(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "prepayId", required = true) String prepayId) throws Exception {
 		
-		// 页面获得支付成功信息后，需要通知后台，后台Check是否真正成功
 		return wechatPayService.clientPayCallback(prepayId);
 	}
 }

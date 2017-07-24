@@ -2,7 +2,7 @@
 <div class="llas-header">
 	<div class="topbar-head llas-left clearfix">
 		<a class="topbar-btn topbar-logo llas-left" href="/lele">
-			<img src="/lele/resources/common/images/logo.png" alt="Logo">
+			<img src="/resources/common/images/logo.png" alt="Logo">
 		</a>
 		<!--<h2 class="topbar-title llas-left">乐乐教育信息系统管理</h2>-->
 	</div>
@@ -17,7 +17,7 @@
 			  </button>
 			  <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu2">
 			   <!-- <li><a href="#">个人中心</a></li> -->
-			    <li><a href="/lele/logout.do" onclick="commonManager.systemLoginOut();">退出</a></li>
+			    <li><a href="/logout.do" onclick="commonManager.systemLoginOut();">退出</a></li>
 			  </ul>
 			</div>
 	</div>

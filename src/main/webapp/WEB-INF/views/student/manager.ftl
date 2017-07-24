@@ -16,7 +16,7 @@
 				</div>
 				<#assign gradeList = ['请选择','一年级','二年级','三年级','四年级','五年级','六年级']>
 				<#assign guarderList = ['请选择','爸爸','妈妈','爷爷','奶奶','姥爷','姥姥','其他']>
-				<form class="form-inline" name="searchFrom" method="GET" action="/lele/student/search.json">
+				<form class="form-inline" name="searchFrom" method="GET" action="/student/search.json">
 					<div class="row">
 						<div class="form-group">
 							<label for="student-name">学生姓名</label>
@@ -131,7 +131,7 @@
 	</div>
 </div>
 <div id="layer-modle" class="layer-modle">
-	<form class="container-fluid form-inline llas-valid-form error-info-div" name="createForm" method="POST" action="/lele/student/create.json">
+	<form class="container-fluid form-inline llas-valid-form error-info-div" name="createForm" method="POST" action="/student/create.json">
 		<div class="alert alert-danger contact-error">
 			<span class="no-data-icon"></span>
 			<span class="error-message"></span>
@@ -207,7 +207,7 @@
 </div>
 
 <div id="layer-modle-class" class="layer-modle">
-	<form class="container-fluid form-inline llas-valid-form error-info-div" id="grade-evaluation-form" name="gradeEvaluationForm" method="GET" action="/lele/wechat/search/enrollinfo.json">
+	<form class="container-fluid form-inline llas-valid-form error-info-div" id="grade-evaluation-form" name="gradeEvaluationForm" method="GET" action="/wechat/search/enrollinfo.json">
 		<input type="hidden" value="5" name="pageSize" class="page-size"/>
 		<input type="hidden" value="1" name="curPage" class="cur-page"/>
 		<input type="hidden" value="" id="total-items"/>

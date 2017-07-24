@@ -3,7 +3,7 @@
 	<div class="llas-header">
 		<div class="topbar-head llas-left clearfix">
 			<a class="topbar-btn topbar-logo llas-left" href="/lele" title="">
-				<img src="/lele/resources/common/images/logo.png" alt="Logo">
+				<img src="/resources/common/images/logo.png" alt="Logo">
 			</a>
 			<!--<h2 class="topbar-title llas-left">乐乐教育信息系统管理</h2>-->
 		</div>
@@ -15,7 +15,7 @@
 	</div>
 	
 <div class="llas-login-panel">
-<form class="form-horizontal llas-valid-form" method="GET" action="/lele/login.json" name="llasLoginForm">
+<form class="form-horizontal llas-valid-form" method="GET" action="/login.json" name="llasLoginForm">
 <h2 class="llas-login-title llas-textcenter">乐乐教育</h2>
   <div class="form-group">
     <div class="col-sm-12">
@@ -47,11 +47,11 @@
 </div>  
 </form>
 </div>
-<script src="/lele/resources/common/js/jquery/jquery-1.11.1.min.js"></script>
-<script src="/lele/resources/bootstrap/js/bootstrap.min.js"></script>
-<script src="/lele/resources/layer/layer.js"></script>
-<script src="/lele/resources/common/js/jquery/jquery.validate.js"></script>
-<script src="/lele/resources/common/js/custom.js"></script>
+<script src="/resources/common/js/jquery/jquery-1.11.1.min.js"></script>
+<script src="/resources/bootstrap/js/bootstrap.min.js"></script>
+<script src="/resources/layer/layer.js"></script>
+<script src="/resources/common/js/jquery/jquery.validate.js"></script>
+<script src="/resources/common/js/custom.js"></script>
 
 </body>
 </html>

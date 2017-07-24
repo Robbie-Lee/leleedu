@@ -25,7 +25,7 @@ public class ClassInfoService {
 	
 	public void saveClassInfo(String classId, String className, String classRoom, Date startDate, 
 			Date endDate, String classTime, String teacherName, int classCount, int classPrice, 
-			boolean acceptDiscount, String classDescription, ScoreLevel scoreLevel, int classGrade) {
+			boolean acceptDiscount, String classDescription, ScoreLevel scoreLevel, int classGrade, int registerLimit) {
 		
 		ClassInfo classInfo = classInfoDao.getClassInfoById(classId);
 		
@@ -48,6 +48,7 @@ public class ClassInfoService {
 		classInfo.setStartDate(startDate);
 		classInfo.setTeacherName(teacherName);
 		classInfo.setClassGrade(classGrade);
+		classInfo.setRegisterLimit(registerLimit);
 		
 		classInfoDao.save(classInfo);
 	}

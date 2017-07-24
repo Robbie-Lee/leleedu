@@ -25,12 +25,6 @@ public class Signature {
 	
 	private static final String payKey = "leleeduleleeduleleeduleleedu0621";
 	
-    /**
-     * 签名算法
-     * @param o 要参与签名的数据对象
-     * @return 签名
-     * @throws IllegalAccessException
-     */
     public static String getSign(Object o) throws IllegalAccessException {
         ArrayList<String> list = new ArrayList<String>();
         Class cls = o.getClass();
@@ -107,31 +101,19 @@ public class Signature {
         return result;
     }
 
-    /**
-     * 从API返回的XML数据里面重新计算一次签名
-     * @param responseString API返回的XML数据
-     * @return 新鲜出炉的签名
-     * @throws ParserConfigurationException
-     * @throws IOException
-     * @throws SAXException
-     */
     public static String getSignFromResponseString(String responseString) throws IOException, SAXException, ParserConfigurationException {
         Map<String,Object> map = getMapFromXML(responseString);
-        //清掉返回数据对象里面的Sign数据（不能把这个数据也加进去进行签名），然后用签名算法进行签名
         map.put("sign","");
-        //将API返回的数据根据用签名算法进行计算新的签名，用来跟API返回的签名进行比较
         return Signature.getSign(map);
     }
 
     private static Map<String,Object> getMapFromXML(String xmlString) throws ParserConfigurationException, IOException, SAXException {
 
-        //这里用Dom的方式解析回包的最主要目的是防止API新增回包字段
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         InputStream is =  getStringStream(xmlString);
         Document document = builder.parse(is);
 
-        //获取到document里面的全部结点
         NodeList allNodes = document.getFirstChild().getChildNodes();
         Node node;
         Map<String, Object> map = new HashMap<String, Object>();
@@ -154,14 +136,7 @@ public class Signature {
         }
         return tInputStringStream;
     }
-    /**
-     * 检验API返回的数据里面的签名是否合法，避免数据在传输的过程中被第三方篡改
-     * @param responseString API返回的XML数据字符串
-     * @return API签名是否合法
-     * @throws ParserConfigurationException
-     * @throws IOException
-     * @throws SAXException
-     */
+
     public static boolean checkIsSignValidFromResponseString(String responseString) throws ParserConfigurationException, IOException, SAXException {
 
         Map<String,Object> map = getMapFromXML(responseString);
@@ -170,13 +145,10 @@ public class Signature {
         if(signFromAPIResponse=="" || signFromAPIResponse == null){
             return false;
         }
-        //清掉返回数据对象里面的Sign数据（不能把这个数据也加进去进行签名），然后用签名算法进行签名
         map.put("sign","");
-        //将API返回的数据根据用签名算法进行计算新的签名，用来跟API返回的签名进行比较
         String signForAPIResponse = Signature.getSign(map);
 
         if(!signForAPIResponse.equals(signFromAPIResponse)){
-            //签名验不过，表示这个API返回的数据有可能已经被篡改了
             return false;
         }
         return true;

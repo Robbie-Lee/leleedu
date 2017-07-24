@@ -75,8 +75,11 @@ public class ClassStatisticService {
 			int minRegisterFee = 100000;
 			int totalFee = 0;
 			for (RegisterInfo ri : registerInfoList) {
-				if (minRegisterFee > ri.getRegisterFee()) {
-					minRegisterFee = ri.getRegisterFee();
+				if (ri.getRegisterMode() == 0) {
+					// 只有微信报名才计入教师费用统计
+					if (minRegisterFee > ri.getRegisterFee()) {
+						minRegisterFee = ri.getRegisterFee();
+					}
 				}
 				totalFee += ri.getRegisterFee();
 			}

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="Keywords" content="">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
-<link rel="stylesheet" type="text/css" href="/lele/resources/weui/weui.min.css">
+<link rel="stylesheet" type="text/css" href="/resources/weui/weui.min.css">
 <title>注册用户</title>
 <style>
 body{font-family: '微软雅黑';}
@@ -111,8 +111,8 @@ body{font-family: '微软雅黑';}
 
 	</form>
 </div>
-<script src="/lele/resources/common/js/jquery/jquery-1.11.1.min.js"></script>
-<script src="/lele/resources/weui/jquery-mvalidate.js"></script>
-<script src="/lele/resources/weui/weui.js"></script>
+<script src="/resources/common/js/jquery/jquery-1.11.1.min.js"></script>
+<script src="/resources/weui/jquery-mvalidate.js"></script>
+<script src="/resources/weui/weui.js"></script>
 </body>
 </html>

@@ -5,8 +5,8 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 public class AES {
-    private static String ENCRYPT_TOKEN="d49d3b1da345884e"; //替换成和客户端一样的16位长度
-    private static String  IV_KEY = "d49d3b1da345884e"; //替换成和客户端一样的16位长度
+    private static String ENCRYPT_TOKEN="d49d3b1da345884e"; 
+    private static String  IV_KEY = "d49d3b1da345884e"; 
     
     public static byte[] key = null;
     public static byte[] iv = null;
@@ -18,13 +18,7 @@ public class AES {
             System.out.println("dont't init the AES KEY");
         }
     }
-    /*
-     * 将字符串AES加密
-     * 加密顺序如下：
-     * 先AES加密
-     * 然后在base64编码
-     * 然后去掉base64编码中的空格。
-     */
+
     public static String AESEncrypt(String src) {
         try {
             SecretKeySpec skeySpec = new SecretKeySpec(AES.key, "AES");
@@ -40,12 +34,8 @@ public class AES {
             return null;
         }
     }
-    /*
-     * 将字符串AES解密
-     * 解密顺序如下：
-     * 先AES解密
-     * 转换成Strng 返回
-     */
+
+    
     public static String AESDecrypt(String src) {
         try {
             byte[] srcDecode = Base64.decode(src);

@@ -37,7 +37,7 @@ public class Pagination<T> implements Serializable {
 			// removeSelect(removeOrders(resultQuery.getQueryString()));
 			String countHql = checkGroupBy(resultQuery.getQueryString());
 			Query countQuery = session.createQuery(countHql);
-			// resultQuery.setCacheMode(CacheMode.REFRESH);//强行刷新
+			// resultQuery.setCacheMode(CacheMode.REFRESH);
 			for (int i = 0; i < values.length; i++) {
 				countQuery.setParameter("" + i, values[i]);
 				resultQuery.setParameter("" + i, values[i]);
@@ -97,19 +97,6 @@ public class Pagination<T> implements Serializable {
 		}
 	}
 
-	/**
-	 * 构建Pagination对象，完成Hibernate的Query数据的分页处理
-	 * 
-	 * @param resultQuery
-	 *            Hibernate的Query对象
-	 * @param total
-	 *            统计总数
-	 * @param pageNumber
-	 *            当前页编码，从1开始，如果传的值为Integer.MAX_VALUE表示获取最后一页。
-	 *            如果你不知道最后一页编码，传Integer.MAX_VALUE即可。如果当前页超过总页数，也表示最后一页。 这两种情况将重新更改当前页的页码，为最后一页编码。
-	 * @param pageSize
-	 *            每一页显示的条目数
-	 */
 	public Pagination(Query resultQuery, int total, int pageNumber, int pageSize) {
 		this.pageNumber = pageNumber;
 		this.pageSize = pageSize;
@@ -134,19 +121,6 @@ public class Pagination<T> implements Serializable {
 		}
 	}
 
-	/**
-	 * 构建Pagination对象，完成Hibernate的分页处理
-	 * 
-	 * @param elements
-	 *            当前页面要显示的数据
-	 * @param total
-	 *            所有页面数据总数
-	 * @param pageNumber
-	 *            当前页编码，从1开始，如果传的值为Integer.MAX_VALUE表示获取最后一页。
-	 *            如果你不知道最后一页编码，传Integer.MAX_VALUE即可。如果当前页超过总页数，也表示最后一页。 这两种情况将重新更改当前页的页码，为最后一页编码。
-	 * @param pageSize
-	 *            每一页显示的条目数
-	 */
 	public Pagination(List<T> elements, long total, int pageNumber, int pageSize) {
 		this.pageNumber = pageNumber;
 		this.pageSize = pageSize;
@@ -163,17 +137,6 @@ public class Pagination<T> implements Serializable {
 		this.elements = elements;
 	}
 
-	/**
-	 * 构建Pagination对象，完成Hibernate的分页处理
-	 * 
-	 * @param dataList
-	 *            数据List
-	 * @param pageNumber
-	 *            当前页编码，从1开始，如果传的值为Integer.MAX_VALUE表示获取最后一页。
-	 *            如果你不知道最后一页编码，传Integer.MAX_VALUE即可。如果当前页超过总页数，也表示最后一页。 这两种情况将重新更改当前页的页码，为最后一页编码。
-	 * @param pageSize
-	 *            每一页显示的条目数
-	 */
 	public Pagination(List<T> dataList, int pageNumber, int pageSize) {
 		this.pageNumber = pageNumber;
 		this.pageSize = pageSize;
@@ -226,11 +189,6 @@ public class Pagination<T> implements Serializable {
 						/ this.pageSize + 1);
 	}
 
-	/**
-	 * 返回List类型数据
-	 * 
-	 * @return List数据源
-	 */
 	public List<T> getElements() {
 		return elements;
 	}
@@ -278,9 +236,6 @@ public class Pagination<T> implements Serializable {
 		return elements.size();
 	}
 
-	/*
-	 * 去除select 子句，未考虑union的情况
-	 */
 	private static String removeSelect(String hql) {
 		Assert.hasText(hql);
 		int beginPos = hql.toLowerCase().indexOf("from");
@@ -288,9 +243,6 @@ public class Pagination<T> implements Serializable {
 		return hql.substring(beginPos);
 	}
 
-	/*
-	 * 去除orderby 子句
-	 */
 	private static String removeOrders(String hql) {
 		Assert.hasText(hql);
 		Pattern p = Pattern.compile("order\\s+by[\\w|\\W|\\s|\\S]*", Pattern.CASE_INSENSITIVE);

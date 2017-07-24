@@ -26,7 +26,7 @@ public abstract class MysqlBaseDAO<T> {
 
 //	private static final Log LOG = LogFactory.getLog(MysqlBaseDAO.class);
 
-	private static final String ORDER_LIST_PROPERTY_NAME = "orderList";// "排序"属性名称
+	private static final String ORDER_LIST_PROPERTY_NAME = "orderList";
 	
 	@Autowired
 	protected SessionFactory sessionFactory;
@@ -37,11 +37,6 @@ public abstract class MysqlBaseDAO<T> {
 		this.clazz = getPoClass();
 	}
 	
-	/***
-	 * Bean 类型
-	 * 
-	 * @return
-	 */
 	private Class<T> getPoClass() {
 		Type type = getClass().getGenericSuperclass();
 		Class<T> poClass = null;
@@ -159,13 +154,6 @@ public abstract class MysqlBaseDAO<T> {
         return hp;
 	}
 	
-	/**
-	 * 获得唯一查询结果
-	 * 
-	 * @param hql
-	 * @param values
-	 * @return
-	 */
 	public T doQueryUnique(final String hql, final Object... values) {
         Session session = getNewSession();
 		Query query = session.createQuery(hql);
@@ -188,13 +176,6 @@ public abstract class MysqlBaseDAO<T> {
 		return t;
 	}	
 	
-	/**
-	 * 获得唯一查询结果
-	 * 
-	 * @param hql
-	 * @param values
-	 * @return
-	 */
 	public <R> R doQueryUnique(Class<R> resultClazz, final String hql, final Object... values) {
 		
 		Session session = getNewSession();
@@ -230,13 +211,6 @@ public abstract class MysqlBaseDAO<T> {
 	}	
 	
 	
-	/**
-	 * 获得首个查询结果
-	 * 
-	 * @param hql
-	 * @param values
-	 * @return
-	 */
 	public T doQueryFirst(final String hql, final Object... values) {
         Session session = getNewSession();
 		Query query = session.createQuery(hql);
@@ -288,13 +262,7 @@ public abstract class MysqlBaseDAO<T> {
 		}
 	}	
 	
-	/**
-	 * 执行sql插入更新或删除语句
-	 * 
-	 * @param hql
-	 * @param values
-	 */
-    @Transactional
+   @Transactional
 	public void executeHsql(final String hql, final Object... values) {
 		Query query = getSession().createQuery(hql);
 		for (int i = 0; i < values.length; i++) {
@@ -304,12 +272,6 @@ public abstract class MysqlBaseDAO<T> {
 		sessionFactory.getCache().evictEntityRegion(clazz);
 	}
 
-	/**
-	 * 执行sql插入更新或删除语句 针对只更新记录某些字段，在Hibernate缓存中不存在Bean的情况，不需要清除缓存中的对象
-	 * 
-	 * @param hql
-	 * @param values
-	 */
     @Transactional
 	public void executeHsqlWithoutEvict(final String hql, final Object... values) {
     	Session session = getNewSession();
@@ -321,9 +283,6 @@ public abstract class MysqlBaseDAO<T> {
 		session.close();
 	}
 
-	/*
-	 * 执行nameQuery
-	 */
     @Transactional
 	public void executeNameQuery(final String sql, final Object... values) {
 		SQLQuery query = getSession().createSQLQuery(sql);
@@ -563,7 +522,7 @@ public abstract class MysqlBaseDAO<T> {
 	public List<T> doQueryListWithNewSession(final String hql, final Object... values) {
 		Session session = this.getNewSession();
 		Query query = session.createQuery(hql);
-		query.setCacheable(false);
+		query.setCacheable(false); 
 		for (int i = 0; i < values.length; i++) {
 			query.setParameter("" + i, values[i]);
 		}

@@ -14,7 +14,7 @@
 						</ol>
 					</div>
 				</div>
-				<form class="form-inline" name="searchFrom" method="GET" action="/lele/class/search.json">
+				<form class="form-inline" name="searchFrom" method="GET" action="/class/search.json">
 					<div class="row">
 						<div class="form-group">
 							<label for="course-number">课程号</label>
@@ -129,7 +129,7 @@
 	</div>
 </div>
 <div id="layer-modle" class="layer-modle">
-	<form class="container-fluid form-inline llas-valid-form error-info-div" name="createForm" method="POST" action="/lele/class/create.json">
+	<form class="container-fluid form-inline llas-valid-form error-info-div" name="createForm" method="POST" action="/class/create.json">
 		<div class="alert alert-danger contact-error">
 			<span class="no-data-icon"></span>
 			<span class="error-message"></span>
@@ -146,6 +146,18 @@
 				<span class="llas-error-inco"></span>
 			</div>
 			<div class="form-group">
+				<label for="student-grade">年级</label>
+				<select id="student-grade" class="form-control select-defaule-width" name="classGrade">
+					<option value="">请选择</option>
+					<option value="1">一年级</option>
+					<option value="2">二年级</option>
+					<option value="3">三年级</option>
+					<option value="4">四年级</option>
+					<option value="5">五年级</option>
+					<option value="6">六年级</option>
+				</select>
+			</div>
+			<div class="form-group">
 				<label for="course-teacher">授课教师</label>
 				<select id="course-teacher" name="teacherName" data-type="SELECT" class="form-control select-defaule-width required teacher-list"></select>
 				<span class="llas-error-inco"></span>
@@ -156,6 +168,11 @@
 				<span class="llas-error-inco"></span>
 			</div>	
 			<div class="form-group">
+				<label for="course-time">上课时间</label>
+				<input type="text" class="form-control required" name="classTime" id="course-time" placeholder="上课时间" maxlength="16">	
+				<span class="llas-error-inco"></span>
+			</div>
+			<div class="form-group">
 				<label for="course-start">开始日期</label>
 				<input type="text" class="form-control date-input required dateISO" name="startDate" id="course-start" placeholder="开始日期">	
 				<span class="llas-error-inco"></span>
@@ -165,11 +182,7 @@
 				<input type="text" class="form-control date-input required dateISO" name="endDate" id="course-end" placeholder="结束日期">
 				<span class="llas-error-inco"></span>	
 			</div>
-			<div class="form-group">
-				<label for="course-time">上课时间</label>
-				<input type="text" class="form-control required" name="classTime" id="course-time" placeholder="上课时间" maxlength="16">	
-				<span class="llas-error-inco"></span>
-			</div>
+
 			<div class="form-group">
 				<label for="course-count">课次</label>
 				<input type="text" class="form-control number required" name="classCount" id="course-count" placeholder="课次">	
@@ -204,13 +217,14 @@
 	</form>
 </div>
 <div id="layer-enroll-modle" class="layer-modle">
-	<form class="container-fluid form-inline llas-valid-form error-info-div" name="enrollForm" method="POST" action="/lele/wechat/enroll.json">
+	<form class="container-fluid form-inline llas-valid-form error-info-div" name="enrollForm" method="POST" action="/wechat/enroll.json">
 		<div class="alert alert-danger contact-error">
 			<span class="no-data-icon"></span>
 			<span class="error-message"></span>
 		</div>
 		<div class="row">
 			<input type="hidden" value="" id="enroll-class-id" name="classId">
+			<input type="hidden" value="1" id="" name="payMode">
 			<div class="form-group">
 				<label for="enroll-student-id">学生</label>
 				<select id="enroll-student-id" class="form-control select-defaule-width" required name="studentId"></select>

@@ -112,7 +112,7 @@ function signup(){
 	})
 	.done(function(result){
 		if(result.result == 'success'){
-			window.location.href= '/lele/wechat/enroll.do?wechatid=' + $('#student-id').val();
+			window.location.href= '/wechat/enroll.do?wechatid=' + $('#student-id').val();
 		}else{
 			dialogMethod(result.errCode);
 		}
@@ -188,6 +188,18 @@ function loadMoreData() {
 		$('#nomore-div').hide();
 	}
 }
+function GetRequest() {
+    var url = location.search; //获取url中"?"符后的字串
+    var theRequest = new Object();
+    if (url.indexOf("?") != -1) {
+        var str = url.substr(1);
+        var strs = str.split("&");
+        for (var i = 0; i < strs.length; i++) {
+            theRequest[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
+        }
+    }
+    return theRequest;
+}
 function cancel(_this){
 	var $this, $prev, $cur, data;
 	$this  = $(_this);
@@ -262,6 +274,7 @@ var classManager = {
 	},
 	cur_class: null,
 	cur_student: null,
+	cur_classInfo: null,
 	getFee: function(_this){
 		var $this = $(_this), data = {}, _t = this, param = $this.data();
 		loadingToastMethod(true);
@@ -269,6 +282,9 @@ var classManager = {
 		data.studentId = param.student;
 		this.cur_class = param.classid;
 		this.cur_student = param.student;
+		
+		this.cur_classInfo = param;
+		
 		$.ajax({
 			url: 'search/discount.json',
 			type: 'GET',
@@ -278,8 +294,8 @@ var classManager = {
 		.done(function(result){
 			if(result.discountFee && result.discountFee > 0){
 				_t.classEnroll(result.discountFee, param);
+				_t.cur_classInfo.fee = result.discountFee;
 			}else{
-				
 				dialogMethod(result.errCode);
 			}
 			loadingToastMethod(false);
@@ -292,9 +308,11 @@ var classManager = {
 	classEnroll: function(fee, param){
 		loadingToastMethod(true);
 		var data = {},_t = this;
-		data.classId = param.classid;
+		
+		data.classId   = param.classid;
 		data.studentId = param.student;
-		data.fee = fee;
+		data.fee       = fee;
+		data.payMode   = 0;
 		
 		$.ajax({
 			url: 'enroll.json',
@@ -312,8 +330,7 @@ var classManager = {
 				$pay.find('.class-title').text(param.title);
 				$pay.find('.class-note').text(param.note);
 				$pay.show();
-				$('#brand-pay-request').addClass('weui-btn_disabled');
-				_t.getWechatPrepay(data);
+
 			}else{
 				dialogMethod(result.errCode);
 			}
@@ -325,22 +342,26 @@ var classManager = {
 		});	
 	},
 	requestData: null,
-	getWechatPrepay: function(data){
-		var data = data, _t = this;
+	getWechatPrepay: function(){
+		var data = {}, _t = this;
 		data.clientIp = returnCitySN["cip"];
-		data.payFee = data.fee;
+		data.payFee = _t.cur_classInfo.fee;
+		data.studentId = _t.cur_classInfo.student;
+		data.classId = _t.cur_classInfo.classid;
+		console.log('in');
 		$.ajax({
-			url: '/lele/wechatpay/prepay.json',
+			url: '/wechatPay/prepay.json',
 			type: 'GET',
 			data: data,
 			dataType: 'json',
 		})
 		.done(function(result){
-			if(result.result == 'success'){
-				_t.requestData = result.data;
-				$('#brand-pay-request').removeClass('weui-btn_disabled');
+			if(result.status == 0){
+				_t.requestData = result;
+				console.log(JSON.stringify(result));
+				_t.getBrandPayRequest();
 			}else{
-				dialogMethod('请求失败，请您稍后再试');	
+				dialogMethod(result.errMsg);	
 			}
 		})
 		.fail(function(){
@@ -349,26 +370,31 @@ var classManager = {
 		});	
 	},
 	
-	getBrandPayRequest: function(_this){
-		if($(_this).is('.weui-btn_disabled')) {
-			return false;
-		}
-		var TestData = {
-			"appId":"wx2421b1c4370ec43b",     //公众号名称，由商户传入     
-	        "timeStamp":"1395712654",         //时间戳，自1970年以来的秒数     
-	        "nonceStr":"e61463f8efa94090b1f366cccfbbb444", //随机串     
-	        "package":"prepay_id=u802345jgfjsdfgsdg888",     
-	        "signType":"MD5",         //微信签名方式：     
-	        "paySign":"70EA570631E4BB79628FBCA90534C63FF7FADD89" //微信签名 
+	getBrandPayRequest: function(){
+//		var TestData = {
+//			"appId":"wx2421b1c4370ec43b",     //公众号名称，由商户传入     
+//	        "timeStamp":"1395712654",         //时间戳，自1970年以来的秒数     
+//	        "nonceStr":"e61463f8efa94090b1f366cccfbbb444", //随机串     
+//	        "package":"prepay_id=u802345jgfjsdfgsdg888",     
+//	        "signType":"MD5",         //微信签名方式：     
+//	        "paySign":"70EA570631E4BB79628FBCA90534C63FF7FADD89" //微信签名 
+//		};
+		var _t = this, reD = _t.requestData;
+		var data = {
+			"appId": reD.appId,
+			"timeStamp": reD.timeStamp,
+			"signType": reD.signType,
+			"nonceStr": reD.nonceStr,
+			"package": reD.prepayId,
+			"paySign": reD.paySign
 		};
-		var _t = this, data = this.requestData || TestData
+
 		WeixinJSBridge.invoke('getBrandWCPayRequest', data, function(res){
+			    console.log(res.errMsg);
 			    if(res.errMsg == 'get_brand_wcpay_request:ok'){
 			    	_t.clientpayback('true');
-			    	dialogMethod('报名成功');
 			    }else{
 			    	_t.clientpayback('false');
-			    	dialogMethod('报名失败');
 			    }
 	   });
 
@@ -376,25 +402,27 @@ var classManager = {
 	clientpayback: function(flag){
 		var data = {};
 		data.result = flag;
-		data.prepayId = requestData.prepayId || '';
-		data.studentId = this.cur_student || '';
-		data.classId = this.cur_class || '';
+		data.prepayId = this.requestData.prepayId || '';
+		var _t = this;
+		console.log(JSON.stringify(data));
 		$.ajax({
-			url: '/lele/wechatpay/clientpayback.json',
+			url: '/wechatPay/clientpayback.json',
 			type: 'GET',
 			data: data,
 			dataType: 'json',
 		})
 		.done(function(result){
-			if(result.result == 'success'){
-				
+			$('#class-pay-div').hide();
+			if(result == 1){
+				$('#enroll-success-div').find('.weui-msg__title').text(_t.cur_classInfo.title + '报名成功');
+				$('#enroll-success-div').show();
 			}else{
-				//dialogMethod('请求失败，请您稍后再试');	
+				$('#enroll-fail-div').find('.weui-msg__title').text(_t.cur_classInfo.title + '报名失败');
+				$('#enroll-fail-div').show();
 			}
 		})
-		.fail(function(){
-			//loadingToastMethod(false);
-			//dialogMethod('请求失败，请您稍后再试');
-		});	
+//		.fail(function(){
+//			dialogMethod('报名失败');
+//		});	
 	},
 };

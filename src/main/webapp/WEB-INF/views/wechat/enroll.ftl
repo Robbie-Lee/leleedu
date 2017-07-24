@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="Keywords" content="">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
-<link rel="stylesheet" type="text/css" href="/lele/resources/weui/weui.min.css">
+<link rel="stylesheet" type="text/css" href="/resources/weui/weui.min.css">
 <title>微信报名</title>
 <style>
 body{font-family: '微软雅黑';}
@@ -132,14 +132,46 @@ body{font-family: '微软雅黑';}
             </div>
             <div class="weui-form-preview__ft">
                 <a class="weui-form-preview__btn weui-form-preview__btn_default" href="javascript:" data-prev="class-list-div" data-cur="class-pay-div" onclick="cancel(this);">返回</a>
-                <button type="button" class="weui-form-preview__btn weui-form-preview__btn_primary weui-btn_disabled" id="brand-pay-request" href="javascript:" onclick="classManager.getBrandPayRequest(this);">付款</button>
+                <button type="button" class="weui-form-preview__btn weui-form-preview__btn_primary" id="brand-pay-request" href="javascript:" onclick="classManager.getWechatPrepay(this);">付款</button>
             </div>
         </div>
+        
+        <div id="enroll-success-div" class="page msg_success js_show" style="display:none;">
+		    <div class="weui-msg">
+		        <div class="weui-msg__icon-area"><i class="weui-icon-success weui-icon_msg"></i></div>
+		        <div class="weui-msg__text-area">
+		            <h2 class="weui-msg__title">报名成功</h2>
+		        </div>
+		        <div class="weui-msg__opr-area">
+		            <p class="weui-btn-area">
+		                <a href="/wechat/enrollinfo.do?studentId=${wechatid}" class="weui-btn weui-btn_primary">查看已报课程</a>
+		                <a href="javascript:location.reload();" class="weui-btn weui-btn_default">返回</a>
+		            </p>
+		        </div>
+		    </div>
+		</div>
+		
+		
+        <div id="enroll-fail-div" class="page msg_warn js_show" style="display:none;">
+		    <div class="weui-msg">
+		        <div class="weui-msg__icon-area"><i class="weui-icon-warn weui-icon_msg"></i></div>
+		        <div class="weui-msg__text-area">
+		            <h2 class="weui-msg__title">报名失败</h2>
+		            <p class="weui-msg__desc">课程说明</p>
+		        </div>
+		        <div class="weui-msg__opr-area">
+		            <p class="weui-btn-area">
+		                <a href="javascript:location.reload();" class="weui-btn weui-btn_primary">重新报名</a>
+		            </p>
+		        </div>
+		    </div>
+		</div>
+        
     </div>
-<script src="/lele/resources/common/js/jquery/jquery-1.11.1.min.js"></script>
-<script src="/lele/resources/common/js/jquery/jquery.validate.js"></script>
+<script src="/resources/common/js/jquery/jquery-1.11.1.min.js"></script>
+<script src="/resources/common/js/jquery/jquery.validate.js"></script>
 
-<script src="/lele/resources/weui/weui.js"></script>
+<script src="/resources/weui/weui.js"></script>
 <script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>  
 </body>
 </html>

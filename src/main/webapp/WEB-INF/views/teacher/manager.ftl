@@ -14,7 +14,7 @@
 						</ol>
 					</div>
 				</div>
-				<form class="form-inline" name="searchFrom" method="GET" action="/lele/teacher/search.json">
+				<form class="form-inline" name="searchFrom" method="GET" action="/teacher/search.json">
 					<div class="row">
 						<div class="form-group">
 							<label for="teacher-name">教师姓名</label>
@@ -122,7 +122,7 @@
 	</div>
 </div>
 <div id="layer-modle" class="layer-modle">
-	<form class="container-fluid form-inline llas-valid-form error-info-div" name="createForm" method="POST" action="/lele/teacher/create.json">
+	<form class="container-fluid form-inline llas-valid-form error-info-div" name="createForm" method="POST" action="/teacher/create.json">
 		<div class="alert alert-danger contact-error">
 			<span class="no-data-icon"></span>
 			<span class="error-message"></span>

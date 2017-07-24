@@ -14,7 +14,7 @@
 						</ol>
 					</div>
 				</div>
-				<form class="form-inline" name="searchFrom" method="GET" action="/lele/statistic/search.json">
+				<form class="form-inline" name="searchFrom" method="GET" action="/statistic/search.json">
 					<div class="row">
 						<div class="form-group">
 							<label for="course-teacher">授课教师</label>

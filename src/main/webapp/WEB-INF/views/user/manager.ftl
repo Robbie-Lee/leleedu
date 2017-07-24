@@ -14,7 +14,7 @@
 						</ol>
 					</div>
 				</div>
-				<form class="form-inline" name="searchFrom" method="GET" action="/lele/manager/searchuser.json">
+				<form class="form-inline" name="searchFrom" method="GET" action="/manager/searchuser.json">
 					<div class="row">
 						<div class="form-group">
 							<label for="user-name">登录名称</label>
@@ -86,7 +86,7 @@
 	</div>
 </div>
 <div id="layer-modle" class="layer-modle">
-	<form class="container-fluid form-inline llas-valid-form error-info-div" name="createForm" method="POST" action="/lele/manager/adduser.json">
+	<form class="container-fluid form-inline llas-valid-form error-info-div" name="createForm" method="POST" action="/manager/adduser.json">
 		<div class="alert alert-danger contact-error">
 			<span class="no-data-icon"></span>
 			<span class="error-message"></span>
@@ -132,7 +132,7 @@
 </div>
 
 <div id="layer-modle-change-password" class="layer-modle">
-	<form class="container-fluid form-inline llas-valid-form error-info-div" name="changePasswordForm" method="POST" action="/lele/manager/changepassword.json">
+	<form class="container-fluid form-inline llas-valid-form error-info-div" name="changePasswordForm" method="POST" action="/manager/changepassword.json">
 		<div class="alert alert-danger contact-error">
 			<span class="no-data-icon"></span>
 			<span class="error-message"></span>

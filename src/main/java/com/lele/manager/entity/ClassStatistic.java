@@ -17,15 +17,15 @@ public class ClassStatistic implements Serializable {
 	
 	private String className;
 	
-	private int attendCount;
+	private int attendCount; 
 	
 	private int studentCount;
 	
 	private int totalFee;
 	
-	// 比例课时费
+	// 姣斾緥璇炬椂璐�
 	private float teacherRateFee;
-	// 保底课时费
+	// 淇濆簳璇炬椂璐�
 	private int teacherMinFee;
 	
 	private int teacherSalary;

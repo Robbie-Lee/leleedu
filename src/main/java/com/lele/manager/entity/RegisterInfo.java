@@ -28,6 +28,8 @@ public class RegisterInfo implements Serializable {
 	private int registerFee;
 	
 	private int classScore;
+	
+	private int registerMode;
 
 	public long getId() {
 		return id;
@@ -75,5 +77,13 @@ public class RegisterInfo implements Serializable {
 
 	public void setClassScore(int classScore) {
 		this.classScore = classScore;
+	}
+
+	public int getRegisterMode() {
+		return registerMode;
+	}
+
+	public void setRegisterMode(int registerMode) {
+		this.registerMode = registerMode;
 	}
 }
