@@ -2,7 +2,11 @@ package com.lele.manager.entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 public class EnrollInfo implements Serializable {
 
@@ -18,9 +22,15 @@ public class EnrollInfo implements Serializable {
 	
 		private int classCount;
 	
-		private int checkinCount;
-	
-		private int classScore;
+		private String classRoom;
+		
+		private Date startDate;
+		
+		private Date endDate;
+		
+		private String classTime;
+		
+		private int classPrice;
 
 		public String getClassId() {
 			return classId;
@@ -54,21 +64,46 @@ public class EnrollInfo implements Serializable {
 			this.classCount = classCount;
 		}
 
-		public int getCheckinCount() {
-			return checkinCount;
+		public String getClassRoom() {
+			return classRoom;
 		}
 
-		public void setCheckinCount(int checkinCount) {
-			this.checkinCount = checkinCount;
+		public void setClassRoom(String classRoom) {
+			this.classRoom = classRoom;
 		}
 
-		public int getClassScore() {
-			return classScore;
+		public Date getStartDate() {
+			return startDate;
 		}
 
-		public void setClassScore(int classScore) {
-			this.classScore = classScore;
+		public void setStartDate(Date startDate) {
+			this.startDate = startDate;
 		}
+
+		public Date getEndDate() {
+			return endDate;
+		}
+
+		public void setEndDate(Date endDate) {
+			this.endDate = endDate;
+		}
+
+		public String getClassTime() {
+			return classTime;
+		}
+
+		public void setClassTime(String classTime) {
+			this.classTime = classTime;
+		}
+
+		public int getClassPrice() {
+			return classPrice;
+		}
+
+		public void setClassPrice(int classPrice) {
+			this.classPrice = classPrice;
+		}
+
 	}
 	
 	private List<EnrollClass> enrollClass = new ArrayList<EnrollClass>();
@@ -76,14 +111,17 @@ public class EnrollInfo implements Serializable {
 	private ScoreLevel scoreLevel;
 	
 	public void addEnrollClass(String classId, String className, String teacherName,
-					int classCount, int checkinCount,  int classScore) {
+					int classCount, String classRoom, Date startDate, Date endDate, String classTime, int classPrice) {
 		EnrollClass ec = new EnrollClass();
 		ec.setClassId(classId);
 		ec.setClassName(className);
 		ec.setTeacherName(teacherName);
 		ec.setClassCount(classCount);
-		ec.setCheckinCount(checkinCount);
-		ec.setClassScore(classScore);
+		ec.setClassRoom(classRoom);
+		ec.setStartDate(startDate);
+		ec.setEndDate(endDate);
+		ec.setClassTime(classTime);
+		ec.setClassPrice(classPrice);
 		
 		enrollClass.add(ec);
 	}

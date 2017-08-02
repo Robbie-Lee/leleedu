@@ -33,11 +33,11 @@ public class StudentController extends BaseController {
 	DiscountService discountService;
 	
 	private Pagination<StudentInfo> getStudentInfo(int curPage, int pageSize, 
-			String studentId, String studentName, String sex, int grade,
+			String studentId, String studentName, String sex, int attendYear,
 			String guarderName, String guarderPhone) {
 		
 		Pagination<StudentInfo> studentInfoList = studentInfoService.getStudentInfoByPage(curPage, pageSize, 
-				studentId, studentName, sex, grade, guarderName, guarderPhone);
+				studentId, studentName, sex, attendYear, guarderName, guarderPhone);
 		
 		for (StudentInfo si : studentInfoList.getElements()) {
 			si.setDiscountRate(discountService.getDiscountRate(si.getTotalFee()));
@@ -52,7 +52,7 @@ public class StudentController extends BaseController {
 			@RequestParam(value = "studentId", required = false, defaultValue = "") String studentId,
 			@RequestParam(value = "studentName", required = false, defaultValue = "") String studentName,
 			@RequestParam(value = "sex", required = false, defaultValue = "") String sex,
-			@RequestParam(value = "grade", required = false, defaultValue = "-1") int grade,
+			@RequestParam(value = "attendYear", required = false, defaultValue = "-1") int attendYear,
 			@RequestParam(value = "guarderName", required = false, defaultValue = "") String guarderName,
 			@RequestParam(value = "guarderPhone", required = false, defaultValue = "") String guarderPhone,
 			@RequestParam(value = "pageSize", required = false, defaultValue = "20") int pageSize,
@@ -61,7 +61,7 @@ public class StudentController extends BaseController {
 		ModelAndView mv = new ModelAndView("student/manager");
         
         Pagination<StudentInfo> studentInfoList = getStudentInfo(curPage, pageSize, 
-        				studentId, studentName, sex, grade, guarderName, guarderPhone);
+        				studentId, studentName, sex, attendYear, guarderName, guarderPhone);
         
         mv.addObject("studentInfo", studentInfoList);
         
@@ -93,14 +93,14 @@ public class StudentController extends BaseController {
 			@RequestParam(value = "studentId", required = false, defaultValue = "") String studentId,
 			@RequestParam(value = "studentName", required = false, defaultValue = "") String studentName,
 			@RequestParam(value = "sex", required = false, defaultValue = "") String sex,
-			@RequestParam(value = "grade", required = false, defaultValue = "-1") int grade,
+			@RequestParam(value = "attendYear", required = false, defaultValue = "-1") int attendYear,
 			@RequestParam(value = "guarderName", required = false, defaultValue = "") String guarderName,
 			@RequestParam(value = "guarderPhone", required = false, defaultValue = "") String guarderPhone,
 			@RequestParam(value = "pageSize", required = false, defaultValue = "20") int pageSize,
 			@RequestParam(value = "curPage", required = false, defaultValue = "1") int curPage) throws Exception { 
         
         return getStudentInfo(curPage, pageSize, 
-				studentId, studentName, sex, grade, guarderName, guarderPhone);
+				studentId, studentName, sex, attendYear, guarderName, guarderPhone);
     }
 
 	@Auth(auth=AuthType.INTERFACE)
@@ -110,7 +110,7 @@ public class StudentController extends BaseController {
 			@RequestParam(value = "studentId", required = true) String studentId,
 			@RequestParam(value = "name", required = true) String name,
 			@RequestParam(value = "sex", required = true) String sex,
-			@RequestParam(value = "grade", required = true) int grade,
+			@RequestParam(value = "attendYear", required = true) int attendYear,
 			@RequestParam(value = "guarder", required = true) int guarder,
 			@RequestParam(value = "guarderName", required = true) String guarderName,
 			@RequestParam(value = "guarderPhone", required = true) String guarderPhone,
@@ -119,7 +119,7 @@ public class StudentController extends BaseController {
 			@RequestParam(value = "scoreLevel", required = false, defaultValue = "0") int scoreLevel
 			) throws Exception { 
         
-        studentInfoService.saveStudentInfo(studentId, name, sex, grade, guarder, guarderName,
+        studentInfoService.saveStudentInfo(studentId, name, sex, attendYear, guarder, guarderName,
         		guarderPhone, note, school, scoreLevelService.getScoreLevel(scoreLevel));
         
         CommonResult cr = new CommonResult();

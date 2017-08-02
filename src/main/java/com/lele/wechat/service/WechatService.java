@@ -19,6 +19,8 @@ import com.lele.manager.entity.RegisterInfo;
 import com.lele.manager.entity.StudentInfo;
 import com.lele.manager.service.DiscountService;
 import com.lele.manager.sys.dao.Pagination;
+import com.lele.wechat.dao.PayInfoDAO;
+import com.lele.wechat.entity.PayInfo;
 
 @Service("wechatService")
 public class WechatService {
@@ -37,6 +39,9 @@ public class WechatService {
 	
 	@Autowired
 	ScoreLevelDAO scoreLevelDao;
+	
+	@Autowired
+	PayInfoDAO payInfoDao;
 
 	public int enroll(String classId, String studentId, int fee, int payMode) {
 		
@@ -96,6 +101,7 @@ public class WechatService {
 			return cInfo.getClassPrice();
 		}
 		
+		System.out.println("studentId: " + studentId);
 		StudentInfo sInfo = studentInfoDao.getStudentInfoById(studentId);
 		return (int)(cInfo.getClassPrice() * discountService.getDiscountRate(sInfo.getTotalFee()));
 	}
@@ -115,8 +121,11 @@ public class WechatService {
 		
 		List<ClassInfo> cis = classInfoDao.getClassInfoByIds(classIds);
 		for (ClassInfo ci : cis) {
-			ei.addEnrollClass(ci.getClassId(), ci.getClassName(), ci.getTeacherName(), 
-							ci.getClassCount(), ci.getCheckinCount(), classScoreMap.get(ci.getClassId()));
+			
+			PayInfo payInfo = payInfoDao.getPayInfoBySCId(studentId, ci.getClassId());
+			
+			ei.addEnrollClass(ci.getClassId(), ci.getClassName(), ci.getTeacherName(), ci.getClassCount(), 
+							ci.getClassRoom(), ci.getStartDate(), ci.getEndDate(), ci.getClassTime(), payInfo.getPayFee());
 		}
 		
 		StudentInfo si = studentInfoDao.getStudentInfoById(studentId);

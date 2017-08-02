@@ -1,12 +1,17 @@
 package com.lele.manager.service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.lele.manager.dao.ClassInfoDAO;
+import com.lele.manager.dao.RegisterInfoDAO;
+import com.lele.manager.dao.StudentInfoDAO;
 import com.lele.manager.entity.ClassInfo;
+import com.lele.manager.entity.RegisterInfo;
 import com.lele.manager.entity.ScoreLevel;
 import com.lele.manager.sys.dao.Pagination;
 
@@ -15,6 +20,24 @@ public class ClassInfoService {
 
 	@Autowired
 	ClassInfoDAO classInfoDao;
+	
+	@Autowired
+	RegisterInfoDAO registerInfoDao;
+	
+	@Autowired
+	StudentInfoDAO studentInfoDao;
+	
+	public List<String> getStudentNameByClassId(String classId) {
+		
+		List<String> studentNameList = new ArrayList<String>();
+		List<RegisterInfo> ris = registerInfoDao.getRegisterInfo(classId);
+		
+		for (RegisterInfo ri : ris) {
+			studentNameList.add(studentInfoDao.getStudentInfoById(ri.getStudentId()).getName());
+		}
+		
+		return studentNameList;
+	}
 	
 	public Pagination<ClassInfo> getClassInfoByPage(int curPage, int pageSize, 
 						String classId, String className, String teacherName, 

@@ -33,11 +33,15 @@ public class StudentInfoService {
 		studentInfoDao.updateScoreLevel(studentId, scoreIndex);
 	}
 	
+	public StudentInfo getStudentInfoByCode(String code) {
+		return studentInfoDao.getStudentInfoByCode(code);
+	}
+	
 	public Pagination<StudentInfo> getStudentInfoByPage(int curPage, int pageSize, 
-			String studentId, String studentName, String sex, int grade,
+			String studentId, String studentName, String sex, int attendYear,
 			String guarderName, String guarderPhone) {
 		return studentInfoDao.getStudentInfoByPage(curPage, pageSize, studentId, 
-				studentName, sex, grade, guarderName, guarderPhone);
+				studentName, sex, attendYear, guarderName, guarderPhone);
 	}
 	
 	public boolean isStudentExist(String studentId) {
@@ -50,9 +54,12 @@ public class StudentInfoService {
 	}
 	
 	public void saveStudentInfo(String studentId, String name, String sex, 
-			int grade, int guarder, String guarderName, String guarderPhone, 
+			int attendYear, int guarder, String guarderName, String guarderPhone, 
 			String note, String school, ScoreLevel scoreLevel) {
-		
+
+		String[] idandcode = studentId.split("idandcode");
+		studentId = idandcode[0];
+
 		StudentInfo studentInfo = studentInfoDao.getStudentInfoById(studentId);
 		
 		if (studentInfo == null) {
@@ -62,8 +69,14 @@ public class StudentInfoService {
 			studentInfo.setDiscountRate(1.0f);
 			studentInfo.setTotalFee(0);
 		}
+
+		if (idandcode.length == 2) {
+			String code = idandcode[1];
+			studentInfo.setWechatCode(code);
+			System.out.println("register studentId: " + studentId + " and code: " + code);
+		}
 		
-		studentInfo.setGrade(grade);
+		studentInfo.setAttendYear(attendYear);
 		studentInfo.setGuarder(guarder);
 		studentInfo.setGuarderName(guarderName);
 		studentInfo.setGuarderPhone(guarderPhone);

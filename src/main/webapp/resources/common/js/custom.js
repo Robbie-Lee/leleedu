@@ -290,6 +290,16 @@ var ajaxDone = {
 				layer.alert('创建失败，请检查您填写的信息是否合理!', {icon: 2});
 			}	
 		},
+    	studentLook: function(result){
+			var content = '';
+
+			if(result.length > 0){
+				content = result.join('<br>');
+			}else{
+                content = '没有学生报名';
+			}
+            layer.msg(content);
+		},
 		classSearch: function(result){
 			var $tbody = $('#search-table').find('tbody'), tbodyHTML = '', elements = result.elements, status_html;
 			var handHtml = tool.relaceVariable(llas.tableRowEditButton , 'editClass') + llas.tableRowHandLine;
@@ -301,7 +311,7 @@ var ajaxDone = {
 				}else{
 					status_html = '<button type="button" class="btn btn-link llas-left" data-id="'+elements[key].classId+'" data-value="true" onclick="classManager.changeStatus(this, \'changeClassStatus\');">恢复</button>';
 				}
-				tbodyHTML += '<tr id="'+elements[key].classId+'">';
+				tbodyHTML += '<tr id="'+elements[key].classId+'" data-classgrade="'+elements[key].classGrade+'" data-registerlimit="'+elements[key].registerLimit+'">';
 				tbodyHTML += '<td class="classId">'+elements[key].classId+'</td>';
 				tbodyHTML += '<td class="className">'+elements[key].className+'</td>';
 				tbodyHTML += '<td class="startDate llas-nowrap">'+tool.formatDate(elements[key].startDate, 'YYYY-MM-DD')+'</td>';
@@ -312,6 +322,7 @@ var ajaxDone = {
 				tbodyHTML += '<td class="teacherName">'+elements[key].teacherName+'</td>';
 				tbodyHTML += '<td>¥<span class="classPrice">'+elements[key].classPrice+'</span></td>';
 				tbodyHTML += '<td  class="scoreLevel llas-nowrap" data-value="'+elements[key].scoreLevel.scoreIndex+'">'+elements[key].scoreLevel.scoreDescription+'</td>';
+                tbodyHTML += '<td class=""><a href="javascript:;" data-id="'+elements[key].classId+'" onclick="classManager.lookStudent(this);">查看</a></td>';
 				tbodyHTML += '<td class="acceptDiscount" data-value="'+elements[key].acceptDiscount+'">'+tool.acceptDiscountStr(elements[key].acceptDiscount)+'</td>';
 				tbodyHTML += '<td class="registerCount">'+elements[key].registerCount+'</td>';
 				tbodyHTML += '<td class="classDescription" data-value="'+tool.html_encode(elements[key].classDescription)+'"><div class="note-text-div"><span class="glyphicon glyphicon-eye-open" data-container="#date-body" data-toggle="tooltip" data-placement="left" title="'+tool.html_encode(elements[key].classDescription)+'"></span></div></td>';
@@ -375,16 +386,17 @@ var ajaxDone = {
 			var $tbody = $('#search-table').find('tbody'), tbodyHTML = '', elements = result.elements;
 			var handHtml = tool.relaceVariable(llas.tableRowEditButton , 'editStudent');
 			for(var key in elements){
-				tbodyHTML += '<tr id="'+elements[key].studentId+'">';
+				tbodyHTML += '<tr id="'+elements[key].studentId+'" data-studentid="'+elements[key].studentId+'" >';
 				tbodyHTML += '<td class="name">'+elements[key].name+'</td>';
-				tbodyHTML += '<td class="studentId">'+elements[key].studentId+'</td>';
+				//tbodyHTML += '<td class="studentId">'+elements[key].studentId+'</td>';
 				tbodyHTML += '<td class="sex llas-nowrap">'+elements[key].sex+'</td>';
 				tbodyHTML += '<td class="school llas-nowrap">'+elements[key].school+'</td>';
-				tbodyHTML += '<td class="grade" data-value="'+elements[key].grade+'">'+studentManager.gradeList[elements[key].grade]+'</td>';
+				tbodyHTML += '<td class="attendYear" data-value="'+elements[key].attendYear+'">'+elements[key].attendYear+'年</td>';
 				tbodyHTML += '<td class="guarderName">'+elements[key].guarderName+'</td>';
 				tbodyHTML += '<td class="guarder" data-value="'+elements[key].guarder+'">'+studentManager.guarderList[elements[key].guarder]+'</td>';
 				tbodyHTML += '<td class="guarderPhone">'+elements[key].guarderPhone+'</td>';
 				tbodyHTML += '<td><a href="javascript:;" data-id="'+elements[key].studentId+'" onclick="studentManager.lookSource(this);">查看</a></td>';
+                tbodyHTML += '<td>'+elements[key].totalFee+'</td>';
 				tbodyHTML += '<td  class="scoreLevel llas-nowrap" data-value="'+elements[key].scoreLevel.scoreIndex+'">'+elements[key].scoreLevel.scoreDescription+'</td>';
 				tbodyHTML += '<td class="discountRate">'+elements[key].discountRate+'</td>';
 				tbodyHTML += '<td class="note" data-value="'+tool.html_encode(elements[key].note)+'"><div class="note-text-div"><span class="glyphicon glyphicon-eye-open" data-container="#date-body" data-toggle="tooltip" data-placement="left" title="'+tool.html_encode(elements[key].note)+'"></span></div></td>';
@@ -721,6 +733,9 @@ var classManager = {
 		ajaxGetDataMethod({status:0},'/teacher/search.json', 'get', 'teacherList', null);
 		//分页信息
 		commonManager.page();
+	},
+    lookStudent: function(_this){
+        ajaxGetDataMethod({classId:_this.getAttribute('data-id')},'/class/register.json', 'get', 'studentLook', null);
 	},
 	changeStatus: function(_this, type){
 		var title = '确认删除该课程吗？', icon = 2, classId = _this.getAttribute('data-id'), active = _this.getAttribute('data-value');

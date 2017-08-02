@@ -65,6 +65,15 @@ public class ClassController extends BaseController {
         
         return mv;  
     }
+
+	@Auth(auth=AuthType.INTERFACE)
+	@RequestMapping(value="/register.json", method = RequestMethod.GET)
+	public @ResponseBody 
+	Object getRegister(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam(value = "classId", required = true) String classId) throws Exception { 
+
+		return classInfoService.getStudentNameByClassId(classId);
+	}
 	
 	@Auth(auth=AuthType.INTERFACE)
 	@RequestMapping(value="/search.json", method = RequestMethod.GET)

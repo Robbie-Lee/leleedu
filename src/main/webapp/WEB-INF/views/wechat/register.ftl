@@ -49,18 +49,10 @@ body{font-family: '微软雅黑';}
         </div>
 		<div class="weui-cell weui-cell_select weui-cell_select-after">
                 <div class="weui-cell__hd">
-                    <label for="" class="weui-label">年级</label>
+                    <label for="" class="weui-label">入学年份</label>
                 </div>
                 <div class="weui-cell__bd">
-                    <select class="weui-select" name="grade" data-required="true" data-descriptions="grade">
-                    	<option value="">请选择</option>
-                        <option value="1">一年级</option>
-						<option value="1">二年级</option>
-						<option value="1">三年级</option>
-						<option value="1">四年级</option>
-						<option value="1">五年级</option>
-						<option value="1">六年级</option>
-                    </select>
+                    <input type="text" class="weui-input" name="attendYear" data-required="true" data-descriptions="attendYear" maxlength="4" placeholder="入学年份">
                 </div>
          </div>
 		<div class="weui-cell">

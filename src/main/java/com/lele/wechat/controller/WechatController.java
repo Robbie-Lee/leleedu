@@ -29,6 +29,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.lele.manager.entity.ClassInfo;
 import com.lele.manager.entity.EnrollInfo;
+import com.lele.manager.entity.StudentInfo;
 import com.lele.manager.service.ClassInfoService;
 import com.lele.manager.service.ScoreLevelService;
 import com.lele.manager.service.StudentInfoService;
@@ -131,7 +132,7 @@ public class WechatController {
 	// 微信回调到报名接口
 	@RequestMapping(value="/callback.json", method = RequestMethod.GET)
 	public @ResponseBody 
-	Object callback(HttpServletRequest request, HttpServletResponse response,
+	void callback(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "code", required = true) String code,
 			@RequestParam(value = "state", required = true) String state) throws Exception {
 		
@@ -146,25 +147,43 @@ public class WechatController {
 	 			"scope":"SCOPE" 
 	 		} 
 		*/
-		final String accessTokenUrl = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=?0&secret=?1&code=?2&grant_type=?3";
-		final String appId = "wx352adddd9f085a9a";
-		final String appSecret = "ec8642d4540aba1a0fd3b659f3ab0d09";
-		final String grantType = "authorization_code";
 		
-		String weChatResponse = HttpRequester.HttpGetAccess(accessTokenUrl, appId, appSecret, code, grantType);
-		System.out.println("WeChat response is : " + weChatResponse);
+		StudentInfo si = studentInfoService.getStudentInfoByCode(code);
 		
-		JSONObject jsonObject = JSON.parseObject(weChatResponse);
-		String openId = jsonObject.get("openid").toString();
-		
-		if (studentInfoService.isStudentExist(openId)) {
-			response.sendRedirect(request.getContextPath() + "/wechat/enroll.do?wechatid=" + openId);
+		if (si != null) {
+			//	已经注册过
+			if (state.equals("enroll")) {
+				response.sendRedirect(request.getContextPath() + "/wechat/enroll.do?wechatid=" + si.getStudentId());
+			}
+			else if (state.equals("info")) {
+				response.sendRedirect(request.getContextPath() + "/wechat/enrollinfo.do?studentId=" + si.getStudentId());
+			}
 		}
 		else {
-			response.sendRedirect(request.getContextPath() + "/wechat/register.do?wechatid=" + openId);
+			final String accessTokenUrl = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=?0&secret=?1&code=?2&grant_type=?3";
+			final String appId = "wx352adddd9f085a9a";
+			final String appSecret = "ec8642d4540aba1a0fd3b659f3ab0d09";
+			final String grantType = "authorization_code";
+			
+			String weChatResponse = HttpRequester.HttpGetAccess(accessTokenUrl, appId, appSecret, code, grantType);
+			System.out.println("WeChat response is : " + weChatResponse);
+			
+			JSONObject jsonObject = JSON.parseObject(weChatResponse);
+			
+			String openId = jsonObject.get("openid").toString();
+			
+			if (studentInfoService.isStudentExist(openId)) {
+				if (state.equals("enroll")) {
+					response.sendRedirect(request.getContextPath() + "/wechat/enroll.do?wechatid=" + openId);
+				}
+				else if (state.equals("info")) {
+					response.sendRedirect(request.getContextPath() + "/wechat/enrollinfo.do?studentId=" + openId);
+				}
+			}
+			else {
+				response.sendRedirect(request.getContextPath() + "/wechat/register.do?wechatid=" + openId + "&wechatcode=" + code);
+			}
 		}
-		
-		return null;
 	}
 	
 	@RequestMapping(value= {"MP_verify_F4LX5mHlnTvFy2s6.txt"}, method = RequestMethod.GET)
@@ -202,11 +221,13 @@ public class WechatController {
 	
 	@RequestMapping(value="/register.do", method = RequestMethod.GET)
 	public ModelAndView register(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam(value = "wechatid", required = true) String wechatid) throws Exception {
+			@RequestParam(value = "wechatid", required = true) String wechatid,
+			@RequestParam(value = "wechatcode", required = false, defaultValue = "") String wechatcode) throws Exception {
 		 
 		ModelAndView mv = new ModelAndView("wechat/register");
-		mv.addObject("wechatid", wechatid);
 		
+		mv.addObject("wechatid", wechatid + "idandcode" + wechatcode);
+
 		return mv;
 	}
 	
@@ -216,7 +237,7 @@ public class WechatController {
 			@RequestParam(value = "studentId", required = true) String studentId,
 			@RequestParam(value = "name", required = true) String name,
 			@RequestParam(value = "sex", required = true) String sex,
-			@RequestParam(value = "grade", required = true) int grade,
+			@RequestParam(value = "attendYear", required = true) int attendYear,
 			@RequestParam(value = "guarder", required = true) int guarder,
 			@RequestParam(value = "guarderName", required = true) String guarderName,
 			@RequestParam(value = "guarderPhone", required = true) String guarderPhone,
@@ -225,11 +246,12 @@ public class WechatController {
 			@RequestParam(value = "scoreLevel", required = false, defaultValue = "0") int scoreLevel
 			) throws Exception { 
         
-        studentInfoService.saveStudentInfo(studentId, name, sex, grade, guarder, guarderName,
+        studentInfoService.saveStudentInfo(studentId, name, sex, attendYear, guarder, guarderName,
         		guarderPhone, note, school, scoreLevelService.getScoreLevel(scoreLevel));
         
         CommonResult cr = new CommonResult();
         cr.setResult("success");
+        
         cr.setErrCode(studentId);
         
         return cr;  
@@ -251,6 +273,9 @@ public class WechatController {
 			@RequestParam(value = "classId", required = true) String classId,
 			@RequestParam(value = "studentId", required = true) String studentId) {
 		
+		String[] idandcode = studentId.split("idandcode");
+		studentId = idandcode[0];
+		
 		int discount = wechatService.getDisCountFee(classId, studentId);
 		
 		Map<String, Integer> dFee = new HashMap<String, Integer>();
@@ -269,6 +294,9 @@ public class WechatController {
 
 		CommonResult cr = new CommonResult();
 
+		String[] idandcode = studentId.split("idandcode");
+		studentId = idandcode[0];
+		
 		int result = wechatService.enroll(classId, studentId, fee, payMode);
 		
 		if (result == 0) {
@@ -284,11 +312,11 @@ public class WechatController {
 		}
 		else if (result == -3){
 	        cr.setResult("failed");
-	        cr.setErrCode("您不满足该课程报名要求");
+	        cr.setErrCode("您的成绩不满足该课程报名要求");
 		}
 		else if (result == -4){
 	        cr.setResult("failed");
-	        cr.setErrCode("您的账号有误");
+	        cr.setErrCode("该账号尚未注册");
 		}
 		else if (result == -5){
 	        cr.setResult("failed");
@@ -310,6 +338,9 @@ public class WechatController {
 		
 		ModelAndView mv = new ModelAndView("wechat/enrollinfo");
 		
+		String[] idandcode = studentId.split("idandcode");
+		studentId = idandcode[0];
+		
 		Pagination<EnrollInfo> eis = wechatService.getEnrollInfoByIds(curPage, pageSize, studentId);
 		mv.addObject("enrollinfo", eis);
 		
@@ -322,6 +353,9 @@ public class WechatController {
 			@RequestParam(value = "studentId", required = true) String studentId,
 			@RequestParam(value = "pageSize", required = false, defaultValue = "20") int pageSize,
 			@RequestParam(value = "curPage", required = false, defaultValue = "1") int curPage) throws Exception {
+		
+		String[] idandcode = studentId.split("idandcode");
+		studentId = idandcode[0];
 		
 		return wechatService.getEnrollInfoByIds(curPage, pageSize, studentId);
 	}

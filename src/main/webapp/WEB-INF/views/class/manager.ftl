@@ -66,6 +66,7 @@
 					            <th>价格</th>
 					            <th>最低成绩</th>
 					            <th>是否折扣</th>
+					            <th>已报学员</th>
 					            <th>已报人数</th>
 					            <th>说明</th>
 					            <th style="width: 118px;">操作</th>
@@ -75,7 +76,7 @@
 					        
 							<#if (classInfo.elements?size > 0)>
 			   					<#list classInfo.elements as class>
-					          <tr id="class-${class['id']}">
+					          <tr id="${class['id']}" data-classgrade="${class['classGrade']}" data-registerlimit="${class['registerLimit']}">
 					            <td class="classId">${class['classId']}</td>
 					            <td class="className">${class['className']}</td>
 					            <td class="startDate llas-nowrap">${class['startDate']}</td>
@@ -87,6 +88,7 @@
 					            <td>¥<span class="classPrice">${class['classPrice']}</span></td>
 					            <td class="scoreLevel llas-nowrap" data-value="${class['scoreLevel'].scoreIndex}">${class['scoreLevel'].scoreDescription}</td>
 					            <td class="acceptDiscount" data-value="${class['acceptDiscount']}">${class['acceptDiscount']?string("是","否")}</td>
+					            <td class="registerCount"><a href="javascript:;" data-id="${class['classId']}" onclick="classManager.lookStudent(this);">查看</a></td>
 					            <td class="registerCount">${class['registerCount']}</td>
 					            <td class="classDescription" data-value="${class['classDescription']?html}">
 					            	<div class="note-text-div">
@@ -147,7 +149,7 @@
 			</div>
 			<div class="form-group">
 				<label for="student-grade">年级</label>
-				<select id="student-grade" class="form-control select-defaule-width" name="classGrade">
+				<select id="student-grade" class="form-control select-defaule-width" name="classGrade" data-type="SELECT">
 					<option value="">请选择</option>
 					<option value="1">一年级</option>
 					<option value="2">二年级</option>
@@ -182,7 +184,11 @@
 				<input type="text" class="form-control date-input required dateISO" name="endDate" id="course-end" placeholder="结束日期">
 				<span class="llas-error-inco"></span>	
 			</div>
-
+			<div class="form-group">
+				<label for="course-count">报名人数</label>
+				<input type="text" class="form-control number required" name="registerLimit" id="course-count" placeholder="报名人数">	
+				<span class="llas-error-inco"></span>
+			</div>	
 			<div class="form-group">
 				<label for="course-count">课次</label>
 				<input type="text" class="form-control number required" name="classCount" id="course-count" placeholder="课次">	

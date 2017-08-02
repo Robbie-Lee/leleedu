@@ -35,16 +35,8 @@
 							</select>
 						</div>
 						<div class="form-group">
-							<label for="student-grade">年级</label>
-							<select id="student-grade" class="form-control select-defaule-width" name="grade">
-							<#list gradeList as grade>
-								<#if grade_index == 0>
-								<option value="">${grade}</option>
-								<#else>
-								<option value="${grade_index}">${grade}</option>
-								</#if>
-							</#list>
-							</select>
+							<label for="student-grade">入学年份</label>
+                            <input type="text" class="form-control" id="student-grade" name="attendYear" placeholder="入学年份">
 						</div>	
 						<div class="form-group">
 							<label for="student-contacts-name">联系人姓名</label>
@@ -69,14 +61,15 @@
 					        <thead>
 					          <tr>
 					            <th>学生姓名</th>
-					            <th>学号</th>
+					            <!--<th>学号</th>-->
 					            <th>性别</th>
 					            <th>就读学校</th>
-					            <th>年级</th>
+					            <th>入学年份</th>
 					            <th>联系人姓名</th>
 					            <th>联系人关系</th>
 					            <th>联系人电话</th>
 					            <th>已报课程</th>
+					            <th>累计学费</th>
 					            <th>成绩评定</th>
 					            <th>折扣等级</th>
 					            <th>说明</th>
@@ -86,16 +79,17 @@
 					        <tbody>
 							<#if (studentInfo.elements?size > 0)>
 			   					<#list studentInfo.elements as student>
-					          <tr id="${student['studentId']}">
+					          <tr id="${student['studentId']}" data-studentid="${student['studentId']}">
 					            <td class="name">${student['name']}</td>
-					            <td class="studentId">${student['studentId']}</td>
+					            <!--<td class="studentId">${student['studentId']}</td>-->
 					            <td class="llas-nowrap sex">${student['sex']}</td>
 					            <td class="llas-nowrap school">${student['school']}</td>
-					            <td class="grade" data-value="${student['grade']}">${gradeList[student['grade']]}</td>
+					            <td class="attendYear" data-value="${student['attendYear']}">${student['attendYear']}年</td>
 					            <td class="guarderName">${student['guarderName']}</td>
 					            <td class="guarder" data-value="${student['guarder']}">${guarderList[student['guarder']]}</td>
 					            <td class="guarderPhone">${student['guarderPhone']}</td>
 					            <td class="examine"><a href="javascript:;" data-id="${student['studentId']}" onclick="studentManager.lookSource(this);">查看</a></td>
+					            <td>${student['totalFee']}</td>
 					            <td class="scoreLevel llas-nowrap" data-value="${class['scoreLevel'].scoreIndex}">${student['scoreLevel'].scoreDescription}</td>
 					            <td class="discountRate">${student['discountRate']?string("0.##")}</td>
 					            <td class="note" data-value="${student['note']?html}">
@@ -157,16 +151,8 @@
 				<span class="llas-error-inco"></span>
 			</div>
 			<div class="form-group">
-				<label for="c-student-grade">年级</label>
-				<select id="c-student-grade" class="form-control select-defaule-width required" name="grade">
-				<#list gradeList as grade>
-					<#if grade_index == 0>
-					<option value="">${grade}</option>
-					<#else>
-					<option value="${grade_index}">${grade}</option>
-					</#if>
-				</#list>
-				</select>
+				<label for="c-student-grade">入学年份</label>
+				<input type="text" class="form-control required" id="c-student-grade" name="attendYear" maxlength="4" placeholder="入学年份">
 				<span class="llas-error-inco"></span>
 			</div>	
 			<div class="form-group">

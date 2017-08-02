@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.client.ResponseHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,17 +36,22 @@ public class WechatPayController {
 			@RequestParam(value = "classId", required = true) String classId,
 			@RequestParam(value = "clientIp", required = true) String clientIp,
 			@RequestParam(value = "payFee", required = true) int payFee) throws Exception {
+
+		String[] idandcode = studentId.split("idandcode");
+		studentId = idandcode[0];
 		
+		System.out.println("prepay.json: studentId " + studentId + "classId " + classId
+						+ "clientIp " + clientIp + "payFee " + payFee);
 		return wechatPayService.getPayInfo(studentId, classId, clientIp, payFee);
 	}
 	
 	@RequestMapping(value="/wechatpayback.json", method = RequestMethod.POST)
 	public @ResponseBody 
-	void wechatpayback(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	Object wechatpayback(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
 		System.out.println("get pay callback from wechat");
 		
-		PrintWriter pw = response.getWriter();
+//		PrintWriter pw = response.getWriter();
 		
 		StringBuffer xmlStr = new StringBuffer(); 
 		try {
@@ -58,9 +64,6 @@ public class WechatPayController {
 		catch (Exception e) { 
 			
 		} 
-		finally { 
-			pw.close();
-		}
 		
 		System.out.println("get pay callback from wechat, body is " + xmlStr.toString());
 		
@@ -81,7 +84,8 @@ public class WechatPayController {
 
 		System.out.println("get pay callback from wechat, response is " + xStream.toXML(wr));
 
-        response.getWriter().write(xStream.toXML(wr));
+//        response.getWriter().write(xStream.toXML(wr).toString());
+		return xStream.toXML(wr);
 	}
 
 	@RequestMapping(value="/clientpayback.json", method = RequestMethod.GET)

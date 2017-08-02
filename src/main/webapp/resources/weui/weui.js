@@ -56,8 +56,8 @@ $(function(){
             sex:{
                 required : '请选择性别'
             },
-            grade:{
-                required : '请选择年级'
+            attendYear:{
+                required : '请输入入学年份'
             },
             guarder:{
                 required : '请选择监护人'

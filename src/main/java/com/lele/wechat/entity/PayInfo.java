@@ -17,7 +17,7 @@ public class PayInfo implements Serializable {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
-
+	
 	private String studentId;
 	
 	private String classId;
@@ -155,6 +155,4 @@ public class PayInfo implements Serializable {
 	public void setPayTime(String payTime) {
 		this.payTime = payTime;
 	}
-	
-	
 }

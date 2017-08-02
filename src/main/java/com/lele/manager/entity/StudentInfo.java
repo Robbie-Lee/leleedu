@@ -21,13 +21,15 @@ public class StudentInfo implements Serializable {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
 	
+	private String wechatCode;
+
 	private String studentId;
 	
 	private String name;
 	
 	private String sex;
 	
-	private int grade;
+	private int attendYear;
 	
 	private String school;
 	
@@ -79,14 +81,6 @@ public class StudentInfo implements Serializable {
 
 	public void setSex(String sex) {
 		this.sex = sex;
-	}
-
-	public int getGrade() {
-		return grade;
-	}
-
-	public void setGrade(int grade) {
-		this.grade = grade;
 	}
 
 	public String getSchool() {
@@ -151,5 +145,21 @@ public class StudentInfo implements Serializable {
 
 	public void setDiscountRate(float discountRate) {
 		this.discountRate = discountRate;
+	}
+
+	public String getWechatCode() {
+		return wechatCode;
+	}
+
+	public void setWechatCode(String wechatCode) {
+		this.wechatCode = wechatCode;
+	}
+
+	public int getAttendYear() {
+		return attendYear;
+	}
+
+	public void setAttendYear(int attendYear) {
+		this.attendYear = attendYear;
 	}
 }

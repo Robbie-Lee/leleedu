@@ -16,13 +16,18 @@ public class StudentInfoDAO extends MysqlBaseDAO<StudentInfo> {
 
 	private final String HQL_ENTITY = "StudentInfo"; 
 
+	public StudentInfo getStudentInfoByCode(String code) {
+		final String hql = "from " + HQL_ENTITY + " where wechatCode = ?0";
+		return this.doQueryUnique(hql, code);
+	}
+
 	public StudentInfo getStudentInfoById(String studentId) {
 		final String hql = "from " + HQL_ENTITY + " where studentId = ?0";
 		return this.doQueryUnique(hql, studentId);
 	}
 
 	public void updateTotalFee(String studentId, int fee) {
-		final String hql = "update " + HQL_ENTITY + " set totalFee = ?0 where studentId = ?1";
+		final String hql = "update " + HQL_ENTITY + " set totalFee = totalFee + ?0 where studentId = ?1";
 		this.executeHsqlWithoutEvict(hql, fee, studentId);
 	}
 
@@ -33,7 +38,7 @@ public class StudentInfoDAO extends MysqlBaseDAO<StudentInfo> {
 
 	public Pagination<StudentInfo> getStudentInfoByPage(int curPage, int pageSize, 
 			String studentId, String studentName, String sex, 
-			int grade, String guarderName, String guarderPhone) {
+			int attendYear, String guarderName, String guarderPhone) {
 
 		StringBuilder hql = new StringBuilder();
 
@@ -53,9 +58,9 @@ public class StudentInfoDAO extends MysqlBaseDAO<StudentInfo> {
 			hql.append(" and j.sex = ?" + values.size());
 			values.add(sex);
 		}
-		if (grade > 0) {
-			hql.append(" and j.grade = ?" + values.size());
-			values.add(grade);
+		if (attendYear > 2000) {
+			hql.append(" and j.attendYear = ?" + values.size());
+			values.add(attendYear);
 		}
 		if (!StringUtils.isNullOrEmpty(guarderName)) {
 			hql.append(" and j.guarderName like ?" + values.size());

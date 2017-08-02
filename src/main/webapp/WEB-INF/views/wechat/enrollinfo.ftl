@@ -17,7 +17,7 @@ body{font-family: '微软雅黑';}
 <body>
 <div class="page__bd">
 		<form>
-        	<input type="hidden" value="${request.getParameter("studentId")}" name="studentId" id="student-id">
+        	<input type="hidden" value="${studentId}" name="studentId" id="student-id">
        		<input type="hidden" value="${enrollinfo.pageSize}" name="pageSize" id="page-size">
        		<input type="hidden" value="${enrollinfo.nextPageNumber}" name="curPage" id="cur-page">
        		<input type="hidden" value="${enrollinfo.lastPage}" id="last-page">
