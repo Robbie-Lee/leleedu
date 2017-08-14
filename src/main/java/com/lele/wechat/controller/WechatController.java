@@ -29,6 +29,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.lele.manager.entity.ClassInfo;
 import com.lele.manager.entity.EnrollInfo;
+import com.lele.manager.entity.RegisterInfo;
 import com.lele.manager.entity.StudentInfo;
 import com.lele.manager.service.ClassInfoService;
 import com.lele.manager.service.ScoreLevelService;
@@ -284,20 +285,50 @@ public class WechatController {
 		return dFee;
 	}
 	
-	@RequestMapping(value="/enroll.json", method = RequestMethod.POST)
+	@RequestMapping(value="/withdraw.json", method = RequestMethod.POST)
 	public @ResponseBody 
-	CommonResult enroll(HttpServletRequest request, HttpServletResponse response,
+	CommonResult withdraw(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "classId", required = true) String classId,
 			@RequestParam(value = "studentId", required = true) String studentId,
 			@RequestParam(value = "fee", required = true) int fee,
-			@RequestParam(value = "payMode", required = false, defaultValue = "0") int payMode) throws Exception {
+			@RequestParam(value = "registerChannel", required = false, defaultValue = "1") int registerChannel,
+			@RequestParam(value = "payMode", required = false, defaultValue = "0") int payMode,
+			@RequestParam(value = "note", required = false, defaultValue = "0") String note) throws Exception {
 
 		CommonResult cr = new CommonResult();
 
 		String[] idandcode = studentId.split("idandcode");
 		studentId = idandcode[0];
 		
-		int result = wechatService.enroll(classId, studentId, fee, payMode);
+		int result = wechatService.withdraw(classId, studentId, fee, registerChannel, payMode, note);
+		
+		if (result == 0) {
+	        cr.setResult("success");
+		}
+		else if (result == -1){
+	        cr.setResult("failed");
+	        cr.setErrCode("您没有报过该课程");
+		}
+		
+		return cr;
+	}
+
+	@RequestMapping(value="/enroll.json", method = RequestMethod.POST)
+	public @ResponseBody 
+	CommonResult enroll(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam(value = "classId", required = true) String classId,
+			@RequestParam(value = "studentId", required = true) String studentId,
+			@RequestParam(value = "fee", required = true) int fee,
+			@RequestParam(value = "registerChannel", required = true) int registerChannel,
+			@RequestParam(value = "payMode", required = false, defaultValue = "0") int payMode,
+			@RequestParam(value = "note", required = false, defaultValue = "0") String note) throws Exception {
+
+		CommonResult cr = new CommonResult();
+
+		String[] idandcode = studentId.split("idandcode");
+		studentId = idandcode[0];
+		
+		int result = wechatService.enroll(classId, studentId, fee, registerChannel, payMode, note);
 		
 		if (result == 0) {
 	        cr.setResult("success");
@@ -341,7 +372,7 @@ public class WechatController {
 		String[] idandcode = studentId.split("idandcode");
 		studentId = idandcode[0];
 		
-		Pagination<EnrollInfo> eis = wechatService.getEnrollInfoByIds(curPage, pageSize, studentId);
+		Pagination<RegisterInfo> eis = wechatService.getEnrollInfoByIds(curPage, pageSize, studentId);
 		mv.addObject("enrollinfo", eis);
 		
 		return mv;

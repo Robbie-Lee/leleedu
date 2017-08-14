@@ -322,9 +322,10 @@ var ajaxDone = {
 				tbodyHTML += '<td class="teacherName">'+elements[key].teacherName+'</td>';
 				tbodyHTML += '<td>¥<span class="classPrice">'+elements[key].classPrice+'</span></td>';
 				tbodyHTML += '<td  class="scoreLevel llas-nowrap" data-value="'+elements[key].scoreLevel.scoreIndex+'">'+elements[key].scoreLevel.scoreDescription+'</td>';
-                tbodyHTML += '<td class=""><a href="javascript:;" data-id="'+elements[key].classId+'" onclick="classManager.lookStudent(this);">查看</a></td>';
 				tbodyHTML += '<td class="acceptDiscount" data-value="'+elements[key].acceptDiscount+'">'+tool.acceptDiscountStr(elements[key].acceptDiscount)+'</td>';
+                tbodyHTML += '<td class=""><a href="javascript:;" data-id="'+elements[key].classId+'" onclick="classManager.lookStudent(this);">查看</a></td>';
 				tbodyHTML += '<td class="registerCount">'+elements[key].registerCount+'</td>';
+				tbodyHTML += '<td class="registerTotalFee">'+elements[key].registerTotalFee+'</td>';
 				tbodyHTML += '<td class="classDescription" data-value="'+tool.html_encode(elements[key].classDescription)+'"><div class="note-text-div"><span class="glyphicon glyphicon-eye-open" data-container="#date-body" data-toggle="tooltip" data-placement="left" title="'+tool.html_encode(elements[key].classDescription)+'"></span></div></td>';
 				tbodyHTML += '<td>'+ handHtml + status_html+'</td>';
 				tbodyHTML += '</tr>';

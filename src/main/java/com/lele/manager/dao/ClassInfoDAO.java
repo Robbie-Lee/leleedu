@@ -68,6 +68,7 @@ public class ClassInfoDAO extends MysqlBaseDAO<ClassInfo> {
 							String classId, String className, String teacherName, 
 							Date startDate, Date endDate, int scoreLevel, int classGrade) {
 		
+
 		StringBuilder hql = new StringBuilder();
 
 		List<Object> values = new ArrayList<Object>();
@@ -116,8 +117,13 @@ public class ClassInfoDAO extends MysqlBaseDAO<ClassInfo> {
 		this.executeHsqlWithoutEvict(hql, classId);
 	}
 	
-	public void enroll(String classId) {
-		String hql = "update " + HQL_ENTITY + " set registerCount = registerCount + 1 where classId = ?0";
+	public void withdraw(String classId, int fee) {
+		String hql = "update " + HQL_ENTITY + " set registerCount = registerCount - 1, registerTotalFee = registerTotalFee - " + fee + "  where classId = ?0";
+		this.executeHsqlWithoutEvict(hql, classId);
+	}
+	
+	public void enroll(String classId, int fee) {
+		String hql = "update " + HQL_ENTITY + " set registerCount = registerCount + 1, registerTotalFee = registerTotalFee + " + fee + "  where classId = ?0";
 		this.executeHsqlWithoutEvict(hql, classId);
 	}
 }

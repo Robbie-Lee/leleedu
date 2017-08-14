@@ -25,8 +25,19 @@ public class StudentInfoDAO extends MysqlBaseDAO<StudentInfo> {
 		final String hql = "from " + HQL_ENTITY + " where studentId = ?0";
 		return this.doQueryUnique(hql, studentId);
 	}
+	
+	public List<String> getStudentIdByName(String studentName) {
+		final String hql = "from " + HQL_ENTITY + " where name = ?0";
+		
+		return this.doQueryList(String.class, hql, studentName);
+	}
 
-	public void updateTotalFee(String studentId, int fee) {
+	public void minusTotalFee(String studentId, int fee) {
+		final String hql = "update " + HQL_ENTITY + " set totalFee = totalFee - ?0 where studentId = ?1";
+		this.executeHsqlWithoutEvict(hql, fee, studentId);
+	}
+	
+	public void plusTotalFee(String studentId, int fee) {
 		final String hql = "update " + HQL_ENTITY + " set totalFee = totalFee + ?0 where studentId = ?1";
 		this.executeHsqlWithoutEvict(hql, fee, studentId);
 	}

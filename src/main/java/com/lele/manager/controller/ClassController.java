@@ -72,7 +72,7 @@ public class ClassController extends BaseController {
 	Object getRegister(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "classId", required = true) String classId) throws Exception { 
 
-		return classInfoService.getStudentNameByClassId(classId);
+		return classInfoService.getStudentByClassId(classId);
 	}
 	
 	@Auth(auth=AuthType.INTERFACE)

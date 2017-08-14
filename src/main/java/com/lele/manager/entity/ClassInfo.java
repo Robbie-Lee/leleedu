@@ -64,6 +64,8 @@ public class ClassInfo implements Serializable {
 	
 	private int registerLimit;
 	
+	private int registerTotalFee;
+	
 	private boolean valid;
 	
 	@Transient
@@ -220,6 +222,14 @@ public class ClassInfo implements Serializable {
 
 	public void setClassScore(int classScore) {
 		this.classScore = classScore;
+	}
+
+	public int getRegisterTotalFee() {
+		return registerTotalFee;
+	}
+
+	public void setRegisterTotalFee(int registerTotalFee) {
+		this.registerTotalFee = registerTotalFee;
 	}
 
 /*	

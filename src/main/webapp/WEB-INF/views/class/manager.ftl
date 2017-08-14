@@ -68,6 +68,7 @@
 					            <th>是否折扣</th>
 					            <th>已报学员</th>
 					            <th>已报人数</th>
+					            <th>已收学费</th>
 					            <th>说明</th>
 					            <th style="width: 118px;">操作</th>
 					          </tr>
@@ -90,6 +91,7 @@
 					            <td class="acceptDiscount" data-value="${class['acceptDiscount']}">${class['acceptDiscount']?string("是","否")}</td>
 					            <td class="registerCount"><a href="javascript:;" data-id="${class['classId']}" onclick="classManager.lookStudent(this);">查看</a></td>
 					            <td class="registerCount">${class['registerCount']}</td>
+					            <td class="registerTotalFee">${class['registerTotalFee']}</td>
 					            <td class="classDescription" data-value="${class['classDescription']?html}">
 					            	<div class="note-text-div">
 					            		<span class="glyphicon glyphicon-eye-open" data-container="#date-body" data-toggle="tooltip" data-placement="left" title="${class['classDescription']?html}">

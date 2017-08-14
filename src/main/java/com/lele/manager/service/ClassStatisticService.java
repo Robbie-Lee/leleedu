@@ -39,7 +39,9 @@ public class ClassStatisticService {
 				curPage, pageSize, "", "", teacherName, startDate, endDate, 0, 0);
 		
 		List<ClassStatistic> csList = new ArrayList<ClassStatistic>();
-		for (ClassInfo ci : classInfoPage.getElements()) {
+		for (Object obj : classInfoPage.getElements()) {
+			
+			ClassInfo ci = (ClassInfo)obj;
 			
 			List<RegisterInfo> registerInfoList = registerInfoDao.getRegisterInfo(ci.getClassId());
 			TeacherInfo teacherInfo = teacherInfoDao.getTeacherInfoByName(ci.getTeacherName());
@@ -73,8 +75,8 @@ public class ClassStatisticService {
 			cs.setTeacherName(ci.getTeacherName());
 			
 			int minRegisterFee = 100000;
-			int totalFee = 0;
-			for (RegisterInfo ri : registerInfoList) {
+			int totalFee = ci.getRegisterTotalFee();
+/*			for (RegisterInfo ri : registerInfoList) {
 				if (ri.getRegisterMode() == 0) {
 					// 只有微信报名才计入教师费用统计
 					if (minRegisterFee > ri.getRegisterFee()) {
@@ -83,7 +85,7 @@ public class ClassStatisticService {
 				}
 				totalFee += ri.getRegisterFee();
 			}
-			
+*/			
 			float rateFee = teacherInfo.getClassFeeRate() * registerInfoList.size() *
 					minRegisterFee * checkinCount / ci.getClassCount();
 			float minFee = teacherInfo.getMinClassFee() * checkinCount;

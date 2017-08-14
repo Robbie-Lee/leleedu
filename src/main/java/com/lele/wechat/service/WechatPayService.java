@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
-import com.alibaba.fastjson.JSON;
 import com.lele.manager.dao.ClassInfoDAO;
 import com.lele.manager.dao.RegisterInfoDAO;
 import com.lele.manager.dao.StudentInfoDAO;
@@ -60,20 +59,22 @@ public class WechatPayService {
 		int fee = payInfo.getPayFee();
 		
 		RegisterInfo ri = new RegisterInfo();
-		ri.setClassId(classId);
+		ri.setClassInfo(classInfoDao.getClassInfoById(classId));
 		ri.setRegisterDate(new Date());
-		ri.setRegisterFee(fee);
-		ri.setStudentId(studentId);
+		ri.setRegisterMode(0); 		// 报名
+		ri.setPayFee(fee);
+		ri.setPayMode(0);			// 微信支付
+		ri.setStudentInfo(studentInfoDao.getStudentInfoById(studentId));
 		ri.setClassScore(0);
-		ri.setRegisterMode(0);
+		ri.setRegisterChannel(0);		// 微信报名
 		
 		registerInfoDao.save(ri);
 		
 		System.out.println("enroll complete and update class info for classId: " + classId);
-		classInfoDao.enroll(classId);
+		classInfoDao.enroll(classId, fee);
 
 		System.out.println("enroll complete and update student info for studentId: " + studentId);
-		studentInfoDao.updateTotalFee(studentId, fee);
+		studentInfoDao.plusTotalFee(studentId, fee);
 	}
 	
 	private String genRandomStr() {

@@ -13,6 +13,7 @@ import com.lele.manager.dao.StudentInfoDAO;
 import com.lele.manager.entity.ClassInfo;
 import com.lele.manager.entity.RegisterInfo;
 import com.lele.manager.entity.ScoreLevel;
+import com.lele.manager.entity.StudentInfo;
 import com.lele.manager.sys.dao.Pagination;
 
 @Service("classInfoService")
@@ -27,16 +28,18 @@ public class ClassInfoService {
 	@Autowired
 	StudentInfoDAO studentInfoDao;
 	
-	public List<String> getStudentNameByClassId(String classId) {
+	public List<StudentInfo> getStudentByClassId(String classId) {
 		
-		List<String> studentNameList = new ArrayList<String>();
+		List<StudentInfo> studentList = new ArrayList<StudentInfo>();
 		List<RegisterInfo> ris = registerInfoDao.getRegisterInfo(classId);
 		
 		for (RegisterInfo ri : ris) {
-			studentNameList.add(studentInfoDao.getStudentInfoById(ri.getStudentId()).getName());
+			for (StudentInfo si : ri.getStudentInfos()) {
+				studentList.add(si);
+			}
 		}
 		
-		return studentNameList;
+		return studentList;
 	}
 	
 	public Pagination<ClassInfo> getClassInfoByPage(int curPage, int pageSize, 

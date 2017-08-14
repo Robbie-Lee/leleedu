@@ -43,7 +43,34 @@ public class WechatService {
 	@Autowired
 	PayInfoDAO payInfoDao;
 
-	public int enroll(String classId, String studentId, int fee, int payMode) {
+	public int withdraw(String classId, String studentId, int fee, int registerChannel, int payMode, String note) {
+
+		RegisterInfo ri = registerInfoDao.getRegisterInfo(classId, studentId);
+		
+		if (ri != null) {
+			return -1;		//	 未报名
+		}
+		
+		ri = new RegisterInfo();
+		ri.setClassInfo(classInfoDao.getClassInfoById(classId));
+		ri.setRegisterDate(new Date());
+		ri.setRegisterMode(0); 		// 报名
+		ri.setPayFee(fee);
+		ri.setPayMode(payMode);
+		ri.setStudentInfo(studentInfoDao.getStudentInfoById(studentId));
+		ri.setClassScore(0);
+		ri.setRegisterChannel(registerChannel);
+		ri.setNote(note);
+		registerInfoDao.save(ri);
+		
+		classInfoDao.withdraw(classId, fee);
+		studentInfoDao.minusTotalFee(studentId, fee);
+		
+		return 0;
+	}
+	
+	public int enroll(String classId, String studentId, int fee, int registerChannel, 
+							int payMode, String note) {
 		
 		RegisterInfo ri = registerInfoDao.getRegisterInfo(classId, studentId);
 		
@@ -75,19 +102,22 @@ public class WechatService {
 			return -3;		// 
 		}
 
-		//
-		if (payMode != 0) {
+		// 前台付款
+		if (registerChannel != 0) {
 			ri = new RegisterInfo();
-			ri.setClassId(classId);
+			ri.setClassInfo(classInfoDao.getClassInfoById(classId));
 			ri.setRegisterDate(new Date());
-			ri.setRegisterFee(fee);
-			ri.setStudentId(studentId);
+			ri.setRegisterMode(0); 		// 报名
+			ri.setPayFee(fee);
+			ri.setPayMode(payMode);
+			ri.setStudentInfo(studentInfoDao.getStudentInfoById(studentId));
 			ri.setClassScore(0);
-			ri.setRegisterMode(payMode);
+			ri.setRegisterChannel(registerChannel);
+			ri.setNote(note);
 			
 			registerInfoDao.save(ri);
-			classInfoDao.enroll(classId);
-			studentInfoDao.updateTotalFee(studentId, fee);
+			classInfoDao.enroll(classId, fee);
+			studentInfoDao.plusTotalFee(studentId, fee);
 		}
 		
 		return 0;
@@ -106,7 +136,11 @@ public class WechatService {
 		return (int)(cInfo.getClassPrice() * discountService.getDiscountRate(sInfo.getTotalFee()));
 	}
 	
-	public Pagination<EnrollInfo> getEnrollInfoByIds(int curPage, int pageSize, String studentId) {
+	public Pagination<RegisterInfo> getEnrollInfoByIds(int curPage, int pageSize, String studentId) {
+		return registerInfoDao.getStudentRegisterInfo(curPage, pageSize, studentId);
+	}
+	
+/*	public Pagination<EnrollInfo> getEnrollInfoByIds(int curPage, int pageSize, String studentId) {
 		
 		Pagination<RegisterInfo> ris = registerInfoDao.getStudentRegisterInfo(curPage, pageSize, studentId);
 		
@@ -140,5 +174,5 @@ public class WechatService {
 			pci.setElements(ei);
 		}
 		return pci;
-	}
+	}*/
 }
