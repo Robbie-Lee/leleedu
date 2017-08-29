@@ -6,6 +6,7 @@ import javax.servlet.ServletContextListener;
 
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import com.lele.manager.security.SecurityHolder;
 import com.lele.manager.utils.WebContext;
 
 public class StartListener implements ServletContextListener {
@@ -15,6 +16,9 @@ public class StartListener implements ServletContextListener {
 		try {
 			ServletContext application = sce.getServletContext();
 			WebContext.context = WebApplicationContextUtils.getWebApplicationContext(application);
+			
+			SecurityHolder.scanRequestMapping();
+			SecurityHolder.loadSysAuthority();
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}	

@@ -18,8 +18,10 @@ public class Discount implements Serializable {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
 	
-	private int totalFee;
-	
+	private int lowerFee;
+
+	private int upperFee;
+
 	private float discountRate;
 
 	public long getId() {
@@ -30,19 +32,27 @@ public class Discount implements Serializable {
 		this.id = id;
 	}
 
-	public int getTotalFee() {
-		return totalFee;
-	}
-
-	public void setTotalFee(int totalFee) {
-		this.totalFee = totalFee;
-	}
-
 	public float getDiscountRate() {
 		return discountRate;
 	}
 
 	public void setDiscountRate(float discountRate) {
 		this.discountRate = discountRate;
+	}
+
+	public int getLowerFee() {
+		return lowerFee;
+	}
+
+	public void setLowerFee(int lowerFee) {
+		this.lowerFee = lowerFee;
+	}
+
+	public int getUpperFee() {
+		return upperFee;
+	}
+
+	public void setUpperFee(int upperFee) {
+		this.upperFee = upperFee;
 	}
 }

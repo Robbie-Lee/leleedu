@@ -21,7 +21,12 @@ import com.lele.manager.entity.ClassInfo;
 import com.lele.manager.service.ClassInfoService;
 import com.lele.manager.service.ScoreLevelService;
 import com.lele.manager.sys.dao.Pagination;
+import com.lele.manager.sys.entity.Role;
+import com.lele.manager.sys.entity.User;
+import com.lele.manager.sys.service.UserService;
 import com.lele.manager.utils.CommonResult;
+import com.lele.manager.utils.Constants;
+import com.lele.manager.vo.UserSession;
 
 @Controller
 @RequestMapping("/class")
@@ -32,8 +37,11 @@ public class ClassController extends BaseController {
 	
 	@Autowired
 	ScoreLevelService scoreLevelService;
+	
+	@Autowired
+	UserService userService;
 
-	@Auth(auth=AuthType.PAGE)
+	@Auth(auth=AuthType.PAGE, description="课程管理页面")
 	@RequestMapping(value="/manager.do", method = RequestMethod.GET)
 	public ModelAndView manager(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "classId", required = false, defaultValue = "") String classId,
@@ -58,15 +66,33 @@ public class ClassController extends BaseController {
         	eDate = sdf.parse(endDate);
         }
         
-        Pagination<ClassInfo> classInfoList = classInfoService.getClassInfoByPage(curPage, pageSize, 
-        		classId, className, teacherName, sDate, eDate, scoreLevel, classGrade);
+        UserSession us = (UserSession)request.getSession().getAttribute(Constants.DEFAULT_SESSION_ATTRIBUTE_NAME);
+        User user = userService.getUser(us.getUser().getAccount());
+        
+        boolean isAdmin = false;
+        for (Role role : user.getRole()) {
+        	if (role.getName().contains("管理员")) {
+        		isAdmin = true;
+        	}
+        }
+        
+        Pagination<ClassInfo> classInfoList = null;
+        
+        if (isAdmin) {
+            classInfoList = classInfoService.getClassInfoByPage(curPage, pageSize, 
+            		classId, className, teacherName, sDate, eDate, scoreLevel, classGrade);
+        }
+        else {
+            classInfoList = classInfoService.getClassInfoByTeacherId(curPage, pageSize, 
+            		classId, className, user.getTeacherId(), sDate, eDate, scoreLevel, classGrade);
+        }
         
         mv.addObject("classInfo", classInfoList);
         
         return mv;  
     }
 
-	@Auth(auth=AuthType.INTERFACE)
+	@Auth(auth=AuthType.INTERFACE, description="查看报名学生接口")
 	@RequestMapping(value="/register.json", method = RequestMethod.GET)
 	public @ResponseBody 
 	Object getRegister(HttpServletRequest request, HttpServletResponse response,
@@ -75,7 +101,7 @@ public class ClassController extends BaseController {
 		return classInfoService.getStudentByClassId(classId);
 	}
 	
-	@Auth(auth=AuthType.INTERFACE)
+	@Auth(auth=AuthType.INTERFACE, description="课程搜索接口")
 	@RequestMapping(value="/search.json", method = RequestMethod.GET)
 	public @ResponseBody 
 	Object search(HttpServletRequest request, HttpServletResponse response,
@@ -106,7 +132,7 @@ public class ClassController extends BaseController {
         return classInfoList;  
     }
 
-	@Auth(auth=AuthType.INTERFACE)
+	@Auth(auth=AuthType.INTERFACE, description="课程创建接口")
 	@RequestMapping(value="/create.json", method = RequestMethod.POST)
 	public @ResponseBody 
 	CommonResult create(HttpServletRequest request, HttpServletResponse response,
@@ -118,6 +144,7 @@ public class ClassController extends BaseController {
 			@RequestParam(value = "endDate", required = true) String endDate,
 			@RequestParam(value = "classTime", required = true) String classTime,
 			@RequestParam(value = "teacherName", required = true) String teacherName,
+			@RequestParam(value = "teacherId", required = true) String teacherId,
 			@RequestParam(value = "classCount", required = true) int classCount,
 			@RequestParam(value = "registerLimit", required = true) int registerLimit,
 			@RequestParam(value = "classPrice", required = true) int classPrice,
@@ -137,7 +164,7 @@ public class ClassController extends BaseController {
         }
         
         classInfoService.saveClassInfo(classId, 
-        		className, classRoom, sDate, eDate, classTime, teacherName, 
+        		className, classRoom, sDate, eDate, classTime, teacherName, teacherId,
         		classCount, classPrice, acceptDiscount, classDescription,
         		scoreLevelService.getScoreLevel(scoreLevel), classGrade, registerLimit);
         
@@ -148,7 +175,7 @@ public class ClassController extends BaseController {
         return cr;  
     }
 	
-	@Auth(auth=AuthType.INTERFACE)
+	@Auth(auth=AuthType.INTERFACE, description="课程激活/关闭接口")
 	@RequestMapping(value="/active.json", method = RequestMethod.POST)
 	public @ResponseBody 
 	CommonResult search(HttpServletRequest request, HttpServletResponse response,

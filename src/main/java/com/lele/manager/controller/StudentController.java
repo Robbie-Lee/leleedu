@@ -40,13 +40,13 @@ public class StudentController extends BaseController {
 				studentId, studentName, sex, attendYear, guarderName, guarderPhone);
 		
 		for (StudentInfo si : studentInfoList.getElements()) {
-			si.setDiscountRate(discountService.getDiscountRate(si.getTotalFee()));
+			si.setDiscountRate(discountService.getDiscount(si.getTotalFee()).getDiscountRate());
 		}
 		
 		return studentInfoList;
 	}
 	
-	@Auth(auth=AuthType.PAGE)
+	@Auth(auth=AuthType.PAGE, description="学员管理页面")
 	@RequestMapping(value="/manager.do", method = RequestMethod.GET)
 	public ModelAndView manager(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "studentId", required = false, defaultValue = "") String studentId,
@@ -68,7 +68,7 @@ public class StudentController extends BaseController {
         return mv;  
     }
 
-	@Auth(auth=AuthType.INTERFACE)
+	@Auth(auth=AuthType.INTERFACE, description="学员成绩提交接口")
 	@RequestMapping(value="/score.json", method = RequestMethod.POST)
 	public @ResponseBody 
 	CommonResult score(HttpServletRequest request, HttpServletResponse response,
@@ -86,7 +86,7 @@ public class StudentController extends BaseController {
         return cr;  
     }
 	
-	@Auth(auth=AuthType.INTERFACE)
+	@Auth(auth=AuthType.INTERFACE, description="搜索学员接口")
 	@RequestMapping(value="/search.json", method = RequestMethod.GET)
 	public @ResponseBody 
 	Object search(HttpServletRequest request, HttpServletResponse response,
@@ -103,7 +103,7 @@ public class StudentController extends BaseController {
 				studentId, studentName, sex, attendYear, guarderName, guarderPhone);
     }
 
-	@Auth(auth=AuthType.INTERFACE)
+	@Auth(auth=AuthType.INTERFACE, description="新增学员接口")
 	@RequestMapping(value="/create.json", method = RequestMethod.POST)
 	public @ResponseBody 
 	CommonResult create(HttpServletRequest request, HttpServletResponse response,

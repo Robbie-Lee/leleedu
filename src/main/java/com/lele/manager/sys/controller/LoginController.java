@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.lele.manager.enums.LoginStatus;
+import com.lele.manager.service.TeacherInfoService;
+import com.lele.manager.sys.entity.Role;
 import com.lele.manager.sys.entity.UserCookie;
 import com.lele.manager.sys.service.CookieService;
 import com.lele.manager.sys.service.LoginService;
@@ -30,6 +32,9 @@ public class LoginController {
 	@Autowired
 	CookieService cookieService;
 	
+	@Autowired
+	TeacherInfoService teacherInfoService;
+	
 	@RequestMapping(value="/login.do", method = RequestMethod.GET)
 	public ModelAndView login(HttpServletRequest request, HttpServletResponse response) throws Exception { 
         ModelAndView mv = new ModelAndView("sys/login");  
@@ -42,13 +47,13 @@ public class LoginController {
 		if (loginResult.getLoginStatus().equals(LoginStatus.LOGIN_SUCCESS.status())) {
 			
 			// remove cookie from DB
-			UserCookie uc = cookieService.getUserCookieFromDB(loginResult.getUserName());
+			UserCookie uc = cookieService.getUserCookieFromDB(loginResult.getUser().getAccount());
 			if (uc != null) {
-				cookieService.removeUserCookieFromDB(loginResult.getUserName());
+				cookieService.removeUserCookieFromDB(loginResult.getUser().getAccount());
 			}
 			
 			if (rememberMe) {
-				cookieService.setUserCookie(response, loginResult.getUserName());
+				cookieService.setUserCookie(response, loginResult.getUser().getAccount());
 			}
 			
 			HttpSession session = request.getSession();
@@ -61,9 +66,8 @@ public class LoginController {
 			else {
 				loginResult.setAuthUrl(request.getContextPath() + userSession.getCurURI());
 			}
-
-			userSession.setUserAccount(loginResult.getUserName());
-			userSession.setUserId(loginResult.getUserId());			
+			
+			userSession.setUser(loginResult.getUser());
 			session.setAttribute(Constants.DEFAULT_SESSION_ATTRIBUTE_NAME, userSession);
 		}
 		else {
@@ -89,6 +93,10 @@ public class LoginController {
 			loginResult = loginService.doAutoLogin(loginName, cookieStr);
 			cookieService.removeUserCookie(response, loginName, cookieStr);
 			afterLogin(request, response, loginResult, rememberMe);
+		}
+		
+		for (Role role : loginResult.getUser().getRole()) {
+			role.setResource(null);
 		}
 		
 		return loginResult;

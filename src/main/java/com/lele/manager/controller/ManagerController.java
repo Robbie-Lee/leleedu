@@ -31,7 +31,7 @@ public class ManagerController extends BaseController {
 	
 	private final static String USER_LIST = "userlist";
 	
-	@Auth(auth=AuthType.PAGE)
+	@Auth(auth=AuthType.PAGE, description="用户管理页面")
 	@RequestMapping(value="/user.do", method = RequestMethod.GET)
 	public ModelAndView user(HttpServletRequest request, HttpServletResponse response) throws Exception {  
 
@@ -48,7 +48,7 @@ public class ManagerController extends BaseController {
         return mv;  
     }
 
-	@Auth(auth=AuthType.INTERFACE)
+	@Auth(auth=AuthType.INTERFACE, description="用户搜索接口")
 	@RequestMapping(value={"searchuser.json"}, method = RequestMethod.GET)
 	public @ResponseBody 
 	Object searchUser(HttpServletRequest request, HttpServletResponse response,
@@ -57,7 +57,7 @@ public class ManagerController extends BaseController {
 		return userService.searchUser(userName);
     }
 	
-	@Auth(auth=AuthType.INTERFACE)
+	@Auth(auth=AuthType.INTERFACE, description="用户激活/停用接口")
 	@RequestMapping(value={"activeuser.json"}, method = RequestMethod.POST)
 	public @ResponseBody 
 	CommonResult activeUser(HttpServletRequest request, HttpServletResponse response,
@@ -71,7 +71,7 @@ public class ManagerController extends BaseController {
 		return cr;
     }
 	
-	@Auth(auth=AuthType.INTERFACE)
+	@Auth(auth=AuthType.INTERFACE, description="修改密码接口")
 	@RequestMapping(value={"changepassword.json"}, method = RequestMethod.POST)
 	public @ResponseBody 
 	CommonResult changePassword(HttpServletRequest request, HttpServletResponse response,
@@ -84,7 +84,7 @@ public class ManagerController extends BaseController {
 		return cr;
     }
 	
-	@Auth(auth=AuthType.INTERFACE)
+	@Auth(auth=AuthType.INTERFACE, description="添加用户接口")
 	@RequestMapping(value={"adduser.json"}, method = RequestMethod.POST)
 	public @ResponseBody 
 	CommonResult addUser(HttpServletRequest request, HttpServletResponse response,

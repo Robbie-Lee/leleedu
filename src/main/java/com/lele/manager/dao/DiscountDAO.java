@@ -6,57 +6,28 @@ import org.springframework.stereotype.Repository;
 
 import com.lele.manager.entity.Discount;
 import com.lele.manager.sys.dao.MysqlBaseDAO;
+import com.lele.manager.sys.dao.Pagination;
 
 @Repository("discountDAO")
 public class DiscountDAO extends MysqlBaseDAO<Discount> {
 
 	private final String HQL_ENTITY = "Discount";
 	
-	public float getDiscountRate(int fee) {
-		
-		final String hql = "from " + HQL_ENTITY + " where totalFee <= ?0";
-		
-		List<Discount> disList = this.doQueryList(hql, fee);
-		
-		if (disList == null) {
-			return 1.0f;
-		}
-		
-		float minDiscountRate = 1.0f;
-		for (Discount dis : disList) {
-			if (dis.getDiscountRate() < minDiscountRate) {
-				minDiscountRate = dis.getDiscountRate();
-			}
-		}
-		
-		return minDiscountRate;
+	public Pagination<Discount> getDiscountInfo(int curPage, int pageSize) {
+		final String hql = "from " + HQL_ENTITY;
+		return this.doQuery(hql, curPage, pageSize);
 	}
 	
 	public Discount getDiscount(int fee) {
 		
-		final String hql = "from " + HQL_ENTITY + " where totalFee <= ?0";
-		
-		List<Discount> disList = this.doQueryList(hql, fee);
-		
-		if (disList == null) {
-			Discount ds = new Discount();
-			ds.setDiscountRate(1.0f);
-			ds.setTotalFee(fee);
-			
-			return ds;
-		}
-		
-		float minDiscountRate = 1.0f;
-		for (Discount dis : disList) {
-			if (dis.getDiscountRate() < minDiscountRate) {
-				minDiscountRate = dis.getDiscountRate();
-			}
-		}
-		
-		Discount ds = new Discount();
-		ds.setDiscountRate(minDiscountRate);
-		ds.setTotalFee(fee);
-		
-		return ds;
+		final String hql = "from " + HQL_ENTITY + " where lowerFee <= ?0 and upperFee > ?1";
+		Discount discount = this.doQueryUnique(hql, fee, fee);
+		return discount;
+	}
+	
+	public Discount getDiscount(int lowerFee, int upperFee) {
+		final String hql = "from " + HQL_ENTITY + " where lowerFee = ?0 and upperFee = ?1";
+		Discount discount = this.doQueryUnique(hql, lowerFee, upperFee);
+		return discount;
 	}
 }

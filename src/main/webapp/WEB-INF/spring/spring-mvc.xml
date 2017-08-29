@@ -35,16 +35,6 @@
 		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
 	</context:component-scan>
  
-	<!-- json convert -->
-	<beans:bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" />
-	<beans:bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
-		<beans:property name="messageConverters">
-			<beans:list>
-				<beans:bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
-			</beans:list>
-		</beans:property>
-	</beans:bean> 
-
 	<beans:bean id="viewResolver"  
       class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">  
       	<beans:property name="viewClass" value="org.springframework.web.servlet.view.freemarker.FreeMarkerView"/>

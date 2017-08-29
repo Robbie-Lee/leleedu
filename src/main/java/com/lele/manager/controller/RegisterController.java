@@ -29,7 +29,7 @@ public class RegisterController extends BaseController {
 	@Autowired
 	RegisterInfoService registerInfoService;
 	
-	@Auth(auth=AuthType.PAGE)
+	@Auth(auth=AuthType.PAGE, description="对账单页面")
 	@RequestMapping(value="/manager.do", method = RequestMethod.GET)
 	public ModelAndView manager(HttpServletRequest request, HttpServletResponse response) {
 		
@@ -42,7 +42,7 @@ public class RegisterController extends BaseController {
 		return mv;
 	}
 	
-	@Auth(auth=AuthType.INTERFACE)
+	@Auth(auth=AuthType.INTERFACE, description="对账单查询接口")
 	@RequestMapping(value="/search/registerinfo.json", method = RequestMethod.GET)
 	public @ResponseBody 
 	Object enrollInfo(HttpServletRequest request, HttpServletResponse response,

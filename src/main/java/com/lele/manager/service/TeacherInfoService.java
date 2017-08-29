@@ -1,6 +1,7 @@
 package com.lele.manager.service;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,10 @@ public class TeacherInfoService {
 			String phone, int status) {
 		return teacherInfoDao.getTeacherInfoByPage(curPage, pageSize, teacherId, 
 				teacherName, sex, phone, status);
+	}
+	
+	public List<TeacherInfo> getTeacherInfoList() {
+		return teacherInfoDao.findAll();
 	}
 	
 	public void saveTeacherInfo(String teacherId, String name, String sex, 

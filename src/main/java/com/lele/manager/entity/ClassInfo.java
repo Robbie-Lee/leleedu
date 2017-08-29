@@ -40,6 +40,8 @@ public class ClassInfo implements Serializable {
 	
 	private String teacherName;
 	
+	private String teacherId;
+	
 	private int classCount;
 	
 	private int classPrice;
@@ -230,6 +232,14 @@ public class ClassInfo implements Serializable {
 
 	public void setRegisterTotalFee(int registerTotalFee) {
 		this.registerTotalFee = registerTotalFee;
+	}
+
+	public String getTeacherId() {
+		return teacherId;
+	}
+
+	public void setTeacherId(String teacherId) {
+		this.teacherId = teacherId;
 	}
 
 /*	

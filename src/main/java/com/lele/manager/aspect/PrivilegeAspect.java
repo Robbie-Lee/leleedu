@@ -21,6 +21,8 @@ import com.lele.manager.utils.CommonResult;
 import com.lele.manager.controller.BaseController;
 import com.lele.manager.sys.service.CookieService;
 import com.lele.manager.enums.SysInfo;
+import com.lele.manager.security.AuthResource;
+import com.lele.manager.security.SecurityHolder;
 import com.lele.manager.utils.Constants;
 import com.lele.manager.vo.SysMenu;
 import com.lele.manager.vo.UserSession;
@@ -43,21 +45,20 @@ public class PrivilegeAspect {
 		HttpServletResponse response = BaseController.response();
 		
 		Object result = null;
-		UserSession us = null;
-		if (request != null) {
-			us = (UserSession)request.getSession().getAttribute(Constants.DEFAULT_SESSION_ATTRIBUTE_NAME);
-		}
-		
+		UserSession us = (UserSession)request.getSession().getAttribute(Constants.DEFAULT_SESSION_ATTRIBUTE_NAME);
+
 		MethodSignature ms = (MethodSignature) pjp.getSignature();
 		Auth annoAuth = ms.getMethod().getAnnotation(Auth.class);
 		
-		if (us == null || StringUtils.isNullOrEmpty(us.getUserAccount()) || us.getUserId() <= 0) {
+		if (us == null || StringUtils.isNullOrEmpty(us.getUser().getAccount()) || us.getUser().getId() <= 0) {
 			try {
 				if (annoAuth.auth() == AuthType.PAGE) {
 					UserSession userSession = new UserSession();
 					
-					userSession.setCurURI(request.getRequestURI().
-							substring(request.getContextPath().length(), request.getRequestURI().length()));
+					if (!request.getRequestURI().contains("detail.do")) {
+						userSession.setCurURI(request.getRequestURI().
+								substring(request.getContextPath().length(), request.getRequestURI().length()));
+					}
 					
 					HttpSession session = request.getSession();
 					session.setAttribute(Constants.DEFAULT_SESSION_ATTRIBUTE_NAME, userSession);
@@ -80,39 +81,63 @@ public class PrivilegeAspect {
 		String requestURI = request.getRequestURI().
 				substring(request.getContextPath().length(), request.getRequestURI().length());
 
-		try {
-			if (annoAuth.auth() == AuthType.PAGE) {
-				us.setCurURI(request.getRequestURI());
-			}
+		if (SecurityHolder.isAuthorized(us.getUser().getAccount(), new AuthResource(requestURI, ""))) {
+			try {
+				if (!request.getRequestURI().contains("detail.do") && annoAuth.auth() == AuthType.PAGE) {
+					us.setCurURI(request.getRequestURI());
+				}
+				HttpSession session = request.getSession();
+				session.setAttribute(Constants.DEFAULT_SESSION_ATTRIBUTE_NAME, us);
 
-			HttpSession session = request.getSession();
-			session.setAttribute(Constants.DEFAULT_SESSION_ATTRIBUTE_NAME, us);
-
-			result = pjp.proceed();
+				result = pjp.proceed();
 				
-			if (annoAuth.auth() == AuthType.PAGE) {
-				if (result instanceof ModelAndView) {
-					((ModelAndView) result).addObject(Constants.CUR_USER, us.getUserAccount());
+				if (annoAuth.auth() == AuthType.PAGE) {
+					if (result instanceof ModelAndView) {
+						((ModelAndView) result).addObject(Constants.CUR_USER, us.getUser().getAccount());
 						
-					String[] uriSplit = requestURI.split("/");
+						String[] uriSplit = requestURI.split("/");
 						
-					if(uriSplit != null && uriSplit.length > 0){
-						SysMenu menu = new SysMenu();
-					
-						menu.setLevel1(uriSplit[1]);
-						if(uriSplit.length > 2){
-							menu.setLevel2(uriSplit[2]);
-						}
+						if(uriSplit != null && uriSplit.length > 0){
+							SysMenu menu = new SysMenu();
+							
+							menu.setLevel1(uriSplit[1]);
+							if(uriSplit.length > 2){
+								menu.setLevel2(uriSplit[2]);
+							}
 
-						((ModelAndView) result).addObject(Constants.CUR_MENU, menu);
+							((ModelAndView) result).addObject(Constants.CUR_MENU, menu);
+						}
 					}
 				}
-			}
 				
-			return result;
-		} catch (Throwable e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+				return result;
+			} catch (Throwable e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}			
+		else {
+			if (annoAuth.auth() == AuthType.PAGE) {
+				String referUrl = request.getHeader("Referer");
+				try {
+					response.sendRedirect(referUrl);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			else {
+				CommonResult cr = new CommonResult();
+				cr.setResult(CommonResult.FAILED);
+				cr.setErrCode(SysInfo.PERMISSION_DENIED.info());
+				try {
+					response.getWriter().write(cr.toString());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return cr;
+			}
 		}
 		
 		return null;

@@ -28,7 +28,7 @@ public class ClassStatisticController extends BaseController {
 	@Autowired
 	ClassStatisticService classStatisticService;
 	
-	@Auth(auth=AuthType.PAGE)
+	@Auth(auth=AuthType.PAGE, description="授课统计页面")
 	@RequestMapping(value="/manager.do", method = RequestMethod.GET)
 	public ModelAndView manager(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "pageSize", required = false, defaultValue = "20") int pageSize,
@@ -43,7 +43,7 @@ public class ClassStatisticController extends BaseController {
         return mv;
 	}
 	
-	@Auth(auth=AuthType.INTERFACE)
+	@Auth(auth=AuthType.INTERFACE, description="授课统计查询接口")
 	@RequestMapping(value="/search.json", method = RequestMethod.GET)
 	public @ResponseBody 
 	Object search(HttpServletRequest request, HttpServletResponse response,

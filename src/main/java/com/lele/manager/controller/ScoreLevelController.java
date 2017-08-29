@@ -20,7 +20,7 @@ public class ScoreLevelController extends BaseController {
 	@Autowired
 	ScoreLevelService scoreLevelService;
 	
-	@Auth(auth=AuthType.INTERFACE)
+	@Auth(auth=AuthType.INTERFACE, description="成绩等级获取接口")
 	@RequestMapping(value="/level.json", method = RequestMethod.GET)
 	public @ResponseBody
 	Object getScoreList(HttpServletRequest request, HttpServletResponse response) {

@@ -32,6 +32,7 @@ import com.lele.manager.entity.EnrollInfo;
 import com.lele.manager.entity.RegisterInfo;
 import com.lele.manager.entity.StudentInfo;
 import com.lele.manager.service.ClassInfoService;
+import com.lele.manager.service.RegisterInfoService;
 import com.lele.manager.service.ScoreLevelService;
 import com.lele.manager.service.StudentInfoService;
 import com.lele.manager.sys.dao.Pagination;
@@ -54,6 +55,9 @@ public class WechatController {
 	
 	@Autowired
 	ScoreLevelService scoreLevelService;
+	
+	@Autowired
+	RegisterInfoService registerInfoService;
 
 	private final static String token = "lele_edu_wechat";  
 	
@@ -372,7 +376,7 @@ public class WechatController {
 		String[] idandcode = studentId.split("idandcode");
 		studentId = idandcode[0];
 		
-		Pagination<RegisterInfo> eis = wechatService.getEnrollInfoByIds(curPage, pageSize, studentId);
+		Pagination<RegisterInfo> eis = registerInfoService.getRegisterInfoById(curPage, pageSize, studentId);//wechatService.getEnrollInfoByIds(curPage, pageSize, studentId);
 		mv.addObject("enrollinfo", eis);
 		
 		return mv;
@@ -388,6 +392,6 @@ public class WechatController {
 		String[] idandcode = studentId.split("idandcode");
 		studentId = idandcode[0];
 		
-		return wechatService.getEnrollInfoByIds(curPage, pageSize, studentId);
+		return registerInfoService.getRegisterInfoById(curPage, pageSize, studentId);//wechatService.getEnrollInfoByIds(curPage, pageSize, studentId);
 	}
 }

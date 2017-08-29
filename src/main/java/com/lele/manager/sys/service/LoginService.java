@@ -38,8 +38,9 @@ public class LoginService {
 		
 		if (userDao.verifyPassword(user.getId(), user.getAccount(), password)) {
 			loginResult.setLoginStatus(LoginStatus.LOGIN_SUCCESS.status());
-			loginResult.setUserId(user.getId());
-			loginResult.setUserName(userName);
+			loginResult.setUser(user);
+//			loginResult.setUserId(user.getId());
+//			loginResult.setUserName(userName);
 			loginResult.setResultFlag(0);
 		}
 		else {
@@ -58,8 +59,9 @@ public class LoginService {
 		
 		if (cookieService.verifyCookie(loginName, cookieStr)) {
 			loginResult.setLoginStatus(LoginStatus.LOGIN_SUCCESS.status());
-			loginResult.setUserId(user.getId());
-			loginResult.setUserName(loginName);
+			loginResult.setUser(user);
+//			loginResult.setUserId(user.getId());
+//			loginResult.setUserName(loginName);
 			loginResult.setResultFlag(0);
 		}
 		else {

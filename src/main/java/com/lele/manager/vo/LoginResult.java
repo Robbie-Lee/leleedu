@@ -2,12 +2,15 @@ package com.lele.manager.vo;
 
 import java.io.Serializable;
 
+import com.lele.manager.sys.entity.User;
+
 public class LoginResult implements Serializable {
 
 	private static final long serialVersionUID = -1193204165364345117L;
 
-	private long userId;
-	private String userName;
+	private User user;
+//	private long userId;
+//	private String userName;
 	
 	private String loginStatus;
 	private String authUrl;
@@ -26,22 +29,17 @@ public class LoginResult implements Serializable {
 	public void setAuthUrl(String authUrl) {
 		this.authUrl = authUrl;
 	}
-	public long getUserId() {
-		return userId;
-	}
-	public void setUserId(long userId) {
-		this.userId = userId;
-	}
-	public String getUserName() {
-		return userName;
-	}
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
+
 	public int getResultFlag() {
 		return resultFlag;
 	}
 	public void setResultFlag(int resultFlag) {
 		this.resultFlag = resultFlag;
+	}
+	public User getUser() {
+		return user;
+	}
+	public void setUser(User user) {
+		this.user = user;
 	}
 }

@@ -29,7 +29,7 @@ public class TeacherController extends BaseController {
 	@Autowired
 	TeacherInfoService teacherInfoService;
 
-	@Auth(auth=AuthType.PAGE)
+	@Auth(auth=AuthType.PAGE, description="教师管理页面")
 	@RequestMapping(value="/manager.do", method = RequestMethod.GET)
 	public ModelAndView login(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "teacherId", required = false, defaultValue = "") String teacherId,
@@ -49,7 +49,7 @@ public class TeacherController extends BaseController {
         return mv;  
     }
 	
-	@Auth(auth=AuthType.INTERFACE)
+	@Auth(auth=AuthType.INTERFACE, description="教师搜索接口")
 	@RequestMapping(value="/search.json", method = RequestMethod.GET)
 	public @ResponseBody 
 	Object search(HttpServletRequest request, HttpServletResponse response,
@@ -64,8 +64,15 @@ public class TeacherController extends BaseController {
         return teacherInfoService.getTeacherInfoByPage(curPage, 
         						pageSize, teacherId, teacherName, sex, phone, status);
     }
+	
+	@Auth(auth=AuthType.INTERFACE, description="获取教师信息接口")
+	@RequestMapping(value="/getall.json", method = RequestMethod.GET)
+	public @ResponseBody 
+	Object getall(HttpServletRequest request, HttpServletResponse response) {
+		return teacherInfoService.getTeacherInfoList();
+	}
 
-	@Auth(auth=AuthType.INTERFACE)
+	@Auth(auth=AuthType.INTERFACE, description="新增教师接口")
 	@RequestMapping(value="/create.json", method = RequestMethod.POST)
 	public @ResponseBody 
 	CommonResult create(HttpServletRequest request, HttpServletResponse response,

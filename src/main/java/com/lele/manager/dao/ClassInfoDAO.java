@@ -16,9 +16,9 @@ public class ClassInfoDAO extends MysqlBaseDAO<ClassInfo> {
 
 	private final String HQL_ENTITY = "ClassInfo"; 
 	
-	public String getClassIdByName(String className) {
-		final String hql = "select classId from " + HQL_ENTITY + " where className = ?0";
-		return this.doQueryUnique(String.class, hql, className);
+	public List<String> getClassKeyIdByName(String className) {
+		final String hql = "select id from " + HQL_ENTITY + " where className = ?0";
+		return this.doQueryList(String.class, hql, className);
 	}
 	
 	public String getClassIdByStartDate(Date startDate) {
@@ -110,6 +110,55 @@ public class ClassInfoDAO extends MysqlBaseDAO<ClassInfo> {
 		}
 		
 		return this.doQuery(hql.toString(), curPage, pageSize, values.toArray());
+	}
+	
+
+	public Pagination<ClassInfo> getClassInfoByTeacherId(int curPage, int pageSize, 
+			String classId, String className, String teacherId, 
+			Date startDate, Date endDate, int scoreLevel, int classGrade) {
+
+		StringBuilder hql = new StringBuilder();
+
+		List<Object> values = new ArrayList<Object>();
+
+		if (scoreLevel != 0) {
+			hql.append("from " + HQL_ENTITY + " j join j.scoreLevel s where 1=1 ");
+			
+			hql.append(" and s.scoreIndex = ?" + values.size());
+			values.add(scoreLevel);
+		}
+		else
+		{
+			hql.append("from " + HQL_ENTITY + " j where 1=1 ");
+		}
+		
+		if (!StringUtils.isNullOrEmpty(classId)) {
+			hql.append(" and j.classId like ?" + values.size());
+			values.add("%" + classId + "%");
+		}
+		if (!StringUtils.isNullOrEmpty(className)) {
+			hql.append(" and j.className like ?" + values.size());
+			values.add("%" + className + "%");
+		}
+		if (!StringUtils.isNullOrEmpty(teacherId)) {
+			hql.append(" and j.teacherId = ?" + values.size());
+			values.add(teacherId);
+		}
+		if (startDate != null) {
+			hql.append(" and j.startDate <= ?" + values.size());
+			values.add(startDate);
+		}
+		if (endDate != null) {
+			hql.append(" and j.endDate >= ?" + values.size());
+			values.add(endDate);
+		}
+		if (classGrade > 0) {
+			hql.append(" and j.classGrade = ?" + values.size());
+			values.add(classGrade);
+		}
+		
+		return this.doQuery(hql.toString(), curPage, pageSize, values.toArray());
+
 	}
 	
 	public void checkin(String classId) {

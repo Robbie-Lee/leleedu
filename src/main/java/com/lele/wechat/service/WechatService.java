@@ -133,12 +133,12 @@ public class WechatService {
 		
 		System.out.println("studentId: " + studentId);
 		StudentInfo sInfo = studentInfoDao.getStudentInfoById(studentId);
-		return (int)(cInfo.getClassPrice() * discountService.getDiscountRate(sInfo.getTotalFee()));
+		return (int)(cInfo.getClassPrice() * discountService.getDiscount(sInfo.getTotalFee()).getDiscountRate());
 	}
 	
-	public Pagination<RegisterInfo> getEnrollInfoByIds(int curPage, int pageSize, String studentId) {
+/*	public Pagination<RegisterInfo> getEnrollInfoByIds(int curPage, int pageSize, String studentId) {
 		return registerInfoDao.getStudentRegisterInfo(curPage, pageSize, studentId);
-	}
+	}*/
 	
 /*	public Pagination<EnrollInfo> getEnrollInfoByIds(int curPage, int pageSize, String studentId) {
 		

@@ -32,27 +32,94 @@ public class RegisterInfoDAO extends MysqlBaseDAO<RegisterInfo> {
 		return this.doQueryCount(hql, classId);
 	}
 	
-	public Pagination<RegisterInfo> getStudentRegisterInfo(int curPage, int pageSize, String studentId) {
+/*	public Pagination<RegisterInfo> getStudentRegisterInfo(int curPage, int pageSize, String studentId) {
 		final String hql = "from " + HQL_ENTITY + " where studentId = ?0";
 		return this.doQuery(hql, curPage, pageSize, studentId);
-	}
+	}*/
 	
 	public void updateScore(String studentId, String classId, int score) {
 		final String hql = "update " + HQL_ENTITY + " set classScore = ?0 where studentId = ?1 and classId = ?2"; 
 		this.executeHsqlWithoutEvict(hql, score, studentId, classId);
 	}
 	
+	public Pagination<RegisterInfo> getRegisterInfoById(int curPage, int pageSize, String studentKeyId) {
+		final String hql = "from " + HQL_ENTITY + " as r left join r.studentInfos as sis "
+				+ "where sis = ?0";
+		return this.doQuery(hql, curPage, pageSize, studentKeyId);
+	}
+	
 	public Pagination<RegisterInfo> getRegisterInfoByPage(int curPage, int pageSize, 
-					String classId, List<String> studentId, Date startDate, Date endDate) {
+			List<String> classIds, List<String> studentIds, Date startDate, Date endDate) {
 
 		StringBuilder hql = new StringBuilder();
-		hql.append("from " + HQL_ENTITY + " where 1=1");
-
+		hql.append("from " + HQL_ENTITY + " as r ");
+		
 		List<Object> values = new ArrayList<Object>();
+		
+		if (classIds == null && studentIds == null) {
+			hql.append(" where 1=1 ");
+		}
+		else if (classIds != null && studentIds == null) {
+			hql.append(" left join r.classInfos as cis where cis.id in (");
+			
+			for (int i = 0;i < classIds.size();i ++) {
+				int size = i + values.size();
+				hql.append("?" + size);
+				if (i < classIds.size() - 1) {
+					hql.append(",");
+				}
+				else {
+					hql.append(")");
+				}
+				
+				values.add(classIds.get(i));
+			}
+		}
+		else if (classIds == null && studentIds != null) {
+			hql.append(" left join r.studentInfos as sis where sis.id in (");
+			
+			for (int i = 0;i < studentIds.size();i ++) {
+				int size = i + values.size();
+				hql.append("?" + size);
+				if (i < studentIds.size() - 1) {
+					hql.append(",");
+				}
+				else {
+					hql.append(")");
+				}
+				
+				values.add(studentIds.get(i));
+			}
+		}
+		else {
+			hql.append(" left join r.classInfos as cis left join r.studentInfos as sis where cis.id in (");
 
-		if (!Strings.isNullOrEmpty(classId)) {
-			hql.append(" and classId = ?" + values.size());
-			values.add(classId);
+			for (int i = 0;i < classIds.size();i ++) {
+				int size = i + values.size();
+				hql.append("?" + size);
+				if (i < classIds.size() - 1) {
+					hql.append(",");
+				}
+				else {
+					hql.append(")");
+				}
+				
+				values.add(classIds.get(i));
+			}
+			
+			hql.append(" and sis.id in (");
+			for (int i = 0;i < studentIds.size();i ++) {
+				int size = i + values.size();
+				hql.append("?" + size);
+				if (i < studentIds.size() - 1) {
+					hql.append(",");
+				}
+				else {
+					hql.append(")");
+				}
+				
+				values.add(studentIds.get(i));
+			}			
 		}
 		
 		if (startDate != null) {
@@ -65,24 +132,6 @@ public class RegisterInfoDAO extends MysqlBaseDAO<RegisterInfo> {
 			values.add(endDate);
 		}
 		
-		if (studentId != null) {
-			
-			hql.append(" and studentId in (");
-			
-			for (int i = 0;i < studentId.size();i ++) {
-				int size = i + values.size();
-				hql.append("?" + size);
-				if (i < studentId.size() - 1) {
-					hql.append(",");
-				}
-				else {
-					hql.append(")");
-				}
-				
-				values.add(studentId.get(i));
-			}
-		}
-
 		return this.doQuery(hql.toString(), curPage, pageSize, values.toArray());
 	}
 }

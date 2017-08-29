@@ -1,5 +1,6 @@
 package com.lele.manager.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -25,21 +26,25 @@ public class RegisterInfoService {
 	
 	@Autowired
 	ClassInfoDAO classInfoDao;
-	
+
+	public Pagination<RegisterInfo> getRegisterInfoById(int curPage, int pageSize, String studentId) {
+		String studentKeyId = studentInfoDao.getStudentKeyIdById(studentId);
+		return registerInfoDao.getRegisterInfoById(curPage, pageSize, studentKeyId);
+	}
+
 	public Pagination<RegisterInfo> getRegisterInfoByPage(int curPage, int pageSize, 
 			String className, String studentName, Date startDate, Date endDate) {
-	
 		
 		List<String> sidList = null;
 		
 		if (!Strings.isNullOrEmpty(studentName)) {
-			sidList = studentInfoDao.getStudentIdByName(studentName);
+			sidList = studentInfoDao.getStudentKeyIdByName(studentName);
 		}
 		
-		String cidList = "";
+		List<String> cidList = null;
 		
 		if (!Strings.isNullOrEmpty(className)) {
-			classInfoDao.getClassIdByName(className);
+			cidList = classInfoDao.getClassKeyIdByName(className);
 		}
 		
 		return registerInfoDao.getRegisterInfoByPage(curPage, pageSize, cidList, sidList, startDate, endDate);
