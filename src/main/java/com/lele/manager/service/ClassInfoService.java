@@ -2,7 +2,9 @@ package com.lele.manager.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,18 +30,36 @@ public class ClassInfoService {
 	@Autowired
 	StudentInfoDAO studentInfoDao;
 	
-	public List<StudentInfo> getStudentByClassId(String classId) {
+	public List<Map<String, Object>> getStudentByClassId(String classId) {
 		
-		List<StudentInfo> studentList = new ArrayList<StudentInfo>();
-		List<RegisterInfo> ris = registerInfoDao.getRegisterInfo(classId);
+		List<Map<String, Object>> studentLMap = new ArrayList<Map<String, Object>>();
 		
-		for (RegisterInfo ri : ris) {
+//		List<StudentInfo> studentList = new ArrayList<StudentInfo>();
+		List<RegisterInfo> ris = registerInfoDao.getRegisterInfo(classInfoDao.getClassKeyIdById(classId));
+		
+		for (int i = 0;i < ris.size();i ++) {
+			Object obj = (Object) ris.get(i);
+			Object o[] = (Object[]) obj;
+			RegisterInfo ri = (RegisterInfo) o[0];
+			
 			for (StudentInfo si : ri.getStudentInfos()) {
-				studentList.add(si);
+//				studentList.add(si);
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("studentId", si.getStudentId());
+				map.put("name", si.getName());
+				map.put("sex", si.getSex());
+				map.put("attendYear", si.getAttendYear());
+				map.put("school", si.getSchool());
+				map.put("guarder", si.getGuarder());
+				map.put("guarderName", si.getGuarderName());
+				map.put("guarderPhone", si.getGuarderPhone());
+				map.put("classScore", ri.getClassScore());
+				
+				studentLMap.add(map);
 			}
 		}
 		
-		return studentList;
+		return studentLMap;
 	}
 	
 	public Pagination<ClassInfo> getClassInfoByPage(int curPage, int pageSize, 
@@ -83,6 +103,7 @@ public class ClassInfoService {
 		classInfo.setTeacherId(teacherId);
 		classInfo.setClassGrade(classGrade);
 		classInfo.setRegisterLimit(registerLimit);
+		classInfo.setValid(true);
 		
 		classInfoDao.save(classInfo);
 	}

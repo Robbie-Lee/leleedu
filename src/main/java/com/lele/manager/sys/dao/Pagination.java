@@ -27,7 +27,7 @@ public class Pagination<T> implements Serializable {
 	public Pagination() {
 		
 	}
-
+	
 	public Pagination(String resultHql, Session session, int pageNumber, int pageSize, Object... values) {
 		Query resultQuery = session.createQuery(resultHql);
 		this.pageNumber = pageNumber;

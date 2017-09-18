@@ -9,8 +9,6 @@ public class LoginResult implements Serializable {
 	private static final long serialVersionUID = -1193204165364345117L;
 
 	private User user;
-//	private long userId;
-//	private String userName;
 	
 	private String loginStatus;
 	private String authUrl;

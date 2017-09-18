@@ -49,10 +49,10 @@ body{font-family: '微软雅黑';}
         </div>
 		<div class="weui-cell weui-cell_select weui-cell_select-after">
                 <div class="weui-cell__hd">
-                    <label for="" class="weui-label">入学年份</label>
+                    <label for="" class="weui-label">小学入学年份</label>
                 </div>
                 <div class="weui-cell__bd">
-                    <input type="text" class="weui-input" name="attendYear" data-required="true" data-descriptions="attendYear" maxlength="4" placeholder="入学年份">
+                    <input type="text" class="weui-input" name="attendYear" data-required="true" data-descriptions="attendYear" maxlength="4" placeholder="小学入学年份">
                 </div>
          </div>
 		<div class="weui-cell">

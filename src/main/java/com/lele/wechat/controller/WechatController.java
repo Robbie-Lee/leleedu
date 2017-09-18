@@ -12,6 +12,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +32,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.lele.manager.entity.ClassInfo;
 import com.lele.manager.entity.EnrollInfo;
 import com.lele.manager.entity.RegisterInfo;
+import com.lele.manager.entity.ScoreLevel;
 import com.lele.manager.entity.StudentInfo;
 import com.lele.manager.service.ClassInfoService;
 import com.lele.manager.service.RegisterInfoService;
@@ -376,7 +379,7 @@ public class WechatController {
 		String[] idandcode = studentId.split("idandcode");
 		studentId = idandcode[0];
 		
-		Pagination<RegisterInfo> eis = registerInfoService.getRegisterInfoById(curPage, pageSize, studentId);//wechatService.getEnrollInfoByIds(curPage, pageSize, studentId);
+		Pagination<Map> eis = registerInfoService.getRegisterInfoById(curPage, pageSize, studentId);//wechatService.getEnrollInfoByIds(curPage, pageSize, studentId);
 		mv.addObject("enrollinfo", eis);
 		
 		return mv;
@@ -391,7 +394,30 @@ public class WechatController {
 		
 		String[] idandcode = studentId.split("idandcode");
 		studentId = idandcode[0];
+
+//		scoreLevelService.getScoreLevel(scoreIndex);
 		
-		return registerInfoService.getRegisterInfoById(curPage, pageSize, studentId);//wechatService.getEnrollInfoByIds(curPage, pageSize, studentId);
+		Pagination<Map> pri = registerInfoService.getRegisterInfoById(curPage, pageSize, studentId);//wechatService.getEnrollInfoByIds(curPage, pageSize, studentId);
+		
+		Pagination<EnrollInfo> pei = new Pagination<EnrollInfo>();
+		pei.setPageNumber(pri.getPageNumber());
+		pei.setPageSize(pri.getPageSize());
+		pei.setTotalElements(pri.getTotalElements());
+
+		List<Map> result = pri.getElements();
+		ScoreLevel scoreLevel = null;
+		
+		for (Map map : result) {
+			scoreLevel = (ScoreLevel) map.get("scoreLevel");
+//			scoreLevel = JSON.parseObject(, ScoreLevel.class);
+			map.remove("scoreLevel");
+		}
+		
+		EnrollInfo ei = new EnrollInfo();
+		ei.setEnrollClass(pri.getElements());
+		ei.setScoreLevel(scoreLevel);
+		pei.setElements(ei);
+		
+		return pei;
 	}
 }

@@ -70,9 +70,6 @@ public class ClassInfo implements Serializable {
 	
 	private boolean valid;
 	
-	@Transient
-	private int classScore;
-
 	public long getId() {
 		return id;
 	}
@@ -216,14 +213,6 @@ public class ClassInfo implements Serializable {
 
 	public void setValid(boolean valid) {
 		this.valid = valid;
-	}
-
-	public int getClassScore() {
-		return classScore;
-	}
-
-	public void setClassScore(int classScore) {
-		this.classScore = classScore;
 	}
 
 	public int getRegisterTotalFee() {

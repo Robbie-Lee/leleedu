@@ -16,6 +16,10 @@ public class TeacherInfoService {
 	@Autowired
 	TeacherInfoDAO teacherInfoDao;
 	
+	public TeacherInfo getTeacherInfoByKeyId(String teacherId) {
+		return teacherInfoDao.getTeacherInfoById(teacherId);
+	}
+	
 	public Pagination<TeacherInfo> getTeacherInfoByPage(int curPage, int pageSize, 
 			String teacherId, String teacherName, String sex, 
 			String phone, int status) {

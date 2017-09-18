@@ -16,9 +16,14 @@ public class ClassInfoDAO extends MysqlBaseDAO<ClassInfo> {
 
 	private final String HQL_ENTITY = "ClassInfo"; 
 	
-	public List<String> getClassKeyIdByName(String className) {
-		final String hql = "select id from " + HQL_ENTITY + " where className = ?0";
-		return this.doQueryList(String.class, hql, className);
+	public Long getClassKeyIdById(String classId) {
+		final String hql = "select id from " + HQL_ENTITY + " where classId = ?0";
+		return this.doQueryUnique(Long.class, hql, classId);
+	}
+	
+	public List<Long> getClassKeyIdByName(String className) {
+		final String hql = "select id from " + HQL_ENTITY + " where className like ?0";
+		return this.doQueryList(Long.class, hql, "%"+className+"%");
 	}
 	
 	public String getClassIdByStartDate(Date startDate) {

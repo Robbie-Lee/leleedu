@@ -95,10 +95,10 @@ public class LoginController {
 			afterLogin(request, response, loginResult, rememberMe);
 		}
 		
-		for (Role role : loginResult.getUser().getRole()) {
+/*		for (Role role : loginResult.getUser().getRole()) {
 			role.setResource(null);
 		}
-		
+*/		
 		return loginResult;
 	}
 }

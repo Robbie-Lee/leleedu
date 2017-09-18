@@ -3,6 +3,8 @@ package com.lele.manager.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.base.Strings;
+import com.lele.manager.dao.ClassInfoDAO;
 import com.lele.manager.dao.DiscountDAO;
 import com.lele.manager.dao.RegisterInfoDAO;
 import com.lele.manager.dao.StudentInfoDAO;
@@ -12,25 +14,46 @@ import com.lele.manager.sys.dao.Pagination;
 
 @Service("studentInfoService")
 public class StudentInfoService {
+	
 	@Autowired
 	StudentInfoDAO studentInfoDao;
 	
+	@Autowired
+	ClassInfoDAO classInfoDao;
+
 	@Autowired
 	DiscountDAO discountDao;
 
 	@Autowired
 	RegisterInfoDAO registerInfoDao;
 	
-	public void updateStudentScore(String studentId, String classIds, String classScores, int scoreIndex) {
-		
-		String[] cis = classIds.split(",");
-		String[] css = classScores.split(",");
-		
-		for (int i = 0;i < cis.length;i ++) {
-			registerInfoDao.updateScore(studentId, cis[i], Integer.valueOf(css[i]));
-		}
-		
+	public void updateStudentScoreLevel(String studentId, int scoreIndex) {
 		studentInfoDao.updateScoreLevel(studentId, scoreIndex);
+	}
+	
+	public void updateStudentScore(String classId, String studentIds, String classScores) {
+		
+		if (!Strings.isNullOrEmpty(studentIds) && !Strings.isNullOrEmpty(classScores)) {
+			String[] sis = studentIds.split(",");
+			String[] css = classScores.split(",");
+
+			long classKeyId = classInfoDao.getClassKeyIdById(classId);
+			
+			if (css.length > 0 && sis.length > 0) {
+				for (int i = 0;i < sis.length;i ++) {
+					long studentKeyId = studentInfoDao.getStudentKeyIdById(sis[i]);
+					registerInfoDao.updateScore(studentKeyId, 
+							classKeyId, Integer.valueOf(css[i]));
+				}
+			}
+/*			
+			if (css.length > 0 && cis.length > 0) {
+				for (int i = 0;i < cis.length;i ++) {
+					registerInfoDao.updateScore(studentKeyId, 
+							classInfoDao.getClassKeyIdById(cis[i]), Integer.valueOf(css[i]));
+				}
+			}
+*/		}
 	}
 	
 	public StudentInfo getStudentInfoByCode(String code) {

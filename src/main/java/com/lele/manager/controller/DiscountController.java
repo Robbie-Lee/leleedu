@@ -26,7 +26,7 @@ public class DiscountController extends BaseController {
 	DiscountService discountService;
 	
 	@Auth(auth=AuthType.PAGE, description="折扣配置页面")
-	@RequestMapping(value="/discount.do", method = RequestMethod.GET)
+	@RequestMapping(value="/manager.do", method = RequestMethod.GET)
 	public ModelAndView discount(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
 		Pagination<Discount> discountPage = discountService.getDiscountInfo(0, 20);

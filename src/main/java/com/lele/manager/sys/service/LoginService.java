@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.lele.manager.enums.LoginStatus;
 import com.lele.manager.sys.dao.UserCookieDAO;
 import com.lele.manager.sys.dao.UserDAO;
+import com.lele.manager.sys.entity.Role;
 import com.lele.manager.sys.entity.User;
 import com.lele.manager.sys.entity.UserCookie;
 import com.lele.manager.utils.AES;
@@ -37,14 +38,19 @@ public class LoginService {
 		}
 		
 		if (userDao.verifyPassword(user.getId(), user.getAccount(), password)) {
+			user.setCreateTime(null);
+			user.setModifyTime(null);
+			
+			for (Role role : user.getRole()) {
+				role.setResource(null);
+			}
+			
 			loginResult.setLoginStatus(LoginStatus.LOGIN_SUCCESS.status());
 			loginResult.setUser(user);
-//			loginResult.setUserId(user.getId());
-//			loginResult.setUserName(userName);
 			loginResult.setResultFlag(0);
 		}
 		else {
-			loginResult.setLoginStatus(LoginStatus.USER_NOT_EXIST.status());
+			loginResult.setLoginStatus(LoginStatus.PASSWORD_ERROR.status());
 		}
 		
 		return loginResult;
@@ -56,7 +62,9 @@ public class LoginService {
 		loginResult.setResultFlag(1);
 
 		User user = userDao.getUserByName(loginName);
-		
+		for (Role role : user.getRole()) {
+			role.setResource(null);
+		}
 		if (cookieService.verifyCookie(loginName, cookieStr)) {
 			loginResult.setLoginStatus(LoginStatus.LOGIN_SUCCESS.status());
 			loginResult.setUser(user);

@@ -68,16 +68,14 @@ public class StudentController extends BaseController {
         return mv;  
     }
 
-	@Auth(auth=AuthType.INTERFACE, description="学员成绩提交接口")
-	@RequestMapping(value="/score.json", method = RequestMethod.POST)
+	@Auth(auth=AuthType.INTERFACE, description="学员等级提交接口")
+	@RequestMapping(value="/scoreLevel.json", method = RequestMethod.POST)
 	public @ResponseBody 
-	CommonResult score(HttpServletRequest request, HttpServletResponse response,
+	CommonResult scoreLevel(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "studentId", required = true) String studentId,
-			@RequestParam(value = "classIds", required = false, defaultValue = "") String classIds,
-			@RequestParam(value = "classScores", required = false, defaultValue = "") String classScores,
-			@RequestParam(value = "scoreLevel", required = false, defaultValue = "0") int scoreLevel) throws Exception { 
+			@RequestParam(value = "scoreLevel", required = true) int scoreLevel) throws Exception { 
 
-		studentInfoService.updateStudentScore(studentId, classIds, classScores, scoreLevel);
+		studentInfoService.updateStudentScoreLevel(studentId, scoreLevel);
 		
         CommonResult cr = new CommonResult();
         cr.setResult("success");
@@ -85,7 +83,24 @@ public class StudentController extends BaseController {
         
         return cr;  
     }
-	
+
+	@Auth(auth=AuthType.INTERFACE, description="学员课程成绩提交接口")
+	@RequestMapping(value="/score.json", method = RequestMethod.POST)
+	public @ResponseBody 
+	CommonResult score(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam(value = "classId", required = true) String classId,
+			@RequestParam(value = "studentIds", required = true) String studentIds,
+			@RequestParam(value = "classScores", required = true) String classScores) throws Exception { 
+
+		studentInfoService.updateStudentScore(classId, studentIds, classScores);
+		
+        CommonResult cr = new CommonResult();
+        cr.setResult("success");
+        cr.setErrCode(classId);
+        
+        return cr;  
+    }
+
 	@Auth(auth=AuthType.INTERFACE, description="搜索学员接口")
 	@RequestMapping(value="/search.json", method = RequestMethod.GET)
 	public @ResponseBody 

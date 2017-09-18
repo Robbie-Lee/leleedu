@@ -26,15 +26,15 @@ public class StudentInfoDAO extends MysqlBaseDAO<StudentInfo> {
 		return this.doQueryUnique(hql, studentId);
 	}
 
-	public String getStudentKeyIdById(String studentId) {
+	public long getStudentKeyIdById(String studentId) {
 		final String hql = "select id from " + HQL_ENTITY + " where studentId = ?0";
-		return this.doQueryUnique(String.class, hql, studentId);
+		return this.doQueryUnique(Long.class, hql, studentId);
 	}
 
-	public List<String> getStudentKeyIdByName(String studentName) {
-		final String hql = "select id from " + HQL_ENTITY + " where name = ?0";
+	public List<Long> getStudentKeyIdByName(String studentName) {
+		final String hql = "select id from " + HQL_ENTITY + " where name like ?0";
 		
-		return this.doQueryList(String.class, hql, studentName);
+		return this.doQueryList(Long.class, hql, "%"+studentName+"%");
 	}
 
 	public void minusTotalFee(String studentId, int fee) {

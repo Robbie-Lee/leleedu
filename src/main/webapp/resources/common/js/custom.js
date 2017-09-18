@@ -3,6 +3,7 @@ $(function(){
 	tool.autoSwitchIcon2Active();
 	tool.autoLogin();
 	$('[data-toggle="tooltip"]').tooltip();
+	$('[data-toggle="popover"]').popover();
 	$('input.date-input').each(function(){
 		var $this = $(this), 
 			isBody = typeof $this.attr('data-per') == 'undefined'?true:false,
@@ -254,18 +255,37 @@ var ajaxDone = {
 		},
 		teacherList: function(result){
 			var $teacherList = $('select.teacher-list'), optionsHtml = llas.initSelectStr;;
-			for(var key in result.elements){
-				optionsHtml += '<option value="'+result.elements[key].name+'">'+result.elements[key].name+'</option>';
+			for(var key in result){
+				optionsHtml += '<option data-id="'+result[key].teacherId+'" value="'+result[key].name+'">'+result[key].name+'</option>';
 			}
 			$teacherList.html(optionsHtml);
 		},
 		studentList: function(result){
-			var $studentList = $('#enroll-student-id'), optionsHtml = llas.initSelectStr;;
+			var $studentList = $('#enroll-student-id'), optionsHtml = llas.initSelectStr, 
+				studentInfo = '';
 			for(var key in result.elements){
-				optionsHtml += '<option value="'+result.elements[key].studentId+'">'+result.elements[key].name+'</option>';
+				
+				studentInfo = result.elements[key].school +'&nbsp;&nbsp;&nbsp;&nbsp;'+ result.elements[key].attendYear + '年入学&nbsp;&nbsp;&nbsp;&nbsp;' 
+				+ studentManager.guarderList[result.elements[key].guarder] + '电话：' + result.elements[key].guarderPhone;
+				optionsHtml += '<option value="'+result.elements[key].studentId+'" data-subtext="'+studentInfo+'">'+result.elements[key].name+'</option>';
 			}
-			$studentList.html(optionsHtml);
+			$studentList.html(optionsHtml).selectpicker('refresh');
 		},
+		classList: function(result){
+			
+			var $classList = $('#class-select'), optionsHtml = '', 
+				classInfo = '';
+				
+			for(var key in result.elements){
+				
+				classInfo = '[课程号]' + result.elements[key].classId +'&nbsp;&nbsp;' + '[价格]' + result.elements[key].classPrice
+				+'元&nbsp;&nbsp;[老师]' + result.elements[key].teacherName; 
+				//+ '[最低成绩]' + result.elements[key].scoreLevel.scoreDescription;
+				optionsHtml += '<option value="'+result.elements[key].classId+'" data-subtext="'+classInfo+'">'+result.elements[key].className+'</option>';
+			}
+			
+			$classList.html(optionsHtml).selectpicker('refresh');
+		},		
 		editClass: function(result){
 			this.createClass(result);
 		},
@@ -291,14 +311,36 @@ var ajaxDone = {
 			}	
 		},
     	studentLook: function(result){
-			var content = '';
-
-			if(result.length > 0){
-				content = result.join('<br>');
-			}else{
-                content = '没有学生报名';
+    		var tbodyHTML = '', elements = result;
+    		
+    		for(var key in elements) {
+    			
+				tbodyHTML += '<tr>';
+				tbodyHTML += '<td class="name">'+elements[key].name+'</td>';
+				tbodyHTML += '<td>'+elements[key].school+'</td>';
+				tbodyHTML += '<td>'+elements[key].attendYear+'</td>';
+				tbodyHTML += '<td>'+elements[key].guarderName+'['+studentManager.guarderList[elements[key].guarder]+']</td>';
+				tbodyHTML += '<td>'+elements[key].guarderPhone+'</td>';
+				tbodyHTML += '<td><input type="number" value=""></td>';
+				tbodyHTML += '</tr>';   			
+    			
+    		}
+			if('' == tbodyHTML){
+				tbodyHTML = llas.noDataTrHTML;
 			}
-            layer.msg(content);
+    		$('#look-student-table').find('tbody').html(tbodyHTML);
+    		
+		},
+		registerStudentList: function(result){
+			var $studentList = $('#drop-student-id'), optionsHtml = '', 
+			studentInfo = '';
+			for(var key in result){
+				
+				studentInfo = result[key].school +'&nbsp;&nbsp;&nbsp;&nbsp;'+ result[key].attendYear + '年入学&nbsp;&nbsp;&nbsp;&nbsp;' 
+				+ studentManager.guarderList[result[key].guarder] + '电话：' + result[key].guarderPhone;
+				optionsHtml += '<option value="'+result[key].studentId+'" data-subtext="'+studentInfo+'">'+result[key].name+'</option>';
+			}
+			$studentList.html(optionsHtml).selectpicker('refresh');			
 		},
 		classSearch: function(result){
 			var $tbody = $('#search-table').find('tbody'), tbodyHTML = '', elements = result.elements, status_html;
@@ -307,7 +349,12 @@ var ajaxDone = {
 				if(elements[key].valid == 1){
 					status_html = '<button type="button" class="btn btn-link llas-left" data-id="'+elements[key].classId+'" data-value="false" onclick="classManager.changeStatus(this, \'changeClassStatus\');">删除</button>';
 					status_html +=   '<span class="btn-link llas-left">|</span>'
-	            					+'<button type="button" class="btn btn-link llas-left" data-id="'+elements[key].classId+'" data-grade="'+elements[key].classGrade+'" onclick="classManager.enrollClass(this, \'studentList\');">报名</button>';
+						+'<button type="button" class="btn btn-link llas-left" data-id="'+elements[key].classId+'" data-grade="'+elements[key].classGrade+'" onclick="classManager.enrollClass(this, \'studentList\');">报名</button>';
+					if(elements[key].registerCount){
+						status_html +=   '<span class="btn-link llas-left">|</span>'
+							+'<button type="button" class="btn btn-link llas-left" data-id="'+elements[key].classId+'" onclick="classManager.dropClassMethod(this, \'registerStudentList\');">退课</button>';
+						
+					}
 				}else{
 					status_html = '<button type="button" class="btn btn-link llas-left" data-id="'+elements[key].classId+'" data-value="true" onclick="classManager.changeStatus(this, \'changeClassStatus\');">恢复</button>';
 				}
@@ -425,27 +472,31 @@ var ajaxDone = {
 			}	
 		},
 		enrollInfo: function(result){
-			var $tbody = $('#enroll-class-table').find('tbody'), tbodyHTML = '', elements = result.elements[0].enrollClass;
-			for(var key in elements){
-				tbodyHTML += '<tr id="'+elements[key].classId+'">';
-				tbodyHTML += '<td class="className">'+elements[key].className+'</td>';
-				tbodyHTML += '<td class="teacherName">'+elements[key].teacherName+'</td>';
-				
-				tbodyHTML += '<td>';
-				if(elements[key].classCount > elements[key].checkinCount){
-					tbodyHTML += '<span class="" style="llas-success-text">进行中</span>';
-				}else{
-					tbodyHTML += '<span class="" style="llas-success-text">已结束</span>';
+			
+			var $tbody = $('#enroll-class-table').find('tbody'), tbodyHTML = '', elements = result.elements[0];
+			if(result.elements.length > 0){
+				for(var key in elements.enrollClass){
+					tbodyHTML += '<tr id="'+elements.enrollClass[key].classId+'">';
+					tbodyHTML += '<td class="className">'+elements.enrollClass[key].className+'</td>';
+					tbodyHTML += '<td class="teacherName">'+elements.enrollClass[key].teacherName+'</td>';
+					
+//					tbodyHTML += '<td>';
+//					if(elements.enrollClass[key].classCount > elements.enrollClass[key].classInfos[0].checkinCount){
+//						tbodyHTML += '<span class="" style="llas-success-text">进行中</span>';
+//					}else{
+//						tbodyHTML += '<span class="" style="llas-success-text">已结束</span>';
+//					}
+//					tbodyHTML += '</td>';
+					tbodyHTML += '<td class="startDate llas-nowrap">'+elements.enrollClass[key].classScore+'</td>';
+					tbodyHTML += '</tr>';
 				}
-				tbodyHTML += '</td>';
-				tbodyHTML += '<td class="startDate llas-nowrap"><input class="classScores" value="'+elements[key].classScore+'" type="number" max="100"></td>';
-				tbodyHTML += '</tr>';
-			}
-			if('' == tbodyHTML){
+			}else{
 				tbodyHTML = llas.noDataTrHTML;
 			}
 			$tbody.html(tbodyHTML);
-			$('#enroll-course-grade').val(result.elements[0].scoreLevel.scoreIndex);
+			if(result.elements.length > 0 && elements.scoreLevel){
+				$('#enroll-course-grade').val(elements.scoreLevel.scoreIndex);
+			}
 			var dPage = {
 				"data":"",
 				"id":"pagination-class",
@@ -504,10 +555,11 @@ var ajaxDone = {
 			var $tbody = $('#search-table').find('tbody'), tbodyHTML = '', elements = result.elements;
 			for(var key in elements){
 				tbodyHTML += '<tr id="'+elements[key].classId+'">';
+				tbodyHTML += '<td class="classId">'+elements[key].classId+'</td>';
+				tbodyHTML += '<td class="className">'+elements[key].className+'</td>';
 				tbodyHTML += '<td class="teacherName">'+elements[key].teacherName+'</td>';
 				tbodyHTML += '<td class="startDate llas-nowrap">'+tool.formatDate(elements[key].startDate, 'YYYY-MM-DD')+'</td>';
 				tbodyHTML += '<td class="endDate llas-nowrap">'+tool.formatDate(elements[key].endDate, 'YYYY-MM-DD')+'</td>';
-				tbodyHTML += '<td class="className">'+elements[key].className+'</td>';
 				tbodyHTML += '<td class="attendCount">'+elements[key].attendCount+'</td>';
 				tbodyHTML += '<td class="studentCount">'+elements[key].studentCount+'</td>';
 				tbodyHTML += '<td>¥<span class="teacherSalary">'+elements[key].teacherSalary+'</span></td>';
@@ -527,6 +579,9 @@ var ajaxDone = {
 			var $tbody = $('#search-table').find('tbody'), tbodyHTML = '', status = '激活', targetStatus = 'false', targetText = '停用';
 			if(result.length > 0){
 				for(var i in result){
+					status = '激活'; 
+					targetStatus = 'false'; 
+					targetText = '停用';
 					if(!result[i].enable || result[i].enable == 'false') {
 						status = '停用';
 						targetStatus = 'true';
@@ -537,6 +592,22 @@ var ajaxDone = {
 					tbodyHTML += '<td class="email">'+result[i].email+'</td>';
 					tbodyHTML += '<td class="name">'+result[i].name+'</td>';
 					tbodyHTML += '<td class="phone">'+result[i].phone+'</td>';
+					tbodyHTML += '<td class="resourceId">'
+						+'<a role="button" data-toggle="collapse" href="#collapse-'+result[i].id+'" aria-expanded="false" aria-controls="collapseExample">所属组</a>'
+						
+				
+				+'<div class="collapse" id="collapse-'+result[i].id+'">'
+				+'<div class="panel panel-success">'
+				+'<div class="panel-body">';
+				
+				for(var j in result[i].role){
+					tbodyHTML += '<div class="res-item" data-resid="'+result[i].role[j].id+'">&nbsp;&nbsp;'+result[i].role[j].name+'</div>';
+					
+				}
+				tbodyHTML +='</div>'
+						  +'</div>'
+						  +'</div>'
+						  +'</div></td>';
 					tbodyHTML += '<td class="createTime llas-nowrap">'+tool.formatDate(result[i].createTime, 'YYYY-MM-DD')+'</td>';
 					tbodyHTML += '<td class="modifyTime llas-nowrap">'+tool.formatDate(result[i].modifyTime, 'YYYY-MM-DD')+'</td>';
 					tbodyHTML += '<td class="enable" data-value="'+result[i].enable+'">'+status+'</td>';
@@ -579,6 +650,168 @@ var ajaxDone = {
 			}else{
 				layer.alert(result.errCode, {icon: 2});
 			}	
+		},
+		registerSearch: function(result){
+
+			var channelList = ['微信','前台'],
+				registerModeList = ['报名','退课'],
+				payModeList = ['微信支付','支付宝', 'POS机', '现金', '其他'];
+			
+			var $tbody = $('#search-table').find('tbody'), tbodyHTML = '', elements = result.elements;
+			for(var key in elements){
+				tbodyHTML += '<tr id="'+elements[key].id+'">';
+				tbodyHTML += '<td>'+elements[key].classInfos[0].classId+'</td>';
+				tbodyHTML += '<td class="className">'+elements[key].classInfos[0].className+'</td>';
+				tbodyHTML += '<td class="startDate llas-nowrap">'+elements[key].classInfos[0].teacherName+'</td>';
+				tbodyHTML += '<td class="endDate llas-nowrap">'+elements[key].studentInfos[0].name+'</td>';
+				tbodyHTML += '<td class="classTime">'+elements[key].studentInfos[0].school+'</td>';
+				tbodyHTML += '<td class="classCount">'+elements[key].studentInfos[0].attendYear+'年</td>';
+				tbodyHTML += '<td class="teacherName">'+payModeList[elements[key].payMode]+'</td>';
+				tbodyHTML += '<td class="classRoom">'+tool.formatDate(elements[key].registerDate, 'YYYY-MM-DD')+'</td>';
+				tbodyHTML += '<td class="registerCount">¥'+elements[key].payFee+'</td>';
+				tbodyHTML += '<td class="registerCount">'+channelList[elements[key].registerChannel]+'</td>';
+				tbodyHTML += '<td class="classDescription" data-value="'+tool.html_encode(elements[key].note)+'"><div class="note-text-div"><span class="glyphicon glyphicon-eye-open" data-container="#date-body" data-toggle="tooltip" data-placement="left" title="'+tool.html_encode(elements[key].note)+'"></span></div></td>';
+				tbodyHTML += '<td class="registerCount">'+registerModeList[elements[key].registerMode]+'</td>';
+				tbodyHTML += '</tr>';
+			}
+			if('' == tbodyHTML){
+				tbodyHTML = llas.noDataTrHTML;
+			}
+			$tbody.html(tbodyHTML);
+			page.init(result.totalElements, result.pageNumber, llas.page);
+			$('span[data-toggle="tooltip"]').tooltip();
+			tool.highlightingOperationRow(llas.currentRowId);
+		},
+		resourceSearch: function(result){
+
+			var $tbody = $('#search-table').find('tbody'), tbodyHTML = '', elements = result.elements;
+			for(var key in elements){
+				tbodyHTML += '<tr id="'+elements[key].id+'">';
+				tbodyHTML += '<td class="registerCount">'+elements[key].id+'</td>';
+				tbodyHTML += '<td class="registerCount">'+elements[key].menuUrl+'</td>';
+				tbodyHTML += '<td class="registerCount">'+elements[key].createTime+'</td>';
+				tbodyHTML += '<td class="registerCount">'+elements[key].modifyTime+'</td>';
+				tbodyHTML += '<td class="registerCount">'+elements[key].action+'</td>';
+				tbodyHTML += '<td class="registerCount">'+elements[key].description+'</td>';
+				tbodyHTML += '</tr>';
+			}
+			if('' == tbodyHTML){
+				tbodyHTML = llas.noDataTrHTML;
+			}
+			$tbody.html(tbodyHTML);
+			page.init(result.totalElements, result.pageNumber, llas.page);
+			tool.highlightingOperationRow(llas.currentRowId);			
+			
+		},
+		roleSearch: function(result){
+			
+			var $tbody = $('#search-table').find('tbody'), tbodyHTML = '', elements = result.elements;
+			for(var key in elements){
+				tbodyHTML += '<tr id="'+elements[key].id+'" data-enable="'+elements[key].enable+'">';
+				tbodyHTML += '<td>'+elements[key].id+'</td>';
+				tbodyHTML += '<td class="name">'+elements[key].name+'</td>';
+				tbodyHTML += '<td class="createTime">'+elements[key].createTime+'</td>';
+				tbodyHTML += '<td class="modifyTime">'+elements[key].modifyTime+'</td>';
+				tbodyHTML += '<td class="resourceId">'
+							+'<a role="button" data-toggle="collapse" href="#collapse-'+elements[key].id+'" aria-expanded="false" aria-controls="collapseExample">权限列表</a>'
+							
+					
+					+'<div class="collapse" id="collapse-'+elements[key].id+'">'
+					+'<div class="panel panel-success">'
+					+'<div class="panel-body">';
+					
+					for(var i in elements[key].resource){
+						tbodyHTML += '<div class="res-item" data-resid="'+elements[key].resource[i].id+'">'+elements[key].resource[i].description+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+elements[key].resource[i].menuUrl+'</div>';
+						
+					}
+					tbodyHTML +='</div>'
+							  +'</div>'
+							  +'</div>'
+							  +'</div></td>';
+				var statusStr = '激活';
+				if(elements[key].enable == 'false'){
+					statusStr = '暂停';
+				}
+				tbodyHTML += '<td class="">'+statusStr+'</td>';
+				tbodyHTML += '<td class="description">'+elements[key].description+'</td>';
+				tbodyHTML += '<td><button type="button" class="btn btn-link llas-left" data-id="" onclick="editTableRowData(this, \'editRole\');">编辑</button></td>';
+				tbodyHTML += '</tr>';
+			}
+			if('' == tbodyHTML){
+				tbodyHTML = llas.noDataTrHTML;
+			}
+			$tbody.html(tbodyHTML);
+			page.init(result.totalElements, result.pageNumber, llas.page);
+			tool.highlightingOperationRow(llas.currentRowId);			
+		},
+		resourceList: function(result){
+			var $select = $('#c-role-resource'), optionHtml = '';
+			
+			for(var key in result) {
+				optionHtml += '<li><input type="checkbox" value="'+result[key].id+'" onchange="changeResourceIds(this);"/>'+result[key].description+'&nbsp;&nbsp;&nbsp;&nbsp;'+result[key].menuUrl+'</li>';
+			}
+			if(optionHtml == ''){
+				optionHtml = '<option value="" disabled>No data</option>';
+			}
+			$select.html(optionHtml);
+		},
+		roleList: function(result){
+			var $select = $('#c-role-resource'), optionHtml = '';
+			
+			for(var key in result) {
+				optionHtml += '<li><input type="checkbox" value="'+result[key].id+'" onchange="changeResourceIds(this);"/>&nbsp;&nbsp;'+result[key].name+'</li>';
+			}
+			if(optionHtml == ''){
+				optionHtml = '<option value="" disabled>No data</option>';
+			}
+			$select.html(optionHtml);
+		},		
+		editRole: function(result){
+			this.createRole(result);
+		},
+		createRole: function(result){
+			if(result.result == 'success'){
+				llas.currentRowId = result.errCode;
+				formSubmitMethod(null, searchFrom, 'roleSearch');
+				layer.closeAll('page');
+			}else{
+				layer.alert('创建失败，请检查您填写的信息是否合理!', {icon: 2});
+			}	
+		},
+		discountSearch: function(result){
+			
+			var $tbody = $('#search-table').find('tbody'), tbodyHTML = '', elements = result.elements;
+			for(var key in elements){
+				tbodyHTML += '<tr id="'+elements[key].id+'">';
+				tbodyHTML += '<td>'+elements[key].id+'</td>';
+				tbodyHTML += '<td class="lowerFee">'+elements[key].lowerFee+'</td>';
+				tbodyHTML += '<td class="upperFee">'+elements[key].upperFee+'</td>';
+				tbodyHTML += '<td class="discountRate">'+elements[key].discountRate+'</td>';
+				tbodyHTML += '</tr>';
+			}
+			if('' == tbodyHTML){
+				tbodyHTML = llas.noDataTrHTML;
+			}
+			$tbody.html(tbodyHTML);
+			page.init(result.totalElements, result.pageNumber, llas.page);
+			tool.highlightingOperationRow(llas.currentRowId);			
+		},
+		createDiscount: function(result){
+			if(result.result == 'success'){
+				llas.currentRowId = result.errCode;
+				formSubmitMethod(null, searchFrom, 'discountSearch');
+				layer.closeAll('page');
+			}else{
+				layer.alert(result.errCode, {icon: 2});
+			}	
+		},
+		teacherRoleList: function(result){
+			var optionHTML = '';
+			for(var i in result) {
+				optionHTML += '<option data-phone="'+result[i].phone+'" value="'+result[i].name+'">'+result[i].name+'</option>'
+			}
+			$('#c-user-account').replaceWith('<select onchange="fillPhone(this)" class="form-control select-defaule-width required" name="account" id="c-user-account">'+optionHTML+'</select>');
+			$('#change-teacher-list').attr('data-target','custom').text('自定义用户');
 		}
 	};
 function loginSystem(_this, _form){
@@ -663,13 +896,38 @@ function fullEditPanelByTr($tr, $tmpl){
 			if(text == 'true'){
 				$this.parents('div.checkbox').find('input[type="checkbox"]').get(0).checked = true;
 			}
+		}if(this.getAttribute('data-type') == 'MULTIPLE'){
+			var arr = [], $ul = $('#c-role-resource');
+			$target.find('.res-item').each(function(){
+				arr.push(this.getAttribute('data-resid'));
+				$ul.find('input[value="'+this.getAttribute('data-resid')+'"]').get(0).checked = true;
+			});
+			this.value = arr.join(',');
+//			$('#c-role-resource').find('input[type="checkbox"]').each(function(){
+//				
+//			});
 		}else{
 			this.value = text;
 		}
 	});
 	
 }
-
+function fillPhone(_this) {
+	var phone = $(_this).find('option:selected').attr('data-phone');
+	$('#c-user-phone').val(phone);
+}
+function changeUserRole(_this) {
+	if(_this.getAttribute('data-target') == 'teacher') {
+		ajaxGetDataMethod({},'/teacher/getall.json', 'get', 'teacherRoleList', null);
+	}else{
+		$('#c-user-account').replaceWith('<input type="text" class="form-control required" maxlength="32" name="account" id="c-user-account" placeholder="登录名称">	');
+		$('#change-teacher-list').attr('data-target','teacher').text('教师列表');
+	}
+}
+function changeTeacherId(_this, elemId) {
+	var teacherId = $(_this).find('option:selected').data('id')
+	$(elemId).val(teacherId);
+}
 function editTableRowData(_this, type, isNew){
 	var $layerModel = $('#layer-modle');
 	if(!isNew) fullEditPanelByTr($(_this).parents('tr'),$layerModel);
@@ -731,12 +989,38 @@ var classManager = {
 		//成绩等级
 		ajaxGetDataMethod('', '/score/level.json', 'get', 'grade', null);
 		//获取教师信息
-		ajaxGetDataMethod({status:0},'/teacher/search.json', 'get', 'teacherList', null);
+		ajaxGetDataMethod({},'/teacher/getall.json', 'get', 'teacherList', null);
 		//分页信息
 		commonManager.page();
 	},
     lookStudent: function(_this){
         ajaxGetDataMethod({classId:_this.getAttribute('data-id')},'/class/register.json', 'get', 'studentLook', null);
+        
+        
+		$layerModel = $('#layer-modle-student-source');
+		layer.open({
+			type: 1,
+			title: '查看已报名学生',
+			shadeClose: false,
+			scrollbar: false,
+			zIndex: 110,
+			skin: 'layui-layer-rim', 
+			btn: ['确定', '取消'],
+			btnAlign: 'c',
+			btn1: function(index, layero){
+					
+			},
+			btn2: function(index, layero){
+				
+			},
+			area: '740px',
+			content: $layerModel,
+			end: function(){
+				
+			}
+		 });        
+        
+        
 	},
 	changeStatus: function(_this, type){
 		var title = '确认删除该课程吗？', icon = 2, classId = _this.getAttribute('data-id'), active = _this.getAttribute('data-value');
@@ -774,12 +1058,40 @@ var classManager = {
 			btn2: function(index, layero){
 				enrollForm.reset();
 			},
-			area: '360px',
+			area: '740px',
 			content: $layerModel,
 			end: function(){
 				enrollForm.reset();
 			}
 		 });
+	},
+	dropClassMethod: function (_this, type){
+
+		ajaxGetDataMethod({classId: _this.getAttribute('data-id')}, '/class/register.json', 'get', type, null);
+		
+		$('#enroll-class-id').val(_this.getAttribute('data-id'));
+		var $layerModel = $('#layer-drop-modle');
+		layer.open({
+			type: 1,
+			title: '报名',
+			shadeClose: false,
+			scrollbar: false,
+			zIndex: 110,
+			skin: 'layui-layer-rim', 
+			btn: ['确定', '取消'],
+			btnAlign: 'c',
+			btn1: function(index, layero){
+				//formSubmitMethod(_this, enrollForm, 'enrollClass');
+			},
+			btn2: function(index, layero){
+				enrollForm.reset();
+			},
+			area: '740px',
+			content: $layerModel,
+			end: function(){
+				enrollForm.reset();
+			}
+		 });		
 	}
 };
 //教师管理模块
@@ -809,6 +1121,7 @@ var studentManager = {
 	init: function(){
 		commonManager.page();
 		ajaxGetDataMethod('', '/score/level.json', 'get', 'grade', null);
+		ajaxGetDataMethod({curPage:1,pageSize: 10000}, '/class/search.json', 'get', 'classList', null);
 	},
 	lookSource: function(_this){
 		var studentId = _this.getAttribute('data-id');
@@ -841,7 +1154,7 @@ var studentManager = {
 				});
 				data.classId = classIdArr.join(',');
 				data.classScores = classScoresArr.join(',');
-				data.scoreLevel = $('#course-grade').val();
+				data.scoreLevel = $('#enroll-course-grade').val();
 				data.studentId = $('#enroll-class-table').attr('data-student');;
 				ajaxGetDataMethod( data, '/student/score.json', 'post', 'studentScore', null );
 			},
@@ -861,11 +1174,12 @@ var attendManager = {
 	init: function(){
 		commonManager.page();
 		//获取教师信息
-		ajaxGetDataMethod({status:0},'/teacher/search.json', 'get', 'teacherList', null);
+		ajaxGetDataMethod({},'/teacher/getall.json', 'get', 'teacherList', null);
 	},
 	checkIn: function(_this){
+		var classText = $(_this).parents('tr').find('.className').text();
 		
-		layer.confirm('确认进行打卡吗？', {
+		layer.confirm('确认对&nbsp;&nbsp;"'+classText+'" 进行打卡吗？', {
 			title:'打卡确认',
 			icon: 1,
 			btn: ['取消', '确认'],
@@ -885,11 +1199,14 @@ var statisticManager = {
 	init: function(){
 		commonManager.page();
 		//获取教师信息
-		ajaxGetDataMethod({status:0},'/teacher/search.json', 'get', 'teacherList', null);
+		ajaxGetDataMethod({},'/teacher/getall.json', 'get', 'teacherList', null);
 	},		
 };
 //系统管理模块
 var sysManager = {
+	init: function(){
+		ajaxGetDataMethod({},'/role/rolelist.json', 'get', 'roleList', null);
+	},
 	changeStatus: function(_this, type){
 		var title = '确认激活该用户吗？', icon = 1, userId = _this.getAttribute('data-id'), active = _this.getAttribute('data-value');
 		if(!active || active == 'false'){
@@ -908,7 +1225,7 @@ var sysManager = {
 		});	
 	},
 	changePassword: function(_this, type){
-		var userId = _this.getAttribute('data-id'), $layerModel = $('#layer-modle-change-password'),password = $('#user-change-password').val();
+		var userId = _this.getAttribute('data-id'), $layerModel = $('#layer-modle-change-password'), password = $('#l-user-change-password').val(), cof_password = '';
 		layer.open({
 			type: 1,
 			title: '修改密码',
@@ -919,6 +1236,12 @@ var sysManager = {
 			btn: ['确定', '取消'],
 			btnAlign: 'c',
 			btn1: function(index, layero){
+				password = $('#user-change-password').val();
+				cof_password = $('#l-user-change-password').val();
+				if(password != cof_password){
+					layer.alert('两次输入密码不一致', {icon: 2});
+					return false;
+				}
 				ajaxGetDataMethod({userId:userId,password:password}, '/manager/changepassword.json', 'POST', type, _this);
 			},
 			btn2: function(index, layero){
@@ -932,6 +1255,30 @@ var sysManager = {
 	}
 	
 };
+
+var registerManager = {
+	init: function(){
+		commonManager.page();
+	},				
+};
+var roleManager = {
+	init: function(){
+		commonManager.page();
+		//获取资源列表
+		ajaxGetDataMethod({},'/resource/resourcelist.json', 'get', 'resourceList', null);
+	},				
+};
+function changeResourceIds(_this) {
+	var $ul = $(_this).parents('ul'), $input = $('#resource-list-hidden'), idsArray = [];
+	
+	$ul.find('input[type="checkbox"]').each(function(){
+		if(this.checked){
+			idsArray.push(this.value);
+		}
+	});
+	
+	$input.val(idsArray.join(','));
+}
 //分页插件
 var  page = {
     "pageId":"",
@@ -1079,3 +1426,6 @@ jQuery.validator.addMethod("phone", function(value, element) {
 	var reg = /^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/;
 	return this.optional(element) || reg.test($.trim(value));   
 }, $.validator.format('您的密码太简单'));
+function ss(_this){
+	$(_this).popover('show')
+}

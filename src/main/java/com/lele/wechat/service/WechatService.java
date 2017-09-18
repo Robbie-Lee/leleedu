@@ -45,7 +45,10 @@ public class WechatService {
 
 	public int withdraw(String classId, String studentId, int fee, int registerChannel, int payMode, String note) {
 
-		RegisterInfo ri = registerInfoDao.getRegisterInfo(classId, studentId);
+		classInfoDao.getClassKeyIdById(classId);
+		
+		RegisterInfo ri = registerInfoDao.getRegisterInfo(classInfoDao.getClassKeyIdById(classId), 
+				studentInfoDao.getStudentKeyIdById(studentId));
 		
 		if (ri != null) {
 			return -1;		//	 未报名
@@ -54,7 +57,7 @@ public class WechatService {
 		ri = new RegisterInfo();
 		ri.setClassInfo(classInfoDao.getClassInfoById(classId));
 		ri.setRegisterDate(new Date());
-		ri.setRegisterMode(0); 		// 报名
+		ri.setRegisterMode(1); 		// 退课
 		ri.setPayFee(fee);
 		ri.setPayMode(payMode);
 		ri.setStudentInfo(studentInfoDao.getStudentInfoById(studentId));
@@ -72,7 +75,8 @@ public class WechatService {
 	public int enroll(String classId, String studentId, int fee, int registerChannel, 
 							int payMode, String note) {
 		
-		RegisterInfo ri = registerInfoDao.getRegisterInfo(classId, studentId);
+		RegisterInfo ri = registerInfoDao.getRegisterInfo(classInfoDao.getClassKeyIdById(classId), 
+				studentInfoDao.getStudentKeyIdById(studentId));
 		
 		if (ri != null) {
 			return -1;		//	 

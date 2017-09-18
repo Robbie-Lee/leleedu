@@ -37,6 +37,7 @@
 					            <th>邮箱</th>
 					            <th>用户名称</th>
 					            <th>联系电话</th>
+					            <th>组别</th>
 					            <th>创建时间</th>
 					            <th>最后修改时间</th>
 					            <th>状态</th>
@@ -52,6 +53,24 @@
 					            <td class="email">${user['email']}</td>
 					            <td class="name">${user['name']}</td>
 					            <td class="phone">${user['phone']}</td>
+					            <td>
+					            	<a role="button" data-toggle="collapse" href="#collapse-${user['id']}" aria-expanded="false" aria-controls="collapseExample">
+									  所属组
+									</a>
+									
+									<div class="collapse" id="collapse-${user['id']}">
+										<div class="panel panel-success">
+											  <div class="panel-body">
+												<#list user['role'] as role>
+													<div class="res-item" data-resid="${role['id']}">
+														&nbsp;&nbsp${res['name']}
+													</div>
+												</#list>
+											  </div>
+											</div>
+										</div>
+									</div>	
+					            </td>
 					            <td class="llas-nowrap createTime">${user['createTime']}</td>
 					            <td class="llas-nowrap modifyTime">${user['modifyTime']}</td>
 					            <td class="enable" data-value="${user['enable']}">${user['enable']?string("激活","停用")}</td>
@@ -96,7 +115,10 @@
 				<label for="c-user-account">登录名称</label>
 				<input type="text" class="form-control required" maxlength="32" name="account" id="c-user-account" placeholder="登录名称">	
 				<span class="llas-error-inco"></span>
+				<button id="change-teacher-list" data-target="teacher" class="btn btn-info" type="button" onclick="changeUserRole(this);">教师列表</button>
 			</div>
+			
+			<br>
 			<div class="form-group">
 				<label for="c-user-password">登录密码</label>
 				<input type="password" class="form-control required password" id="c-user-password" minlength="8" maxlength="32" name="password" placeholder="密码">
@@ -118,6 +140,13 @@
 				<input type="text" name="phone" class="form-control required phone" id="c-user-phone" placeholder="联系人电话">	
 				<span class="llas-error-inco"></span>
 			</div>
+			<div class="form-group">
+				<label for="c-role-resource">角色列表</label>
+				<input value="" id="resource-list-hidden" name="roleId" type="hidden" data-type="MULTIPLE">
+				<ul id="c-role-resource" style="min-width:178px;">
+				</ul>
+				<span class="llas-error-inco"></span>
+			</div>				
 			<div class="form-group">
 				<label for="c-user-active">状态</label>
 				<select id="c-user-active" name="active" class="form-control select-defaule-width required">
@@ -152,5 +181,8 @@
 	</form>
 </div>
 <#include "/common/footer.ftl">
+<script>
+sysManager.init();
+</script>
 </body>
 </html>

@@ -41,10 +41,11 @@
 					<table class="table table-bordered table-hover" id="search-table">
 					        <thead>
 					          <tr>
+					          	<th>课程号</th>
+					          	<th>课程名称</th>
 					            <th>授课教师</th>
 					            <th>统计开始日期</th>
 					            <th>统计结束日期</th>
-					            <th>班级号</th>
 					            <th>上课次数</th>
 					            <th>上课人次</th>
 					            <th>每人次课时费</th>
@@ -58,10 +59,11 @@
 							<#if (classStatistic.elements?size > 0)>
 			   					<#list classStatistic.elements as statistic>
 					          <tr id="${statistic['classId']}">
+					          	<td>${statistic['classId']}</td>
+					          	<td>${statistic['className']}</td>
 					            <td class="teacherName">${statistic['teacherName']}</td>
 					            <td class="startDate">${statistic['startDate']}</td>
 					            <td class="endDate llas-nowrap">${statistic['endDate']}</td>
-					            <td class="classTime">${statistic['className']}</td>
 					            <td class="attendCount">${statistic['attendCount']}</td>
 					            <td class="studentCount">${statistic['studentCount']}</td>
 					            <td>¥<span class="teacherSalary">${statistic['teacherSalary']}</span></td>

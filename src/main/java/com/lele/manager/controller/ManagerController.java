@@ -2,6 +2,7 @@ package com.lele.manager.controller;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,7 +18,10 @@ import org.springframework.web.servlet.ModelAndView;
 import com.alibaba.fastjson.JSON;
 import com.lele.manager.annotation.Auth;
 import com.lele.manager.annotation.Auth.AuthType;
+import com.lele.manager.security.SecurityHolder;
+import com.lele.manager.sys.entity.Role;
 import com.lele.manager.sys.entity.User;
+import com.lele.manager.sys.service.RoleService;
 import com.lele.manager.sys.service.UserService;
 import com.lele.manager.utils.AES;
 import com.lele.manager.utils.CommonResult;
@@ -29,6 +33,9 @@ public class ManagerController extends BaseController {
 	@Autowired
 	UserService userService;
 	
+	@Autowired
+	RoleService roleService;
+
 	private final static String USER_LIST = "userlist";
 	
 	@Auth(auth=AuthType.PAGE, description="用户管理页面")
@@ -84,7 +91,7 @@ public class ManagerController extends BaseController {
 		return cr;
     }
 	
-	@Auth(auth=AuthType.INTERFACE, description="添加用户接口")
+//	@Auth(auth=AuthType.INTERFACE, description="添加用户接口")
 	@RequestMapping(value={"adduser.json"}, method = RequestMethod.POST)
 	public @ResponseBody 
 	CommonResult addUser(HttpServletRequest request, HttpServletResponse response,
@@ -93,8 +100,11 @@ public class ManagerController extends BaseController {
 			@RequestParam(value = "name", required = true) String name,
 			@RequestParam(value = "email", required = false, defaultValue="") String email,
 			@RequestParam(value = "phone", required = false, defaultValue="") String phone,
-			@RequestParam(value = "active", required = false, defaultValue="") boolean active) {
+			@RequestParam(value = "active", required = false, defaultValue="") boolean active,
+			@RequestParam(value = "roleId", required = true) String[] roleId) {
 
+		Set<Role> roleSet = roleService.getRoleSetByIds(roleId);
+		
 		User user = userService.getUser(account);
 		if (user == null) {
 			user = new User();
@@ -109,7 +119,12 @@ public class ManagerController extends BaseController {
 		user.setPassword(AES.AESEncrypt(password));
 		user.setPhone(phone);
 		
+		if (roleSet != null) {
+			user.setRole(roleSet);
+		}
+		
 		userService.addUser(user);
+		SecurityHolder.loadSysAuthority();
 		
 		CommonResult cr = new CommonResult();
 		cr.setResult(CommonResult.SUCCESS);

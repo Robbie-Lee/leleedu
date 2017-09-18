@@ -27,7 +27,7 @@ public class ClassCheckinService {
 								className, teacherName, startDate, endDate, 0, 0);
 	}
 	
-	public void checkin(String classId) {
+	public int checkin(String classId) {
 		
 		Date date = new Date();
 		
@@ -41,6 +41,10 @@ public class ClassCheckinService {
 			
 			classCheckinDao.save(classCheckin);
 			classInfoDao.checkin(classId);
+			
+			return 0;
 		}
+		
+		return -1;
 	}
 }

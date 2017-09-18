@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" type="text/css" href="../public/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="../public/bootstrap/css/.min.css">
 <link rel="stylesheet" type="text/css" href="../public/common/css/ion.calendar.css">
 <link rel="stylesheet" type="text/css" href="../public/common/css/main.css">
 <title>乐乐教育信息系统管理</title>
@@ -253,6 +254,7 @@
 <div id="layer-modle" class="layer-modle"></div>
 <script src="../public/common/js/jquery/jquery-1.11.1.min.js"></script>
 <script src="../public/bootstrap/js/bootstrap.min.js"></script>
+<script src="../public/bootstrap/js/bootstrap-select.min.js"></script>
 <script src="../public/layer/layer.js"></script>
 <script src="../public/common/js/moment/moment.min.js"></script>
 <script src="../public/common/js/moment/moment.zh-cn.js"></script>

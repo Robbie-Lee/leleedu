@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -12,7 +13,30 @@ public class EnrollInfo implements Serializable {
 
 	private static final long serialVersionUID = -2036424598180627647L;
 
-	public class EnrollClass {
+	private List<Map> enrollClass = new ArrayList<Map>();
+
+	private ScoreLevel scoreLevel;
+
+
+
+	public ScoreLevel getScoreLevel() {
+		return scoreLevel;
+	}
+
+	public void setScoreLevel(ScoreLevel scoreLevel) {
+		this.scoreLevel = scoreLevel;
+	}
+
+	public List<Map> getEnrollClass() {
+		return enrollClass;
+	}
+
+	public void setEnrollClass(List<Map> list) {
+		this.enrollClass = list;
+	}
+	
+	
+/*	public class EnrollClass {
 	
 		private String classId;
 	
@@ -140,5 +164,5 @@ public class EnrollInfo implements Serializable {
 
 	public void setEnrollClass(List<EnrollClass> enrollClass) {
 		this.enrollClass = enrollClass;
-	}
+	}*/
 }

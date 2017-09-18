@@ -18,8 +18,10 @@ import com.google.common.base.Strings;
 import com.lele.manager.annotation.Auth;
 import com.lele.manager.annotation.Auth.AuthType;
 import com.lele.manager.entity.ClassInfo;
+import com.lele.manager.entity.TeacherInfo;
 import com.lele.manager.service.ClassInfoService;
 import com.lele.manager.service.ScoreLevelService;
+import com.lele.manager.service.TeacherInfoService;
 import com.lele.manager.sys.dao.Pagination;
 import com.lele.manager.sys.entity.Role;
 import com.lele.manager.sys.entity.User;
@@ -27,6 +29,7 @@ import com.lele.manager.sys.service.UserService;
 import com.lele.manager.utils.CommonResult;
 import com.lele.manager.utils.Constants;
 import com.lele.manager.vo.UserSession;
+import com.mysql.jdbc.StringUtils;
 
 @Controller
 @RequestMapping("/class")
@@ -34,7 +37,10 @@ public class ClassController extends BaseController {
 
 	@Autowired
 	ClassInfoService classInfoService;
-	
+
+	@Autowired
+	TeacherInfoService teacherInfoService;
+
 	@Autowired
 	ScoreLevelService scoreLevelService;
 	
@@ -67,7 +73,7 @@ public class ClassController extends BaseController {
         }
         
         UserSession us = (UserSession)request.getSession().getAttribute(Constants.DEFAULT_SESSION_ATTRIBUTE_NAME);
-        User user = userService.getUser(us.getUser().getAccount());
+        User user = us.getUser();
         
         boolean isAdmin = false;
         for (Role role : user.getRole()) {
@@ -114,9 +120,9 @@ public class ClassController extends BaseController {
 			@RequestParam(value = "scoreLevel", required = false, defaultValue = "0") int scoreLevel,
 			@RequestParam(value = "pageSize", required = false, defaultValue = "20") int pageSize,
 			@RequestParam(value = "curPage", required = false, defaultValue = "1") int curPage) throws Exception { 
-        
+
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-       
+        
         Date sDate = null;
         Date eDate = null;
         if (!Strings.isNullOrEmpty(startDate)) {
@@ -125,9 +131,40 @@ public class ClassController extends BaseController {
         if (!Strings.isNullOrEmpty(endDate)) {
         	eDate = sdf.parse(endDate);
         }
+		
+        UserSession us = (UserSession)request.getSession().getAttribute(Constants.DEFAULT_SESSION_ATTRIBUTE_NAME);
+        User user = us.getUser();
+		
+        boolean isAdmin = false;
+        for (Role role : user.getRole()) {
+        	if (role.getName().contains("管理员")) {
+        		isAdmin = true;
+        	}
+        }
         
-        Pagination<ClassInfo> classInfoList = classInfoService.getClassInfoByPage(curPage, pageSize, 
-        		classId, className, teacherName, sDate, eDate, scoreLevel, classGrade);
+        Pagination<ClassInfo> classInfoList = null;
+        if (isAdmin) {
+            classInfoList = classInfoService.getClassInfoByPage(curPage, pageSize, 
+            		classId, className, teacherName, sDate, eDate, scoreLevel, classGrade);
+        }
+        else if (!StringUtils.isNullOrEmpty(teacherName)){
+        	TeacherInfo tinfo = teacherInfoService.getTeacherInfoByKeyId(user.getTeacherId());
+        	
+        	if (tinfo.getName().equals(teacherName)) {
+                classInfoList = classInfoService.getClassInfoByPage(curPage, pageSize, 
+                		classId, className, teacherName, sDate, eDate, scoreLevel, classGrade);
+            }
+        	else {
+                classInfoList = classInfoService.getClassInfoByPage(curPage, pageSize, 
+                		classId, className, "other", sDate, eDate, scoreLevel, classGrade);
+        	}
+        }
+        else {
+        	TeacherInfo tinfo = teacherInfoService.getTeacherInfoByKeyId(user.getTeacherId());
+
+            classInfoList = classInfoService.getClassInfoByPage(curPage, pageSize, 
+            		classId, className, tinfo.getName(), sDate, eDate, scoreLevel, classGrade);
+        }
         
         return classInfoList;  
     }
@@ -163,14 +200,44 @@ public class ClassController extends BaseController {
         	eDate = sdf.parse(endDate);
         }
         
-        classInfoService.saveClassInfo(classId, 
-        		className, classRoom, sDate, eDate, classTime, teacherName, teacherId,
-        		classCount, classPrice, acceptDiscount, classDescription,
-        		scoreLevelService.getScoreLevel(scoreLevel), classGrade, registerLimit);
+        UserSession us = (UserSession)request.getSession().getAttribute(Constants.DEFAULT_SESSION_ATTRIBUTE_NAME);
+        User user = us.getUser();
+		
+        boolean isAdmin = false;
+        for (Role role : user.getRole()) {
+        	if (role.getName().contains("管理员")) {
+        		isAdmin = true;
+        	}
+        }
         
         CommonResult cr = new CommonResult();
-        cr.setResult("success");
-        cr.setErrCode(classId);
+
+        if (isAdmin) {
+            classInfoService.saveClassInfo(classId, 
+            		className, classRoom, sDate, eDate, classTime, teacherName, teacherId,
+            		classCount, classPrice, acceptDiscount, classDescription,
+            		scoreLevelService.getScoreLevel(scoreLevel), classGrade, registerLimit);
+            
+            cr.setResult("success");
+            cr.setErrCode(classId);
+        }
+        else {
+        	TeacherInfo tinfo = teacherInfoService.getTeacherInfoByKeyId(user.getTeacherId());
+        	
+        	if (tinfo.getName().equals(teacherName)) {
+                classInfoService.saveClassInfo(classId, 
+                		className, classRoom, sDate, eDate, classTime, teacherName, teacherId,
+                		classCount, classPrice, acceptDiscount, classDescription,
+                		scoreLevelService.getScoreLevel(scoreLevel), classGrade, registerLimit);
+                
+                cr.setResult("success");
+                cr.setErrCode(classId);
+            }
+        	else {
+                cr.setResult("failed");
+                cr.setErrCode(classId);
+        	}
+        }
         
         return cr;  
     }

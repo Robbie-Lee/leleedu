@@ -1,4 +1,5 @@
-<#assign leve1Menu={"class":"infoManager","student":"infoManager","teacher":"infoManager","attend":"teachManager","statistic":"teachManager","manager":"sysManager"}>
+<#assign leve1Menu={"class":"infoManager","student":"infoManager","teacher":"infoManager","attend":"teachManager","statistic":"teachManager","manager":"sysManager"
+,"register":"sysManager","discount":"sysManager","resource":"sysManager","role":"sysManager"}>
 
 <!-- sidebar start -->
 <div class="llas-sidebar">
@@ -65,10 +66,34 @@
 		<ul class="sidebar-trans max-none">
 			<li class="nav-item">
 				<a href="/manager/user.do" class="sidebar-trans <#if _cur_menu.level1 == "manager">active</#if>">
-					<span class="icon iconfont icon-tubiaofuben81"></span>
+					<span class="glyphicon glyphicon-user"></span>
 					<span class="nav-title">用户管理</span>
 				</a>
 			</li>
+			<li class="nav-item">
+				<a href="/register/manager.do" class="sidebar-trans <#if _cur_menu.level1 == "register">active</#if>">
+					<span class="glyphicon glyphicon-file"></span>
+					<span class="nav-title">账单管理</span>
+				</a>
+			</li>	
+			<li class="nav-item">
+				<a href="/discount/manager.do" class="sidebar-trans <#if _cur_menu.level1 == "discount">active</#if>">
+					<span class="glyphicon glyphicon-tags"></span>
+					<span class="nav-title">折扣管理</span>
+				</a>
+			</li>
+			<li class="nav-item">
+				<a href="/resource/manager.do" class="sidebar-trans <#if _cur_menu.level1 == "resource">active</#if>">
+					<span class="glyphicon glyphicon-lock"></span>
+					<span class="nav-title">权限管理</span>
+				</a>
+			</li>
+			<li class="nav-item">
+				<a href="/role/manager.do" class="sidebar-trans <#if _cur_menu.level1 == "role">active</#if>">
+					<span class="icon iconfont icon-tubiaofuben81"></span>
+					<span class="nav-title">角色管理</span>
+				</a>
+			</li>												
 		</ul>
 	</div>			
 </div>

@@ -80,11 +80,17 @@ public class ClassAttendController extends BaseController {
 	CommonResult checkin(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "classId", required = false, defaultValue = "") String classId) throws Exception {
 		
-		classCheckinService.checkin(classId);
+		int result = classCheckinService.checkin(classId);
 		
         CommonResult cr = new CommonResult();
-        cr.setResult("success");
-        cr.setErrCode(classId);
+        if (result == 0) {
+            cr.setResult("success");
+            cr.setErrCode(classId);
+        }
+        else {
+            cr.setResult("failed");
+            cr.setErrCode("您今天已经打过卡了");
+        }
         
         return cr;  
 	}

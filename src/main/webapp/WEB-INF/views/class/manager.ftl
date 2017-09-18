@@ -70,7 +70,7 @@
 					            <th>已报人数</th>
 					            <th>已收学费</th>
 					            <th>说明</th>
-					            <th style="width: 118px;">操作</th>
+					            <th style="width: 150px;">操作</th>
 					          </tr>
 					        </thead>
 					        <tbody>
@@ -107,7 +107,11 @@
 					            	<#if class['valid'] =='true' >
 					            		<span class="btn-link llas-left">|</span>
 					            		<button type="button" class="btn btn-link llas-left" data-id="${class['classId']}" data-grade="${class['classGrade']}" onclick="classManager.enrollClass(this, 'studentList');">报名</button>
-									</#if>					            	
+										<#if class['registerCount'] != 0 >
+					            			<span class="btn-link llas-left">|</span>
+											<button type="button" class="btn btn-link llas-left" data-id="${class['classId']}" onclick="classManager.dropClassMethod(this, 'registerStudentList');">退课</button>
+										</#if>	
+									</#if>	
 					            </td>
 					          </tr>
 					         	 </#list>
@@ -163,7 +167,8 @@
 			</div>
 			<div class="form-group">
 				<label for="course-teacher">授课教师</label>
-				<select id="course-teacher" name="teacherName" data-type="SELECT" class="form-control select-defaule-width required teacher-list"></select>
+				<input type="hidden" value="" name="teacherId" id="teacher-id-from-select">
+				<select id="course-teacher" name="teacherName" data-type="SELECT" class="form-control select-defaule-width required teacher-list" onchange="changeTeacherId(this, '#teacher-id-from-select')";></select>
 				<span class="llas-error-inco"></span>
 			</div>
 			<div class="form-group">
@@ -232,17 +237,115 @@
 		</div>
 		<div class="row">
 			<input type="hidden" value="" id="enroll-class-id" name="classId">
-			<input type="hidden" value="1" id="" name="payMode">
 			<div class="form-group">
 				<label for="enroll-student-id">学生</label>
-				<select id="enroll-student-id" class="form-control select-defaule-width" required name="studentId"></select>
+				<select id="enroll-student-id" class="form-control select-defaule-width selectpicker" required name="studentId" data-live-search="true"></select>
 				<span class="llas-error-inco"></span>
 			</div>
+			<div class="form-group">
+				<label for="enroll-student-register">报名渠道</label>
+				<select id="enroll-student-register" class="form-control select-defaule-width" name="registerChannel">
+					<option value="1">前台报名</option>
+					<option value="0">微信报名</option>
+				</select>
+				<span class="llas-error-inco"></span>
+			</div>
+			<div class="form-group">
+				<label for="enroll-student-payMode">支付方式</label>
+				<select id="enroll-student-payMode" class="form-control select-defaule-width" name="payMode">
+					<option value="0">微信报名</option>
+					<option value="1">支付宝</option>
+					<option value="2">POS机</option>
+					<option value="3">现金</option>
+					<option value="4">其他</option>
+				</select>
+				<span class="llas-error-inco"></span>
+			</div>				
 			<div class="form-group">
 				<label for="enroll-course-price">支付费用</label>
 				<input type="text" class="form-control number required" name="fee" id="enroll-course-price" placeholder="实际支付费用">	
 				<span class="llas-error-inco"></span>
+			</div>
+			<div class="form-group">
+				<label for="enroll-course-note">备注</label>
+				<textarea id="enroll-course-note" placeholder="备注" name="note" class="form-control note required" rows="3" maxlength="128" aria-required="true"></textarea>
+				<span class="llas-error-inco"></span>
+			</div>				
+		</div>
+	</form>
+</div>
+
+<div id="layer-modle-student-source" class="layer-modle">
+	<form class="container-fluid form-inline llas-valid-form error-info-div" id="grade-evaluation-form" name="gradeEvaluationForm" method="GET" action="/wechat/search/enrollinfo.json">
+		<input type="hidden" value="5" name="pageSize" class="page-size"/>
+		<input type="hidden" value="1" name="curPage" class="cur-page"/>
+		<input type="hidden" value="" id="total-items"/>
+		<input type="hidden" name="studentId" id="grade-evaluation-student"/>
+		
+		<div class="alert alert-danger contact-error">
+			<span class="no-data-icon"></span>
+			<span class="error-message"></span>
+		</div>
+		<div class="row">
+				<table class="table table-bordered table-hover" id="look-student-table">
+			        <thead>
+			          <tr>
+			            <th>姓名</th>
+			            <th>就读学校</th>
+			            <th>入学年份</th>
+			            <th>联系人</th>
+			            <th>联系人电话</th>
+			            <th>课程成绩</th>
+			          </tr>
+			        </thead>
+			        <tbody>
+					
+			        </tbody>
+			        <tfoot>
+			        	<tr>
+			        		<td colspan="100">
+								<nav aria-label="Page navigation" class="llas-right">
+								  <ul class="pagination" id="pagination-class" data-type="enrollInfo" data-target="grade-evaluation-form"></ul>
+								</nav>						        		
+			        		</td>
+			        	</tr>
+			        </tfoot>
+			  </table>
+		</div>
+	</form>
+</div>
+
+<div id="layer-drop-modle" class="layer-modle">
+	<form class="container-fluid form-inline llas-valid-form error-info-div" name="dropForm" method="POST" action="/wechat/enroll.json">
+		<div class="alert alert-danger contact-error">
+			<span class="no-data-icon"></span>
+			<span class="error-message"></span>
+		</div>
+		<div class="row">
+			<input type="hidden" value="" id="" name="classId">
+			<div class="form-group">
+				<label for="drop-student-id">学生</label>
+				<select id="drop-student-id" class="form-control select-defaule-width selectpicker" required name="studentId" data-live-search="true"></select>
+				<span class="llas-error-inco"></span>
+			</div>
+			<div class="form-group">
+				<label for="drop-student-register">报名渠道</label>
+				<select id="drop-student-register" class="form-control select-defaule-width" name="registerChannel">
+					<option value="1">前台报名</option>
+					<option value="0">微信报名</option>
+				</select>
+				<span class="llas-error-inco"></span>
 			</div>	
+			<div class="form-group">
+				<label for="drop-course-price">退课费用</label>
+				<input type="text" class="form-control number required" name="fee" id="drop-course-price" placeholder="退课费用">	
+				<span class="llas-error-inco"></span>
+			</div>
+			<div class="form-group">
+				<label for="drop-course-note">退课原因</label>
+				<textarea id="drop-course-note" placeholder="请您填写退课原因" name="note" class="form-control note required" rows="3" maxlength="128" aria-required="true"></textarea>
+				<span class="llas-error-inco"></span>
+			</div>				
 		</div>
 	</form>
 </div>

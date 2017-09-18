@@ -148,6 +148,15 @@ public abstract class MysqlBaseDAO<T> {
         return hp;
 	}
 	
+	public Pagination<Map> doQueryListMap(String hql, int curPage, int pageSize, Object... values) {
+		Session session = getNewSession();
+//		List<Map> lmap = session.createQuery(hql).list();
+//		session.close();
+		Pagination<Map> plmap = new Pagination<Map>(hql, session, curPage, pageSize, values);
+		session.close();
+		return plmap;
+	}
+	
 	public Pagination<T> doSqlQuery(String sql, int curPage, int pageSize, Object ...values) {
 		Session session = getNewSession();
         SQLQuery sqlQuery = session.createSQLQuery(sql);

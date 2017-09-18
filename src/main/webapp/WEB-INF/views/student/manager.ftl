@@ -125,8 +125,8 @@
 	</div>
 </div>
 <div id="layer-modle" class="layer-modle">
-	<form class="container-fluid form-inline llas-valid-form error-info-div" name="createForm" method="POST" action="/student/create.json">
-		<div class="alert alert-danger contact-error">
+	<form class="container-fluid form-inline llas-valid-form error-info-div  small-font-size" name="createForm" method="POST" action="/student/create.json">
+		<div class="alert alert-danger contact-error small-font-size">
 			<span class="no-data-icon"></span>
 			<span class="error-message"></span>
 		</div>
@@ -151,8 +151,8 @@
 				<span class="llas-error-inco"></span>
 			</div>
 			<div class="form-group">
-				<label for="c-student-grade">入学年份</label>
-				<input type="text" class="form-control required" id="c-student-grade" name="attendYear" maxlength="4" placeholder="入学年份">
+				<label for="c-student-grade">小学入学年份</label>
+				<input type="text" class="form-control required" id="c-student-grade" name="attendYear" maxlength="4" placeholder="小学入学年份">
 				<span class="llas-error-inco"></span>
 			</div>	
 			<div class="form-group">
@@ -183,6 +183,22 @@
 				<input type="text" class="form-control phone required" id="c-student-contacts-name" name="guarderPhone" placeholder="联系人电话" maxlength="11">
 				<span class="llas-error-inco"></span>	
 			</div>
+			
+			<div class="form-group">
+				<label for="class-select">选择课程</label>
+				<select id="class-select" class="form-control select-defaule-width selectpicker" name="classId" data-live-search="true">
+										
+				</select>
+				<span class="llas-error-inco"></span>	
+			</div>
+			
+			<div class="form-group">
+				<label for="c-student-fee">报名费用</label>
+				<input type="text" class="form-control number required" id="c-student-fee" name="fee" placeholder="报名费用">
+				<span class="llas-error-inco"></span>	
+			</div>						
+			
+			
 			<div class="form-group">
 				<label for="c-student-note">备注说明</label>
 				<textarea id="c-student-note" placeholder="备注说明" name="note" class="form-control note" rows="3" maxlength="512"></textarea>
@@ -209,7 +225,7 @@
 			          <tr>
 			            <th>课程名称</th>
 			            <th>授课教师</th>
-			            <th>状态</th>
+			            <!--<th>状态</th>-->
 			            <th>课程成绩</th>
 			          </tr>
 			        </thead>
@@ -236,7 +252,7 @@
 </div>
 <#include "/common/footer.ftl">
 <script>
-classManager.init();
+studentManager.init();
 </script>
 </body>
 </html>
