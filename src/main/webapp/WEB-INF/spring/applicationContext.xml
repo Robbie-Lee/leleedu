@@ -47,4 +47,15 @@
 		<context:include-filter type="annotation" expression="org.springframework.stereotype.Component" />
 	</context:component-scan>
 	
+	<beans:bean id="handlerExceptionResolver" class="com.lele.exception.handler.AnnotationHandlerMethodExceptionResolver">  
+    	<beans:property name="defaultErrorView" value="error/500"/> <!--错误页面-->  
+    	<beans:property name="messageConverters">
+    	    <beans:list>
+    	        <beans:bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter" />  
+    	        <!-- JSON转换器无需设置mediaType,由外部客户端调用时，手动设置相关mediaType -->  
+    	        <beans:bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />  
+    	    </beans:list>
+    	</beans:property>
+	</beans:bean>
+	
 </beans:beans>

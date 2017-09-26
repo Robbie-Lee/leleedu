@@ -7,6 +7,8 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,12 +38,16 @@ public class ManagerController extends BaseController {
 	@Autowired
 	RoleService roleService;
 
+	Logger logger = LoggerFactory.getLogger(ManagerController.class);
+	
 	private final static String USER_LIST = "userlist";
 	
 	@Auth(auth=AuthType.PAGE, description="用户管理页面")
 	@RequestMapping(value="/user.do", method = RequestMethod.GET)
 	public ModelAndView user(HttpServletRequest request, HttpServletResponse response) throws Exception {  
 
+		logger.info("access user.do");
+		
 		List<User> userList = userService.getUserList();
 		
 		for (User user : userList) {
@@ -91,13 +97,14 @@ public class ManagerController extends BaseController {
 		return cr;
     }
 	
-//	@Auth(auth=AuthType.INTERFACE, description="添加用户接口")
+	@Auth(auth=AuthType.INTERFACE, description="添加用户接口")
 	@RequestMapping(value={"adduser.json"}, method = RequestMethod.POST)
 	public @ResponseBody 
 	CommonResult addUser(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "account", required = true) String account,
 			@RequestParam(value = "password", required = true) String password,
 			@RequestParam(value = "name", required = true) String name,
+			@RequestParam(value = "teacherId", required = false, defaultValue="") String teacherId,
 			@RequestParam(value = "email", required = false, defaultValue="") String email,
 			@RequestParam(value = "phone", required = false, defaultValue="") String phone,
 			@RequestParam(value = "active", required = false, defaultValue="") boolean active,
@@ -118,6 +125,7 @@ public class ManagerController extends BaseController {
 		user.setName(name);
 		user.setPassword(AES.AESEncrypt(password));
 		user.setPhone(phone);
+		user.setTeacherId(teacherId);
 		
 		if (roleSet != null) {
 			user.setRole(roleSet);

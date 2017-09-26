@@ -83,7 +83,7 @@ public class PrivilegeAspect {
 
 		if (SecurityHolder.isAuthorized(us.getUser().getAccount(), new AuthResource(requestURI, ""))) {
 			try {
-				if (!request.getRequestURI().contains("detail.do") && annoAuth.auth() == AuthType.PAGE) {
+				if (annoAuth.auth() == AuthType.PAGE) {
 					us.setCurURI(request.getRequestURI());
 				}
 				HttpSession session = request.getSession();
@@ -120,6 +120,7 @@ public class PrivilegeAspect {
 			if (annoAuth.auth() == AuthType.PAGE) {
 				String referUrl = request.getHeader("Referer");
 				try {
+					response.getWriter().write("您没有访问权限");
 					response.sendRedirect(referUrl);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block

@@ -316,13 +316,15 @@
 </div>
 
 <div id="layer-drop-modle" class="layer-modle">
-	<form class="container-fluid form-inline llas-valid-form error-info-div" name="dropForm" method="POST" action="/wechat/enroll.json">
+	<form class="container-fluid form-inline llas-valid-form error-info-div" name="dropForm" method="POST" action="/wechat/withdraw.json">
 		<div class="alert alert-danger contact-error">
 			<span class="no-data-icon"></span>
 			<span class="error-message"></span>
 		</div>
 		<div class="row">
-			<input type="hidden" value="" id="" name="classId">
+			<input type="hidden" value="" id="drop-class-id" name="classId">
+			<input type="hidden" value="4" id="" name="payMode">
+			
 			<div class="form-group">
 				<label for="drop-student-id">学生</label>
 				<select id="drop-student-id" class="form-control select-defaule-width selectpicker" required name="studentId" data-live-search="true"></select>

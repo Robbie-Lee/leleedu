@@ -14,6 +14,7 @@ import com.lele.manager.dao.DiscountDAO;
 import com.lele.manager.dao.RegisterInfoDAO;
 import com.lele.manager.dao.StudentInfoDAO;
 import com.lele.manager.entity.ClassInfo;
+import com.lele.manager.entity.Discount;
 import com.lele.manager.entity.RegisterInfo;
 import com.lele.manager.entity.StudentInfo;
 import com.lele.manager.sys.dao.Pagination;
@@ -63,7 +64,15 @@ public class RegisterInfoService {
 			for (StudentInfo si : ri.getStudentInfos()) {
 				si.setId(0);
 				si.setScoreLevel(null);
-				si.setDiscountRate(discountDao.getDiscount(si.getTotalFee()).getDiscountRate());
+				
+				Discount discount = discountDao.getDiscount(si.getTotalFee());
+				if (discount == null) {
+					discount = new Discount();
+					discount.setDiscountRate(1.0f);
+					discount.setLowerFee(si.getTotalFee());
+					discount.setUpperFee(si.getTotalFee());
+				}
+				si.setDiscountRate(discount.getDiscountRate());
 			}
 		}
 		

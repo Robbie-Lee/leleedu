@@ -50,7 +50,7 @@ public class WechatService {
 		RegisterInfo ri = registerInfoDao.getRegisterInfo(classInfoDao.getClassKeyIdById(classId), 
 				studentInfoDao.getStudentKeyIdById(studentId));
 		
-		if (ri != null) {
+		if (ri == null) {
 			return -1;		//	 未报名
 		}
 		

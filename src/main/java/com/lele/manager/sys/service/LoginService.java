@@ -62,6 +62,12 @@ public class LoginService {
 		loginResult.setResultFlag(1);
 
 		User user = userDao.getUserByName(loginName);
+		
+		if (user == null) {
+			loginResult.setLoginStatus(LoginStatus.USER_NOT_EXIST.status());
+			return loginResult;
+		}
+		
 		for (Role role : user.getRole()) {
 			role.setResource(null);
 		}

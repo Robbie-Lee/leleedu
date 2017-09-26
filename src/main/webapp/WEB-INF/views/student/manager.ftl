@@ -183,8 +183,16 @@
 				<input type="text" class="form-control phone required" id="c-student-contacts-name" name="guarderPhone" placeholder="联系人电话" maxlength="11">
 				<span class="llas-error-inco"></span>	
 			</div>
-			
-			<div class="form-group">
+			<div class="form-group" style="display: block;" id="is-baoming-div">
+				<label for="">&nbsp;</label>
+				<div class="checkbox">
+				<label for="is-baoming">
+				    <input id="is-baoming" data-target=".baoming-div" type="checkbox" value="true" onchange="changeBaoMing(this);" checked>
+				    	是否需要报名
+				  </label>
+				</div>
+			</div>			
+			<div class="form-group baoming-div">
 				<label for="class-select">选择课程</label>
 				<select id="class-select" class="form-control select-defaule-width selectpicker" name="classId" data-live-search="true">
 										
@@ -192,7 +200,7 @@
 				<span class="llas-error-inco"></span>	
 			</div>
 			
-			<div class="form-group">
+			<div class="form-group baoming-div">
 				<label for="c-student-fee">报名费用</label>
 				<input type="text" class="form-control number required" id="c-student-fee" name="fee" placeholder="报名费用">
 				<span class="llas-error-inco"></span>	

@@ -147,7 +147,7 @@ tr{background: #fff;}
 .llas-sidebar-mini .sidebar-nav li a{padding: 0;text-align: center;width: 50px;}
 .llas-sidebar-mini .sidebar-nav li a .nav-title{display: none;}
 .layer-modle{padding: 20px;}
-.form-inline .form-control.note{width: 580px;resize: none;}
+.form-inline .form-control.note{width: 570px;resize: none;}
 .note-text-div{cursor: pointer;position: relative;text-align: center;}
 .note-text-div .note-text {display: none;}
 .note-text-div:hover .note-text{

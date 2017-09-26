@@ -315,13 +315,13 @@ var ajaxDone = {
     		
     		for(var key in elements) {
     			
-				tbodyHTML += '<tr>';
+				tbodyHTML += '<tr id="'+elements[key].studentId+'">';
 				tbodyHTML += '<td class="name">'+elements[key].name+'</td>';
 				tbodyHTML += '<td>'+elements[key].school+'</td>';
 				tbodyHTML += '<td>'+elements[key].attendYear+'</td>';
 				tbodyHTML += '<td>'+elements[key].guarderName+'['+studentManager.guarderList[elements[key].guarder]+']</td>';
 				tbodyHTML += '<td>'+elements[key].guarderPhone+'</td>';
-				tbodyHTML += '<td><input type="number" value=""></td>';
+				tbodyHTML += '<td><input type="number" class="classScore" value="'+elements[key].classScore+'"></td>';
 				tbodyHTML += '</tr>';   			
     			
     		}
@@ -403,6 +403,15 @@ var ajaxDone = {
 				layer.alert(result.errCode, {icon: 2});
 			}	
 		},
+		dropClass: function(result){
+			if(result.result == 'success'){
+				llas.currentRowId = result.errCode;
+				formSubmitMethod(null, searchFrom, 'classSearch');
+				layer.closeAll('page');
+			}else{
+				layer.alert(result.errCode, {icon: 2});
+			}	
+		},		
 		teacherSearch: function(result){
 			var $tbody = $('#search-table').find('tbody'), tbodyHTML = '', elements = result.elements; 
 			for(var key in elements){
@@ -465,11 +474,33 @@ var ajaxDone = {
 		createStudent: function(result){
 			if(result.result == 'success'){
 				llas.currentRowId = result.errCode;
-				formSubmitMethod(null, searchFrom, 'studentSearch');
+				if($('#is-baoming').length > 0){
+					var bData = {
+							classId: $('#class-select').val(),
+							studentId: $('#c-student-id').val(),
+							fee: $('#c-student-fee').val(),
+							payMode: 4,
+							registerChannel: 1,
+							note: $('#c-student-note').val()
+					};
+					ajaxGetDataMethod(bData, '/wechat/enroll.json', 'POST', 'afterBaoMing', null)
+				}else{
+					formSubmitMethod(null, searchFrom, 'studentSearch');
+				}
 				layer.closeAll('page');
 			}else{
 				layer.alert('创建失败，请检查您填写的信息是否合理!', {icon: 2});
 			}	
+		},
+		afterBaoMing: function(result){
+			
+			if(result.result == 'success'){
+				llas.currentRowId = result.errCode;
+				formSubmitMethod(null, searchFrom, 'studentSearch');
+				layer.closeAll('page');
+			}else{
+				layer.alert('报名失败，请您稍后重试', {icon: 2});
+			}				
 		},
 		enrollInfo: function(result){
 			
@@ -515,6 +546,15 @@ var ajaxDone = {
 				layer.alert('操作失败，请您稍后重试', {icon: 2});
 			}			
 		},
+		classScore: function(result){
+			if(result.result == 'success'){
+				llas.currentRowId = result.errCode;
+				formSubmitMethod(null, searchFrom, 'classSearch');
+				layer.closeAll('page');
+			}else{
+				layer.alert('操作失败，请您稍后重试', {icon: 2});
+			}			
+		},
 		attendSearch: function(result){
 			var $tbody = $('#search-table').find('tbody'), tbodyHTML = '', elements = result.elements;
 			for(var key in elements){
@@ -548,7 +588,7 @@ var ajaxDone = {
 				llas.currentRowId = result.errCode;
 				formSubmitMethod(null, searchFrom, 'attendSearch');
 			}else{
-				layer.alert('打卡失败，请您稍后重试!', {icon: 2});
+				layer.alert(result.errCode, {icon: 2});
 			}
 		},
 		statisticSearch: function(result){
@@ -877,6 +917,11 @@ function changeCheckboxValue(_this){
 	}
 }
 function fullEditPanelByTr($tr, $tmpl){
+	if($tmpl.find('#is-baoming').length > 0) {
+		$('#is-baoming-div').hide();
+		$('#is-baoming').get(0).checked = false;
+		changeBaoMing($('#is-baoming').get(0));
+	}
 	var trData = $tr.data();
 	$tmpl.find('[name]').each(function(){
 		var nameVal = this.name;
@@ -945,15 +990,24 @@ function editTableRowData(_this, type, isNew){
 		},
 		btn2: function(index, layero){
 			createForm.reset();
+			if($('#is-baoming').length>0){
+				changeBaoMing($('#is-baoming').get(0));
+			}
 		},
 		area: '740px',
 		content: $layerModel,
 		end: function(){
 			createForm.reset();
+			if($('#is-baoming').length>0){
+				changeBaoMing($('#is-baoming').get(0));
+			}
 		}
 	 });
 }
 function newTableRowData(_this, type) {
+	if($('#is-baoming').length > 0) {
+		$('#is-baoming-div').show();
+	}
 	editTableRowData(_this, type, true);
 }
 function deleteTableRowData(_this, type){
@@ -994,7 +1048,8 @@ var classManager = {
 		commonManager.page();
 	},
     lookStudent: function(_this){
-        ajaxGetDataMethod({classId:_this.getAttribute('data-id')},'/class/register.json', 'get', 'studentLook', null);
+    	var classId = _this.getAttribute('data-id');
+        ajaxGetDataMethod({classId: classId},'/class/register.json', 'get', 'studentLook', null);
         
         
 		$layerModel = $('#layer-modle-student-source');
@@ -1008,7 +1063,18 @@ var classManager = {
 			btn: ['确定', '取消'],
 			btnAlign: 'c',
 			btn1: function(index, layero){
-					
+				var data = {}, $tbody = $('#look-student-table').find('tbody'), studentIdsArr = [], classScoresArr = [];
+				$tbody.find('tr').each(function(){
+					var $this = $(this), $scores = $this.find('input.classScore');
+					if($scores.length > 0 && $scores.val() >= 0 ){
+						studentIdsArr.push(this.id);
+						classScoresArr.push($this.find('input.classScore').val());
+					}
+				});
+				data.studentIds = studentIdsArr.join(',');
+				data.classScores = classScoresArr.join(',');
+				data.classId = classId;
+				ajaxGetDataMethod( data, '/student/score.json', 'post', 'classScore', null );
 			},
 			btn2: function(index, layero){
 				
@@ -1066,14 +1132,14 @@ var classManager = {
 		 });
 	},
 	dropClassMethod: function (_this, type){
-
+		
 		ajaxGetDataMethod({classId: _this.getAttribute('data-id')}, '/class/register.json', 'get', type, null);
 		
-		$('#enroll-class-id').val(_this.getAttribute('data-id'));
+		$('#drop-class-id').val(_this.getAttribute('data-id'));
 		var $layerModel = $('#layer-drop-modle');
 		layer.open({
 			type: 1,
-			title: '报名',
+			title: '退课',
 			shadeClose: false,
 			scrollbar: false,
 			zIndex: 110,
@@ -1081,7 +1147,7 @@ var classManager = {
 			btn: ['确定', '取消'],
 			btnAlign: 'c',
 			btn1: function(index, layero){
-				//formSubmitMethod(_this, enrollForm, 'enrollClass');
+				formSubmitMethod(_this, dropForm, 'dropClass');
 			},
 			btn2: function(index, layero){
 				enrollForm.reset();
@@ -1152,11 +1218,11 @@ var studentManager = {
 						classScoresArr.push($this.find('input.classScores').val());
 					}
 				});
-				data.classId = classIdArr.join(',');
-				data.classScores = classScoresArr.join(',');
+				//data.classId = classIdArr.join(',');
+				//data.classScores = classScoresArr.join(',');
 				data.scoreLevel = $('#enroll-course-grade').val();
 				data.studentId = $('#enroll-class-table').attr('data-student');;
-				ajaxGetDataMethod( data, '/student/score.json', 'post', 'studentScore', null );
+				ajaxGetDataMethod( data, '/student/scoreLevel.json', 'post', 'studentScore', null );
 			},
 			btn2: function(index, layero){
 				
@@ -1278,6 +1344,15 @@ function changeResourceIds(_this) {
 	});
 	
 	$input.val(idsArray.join(','));
+}
+function changeBaoMing(_this){
+	var $target = $(_this.getAttribute('data-target'));
+	if(_this.checked) {
+		$target.show()
+		.find('.form-control').removeAttr('disabled');
+	}else{
+		$target.hide().find('.form-control').attr('disabled', 'disabled');
+	}
 }
 //分页插件
 var  page = {

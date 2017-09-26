@@ -17,14 +17,23 @@ public class RegisterInfoDAO extends MysqlBaseDAO<RegisterInfo> {
 	private final String HQL_ENTITY = "RegisterInfo";
 	
 	public List<RegisterInfo> getRegisterInfo(Long classKeyId) {
-		final String hql = "from " + HQL_ENTITY + " as r left join r.classInfos as cis where cis.id = ?0";
-		return this.doQueryList(hql, classKeyId);
+		final String hql = "from " + HQL_ENTITY + " as r left join r.classInfos as cis where cis.id = ?0 and r.registerMode = ?1";
+		return this.doQueryList(hql, classKeyId, 0);
 	}
 	
 	public RegisterInfo getRegisterInfo(Long classKeyId, Long studentKeyId) {
 		final String hql = "from " + HQL_ENTITY + " as r left join r.classInfos as cis left join r.studentInfos as sis "
 				+ "where cis.id = ?0 and sis.id = ?1";
-		return this.doQueryUnique(hql, classKeyId, studentKeyId);
+		
+		Object obj = this.doQueryUnique(hql, classKeyId, studentKeyId);
+		
+		if (obj != null)
+		{
+			RegisterInfo ri = (RegisterInfo) ((Object[])obj)[0];
+			return ri;
+		}
+		
+		return null;
 	}
 	
 /*	public long getRegisterCount(String classId) {

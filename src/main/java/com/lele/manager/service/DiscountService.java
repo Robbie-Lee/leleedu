@@ -14,7 +14,16 @@ public class DiscountService {
 	DiscountDAO discountDao;
 
 	public Discount getDiscount(int fee) {
-		return discountDao.getDiscount(fee);
+		Discount discount = discountDao.getDiscount(fee);
+		
+		if (discount == null) {
+			discount = new Discount();
+			discount.setDiscountRate(1.0f);
+			discount.setLowerFee(fee);
+			discount.setUpperFee(fee);
+		}
+		
+		return discount;
 	}
 	
 	public Pagination<Discount> getDiscountInfo(int curPage, int pageSize) {
